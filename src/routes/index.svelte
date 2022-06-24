@@ -8,10 +8,6 @@
 	});
 </script>
 
-<svelte:head>
-	<title>Matt DeKok</title>
-</svelte:head>
-
 <div class="me">
   <Image src={Me} id="me" container="cover-img" />
   <div class="intro">

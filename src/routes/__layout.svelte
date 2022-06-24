@@ -54,6 +54,10 @@
 	});
 </script>
 
+<svelte:head>
+	<title>{props.title ? `${props.title} - ` : ''}Matt DeKok</title>
+</svelte:head>
+
 <div id="app" data-scroll={scroll} data-theme={theme} class="min-h-screen min-w-full">
 	{#key theme}
 		<div class="bg" data-theme={theme} in:fade out:fade />

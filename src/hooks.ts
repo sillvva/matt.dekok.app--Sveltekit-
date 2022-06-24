@@ -10,7 +10,6 @@ export const handle: Handle = ({ event, resolve }) => {
 	return resolve(event);
 };
 
-/** @type {import('@sveltejs/kit').GetSession} */
 export const getSession: GetSession = (request) => {
 	return {
 		theme: (<any>request.locals).theme
