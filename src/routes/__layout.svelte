@@ -4,26 +4,32 @@
 		return {
 			props: {
 				theme: session.theme || 'dark',
-        key: url
+				key: url
 			}
 		};
 	};
 </script>
 
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import type { themes } from '../utils';
-  import type { PageProps } from '../store';
-  import { pageProps } from '../store';
-  import PageBody from '../components/page-body.svelte'
+	import type { PageProps } from '../store';
+	import { pageProps } from '../store';
+	import PageBody from '../components/page-body.svelte';
 	import '../app.scss';
 
-  export let key: string;
+	export let key: string;
 
-  export let props: PageProps = {};
-  pageProps.subscribe(p => {
-    props = p;
-  });
+	export let loaded = false;
+	onMount(() => {
+		loaded = true;
+	});
+
+	export let props: PageProps = {};
+	pageProps.subscribe((p) => {
+		props = p;
+	});
 
 	export let theme: typeof themes[0];
 	export const toggleTheme = (newtheme: typeof themes[0]) => {
@@ -45,14 +51,20 @@
 			</div>
 		</nav>
 		<div>
-			{#key props.title}
-				<h1 in:fade={{ delay: 250, duration: 250 }} out:fade={{ duration: 250 }}>{props.title || ""}</h1>
-			{/key}
+			{#if loaded}
+				{#key props.title}
+					<h1 in:fade={{ delay: 250, duration: 250 }} out:fade={{ duration: 250 }}>
+						{props.title || ''}
+					</h1>
+				{/key}
+			{/if}
 		</div>
 	</header>
-  <PageBody refresh={key} class={props.bodyClass}>
-    <slot />
-  </PageBody>
+	{#if loaded}
+		<PageBody refresh={key} class={props.bodyClass}>
+			<slot />
+		</PageBody>
+	{/if}
 </div>
 
 <style lang="scss">
