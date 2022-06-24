@@ -1,6 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@mdi/js': ^6.7.96
   '@sveltejs/adapter-auto': next
   '@sveltejs/kit': next
   '@types/cookie': ^0.5.1
@@ -26,6 +27,7 @@ dependencies:
   cookie: 0.5.0
 
 devDependencies:
+  '@mdi/js': 6.7.96
   '@sveltejs/adapter-auto': 1.0.0-next.52
   '@sveltejs/kit': 1.0.0-next.354_sass@1.53.0+svelte@3.48.0
   '@types/cookie': 0.5.1
@@ -116,6 +118,10 @@ packages:
     transitivePeerDependencies:
       - encoding
       - supports-color
+    dev: true
+
+  /@mdi/js/6.7.96:
+    resolution: {integrity: sha512-vZvhFrNN9LQx+Awu3nU6ESfXXDpRA/CA4mwikzU5g8uf9NpAocK43ecQvVNntwiXlLKpyplas8d4lsfpqjtXLA==}
     dev: true
 
   /@nodelib/fs.scandir/2.1.5:

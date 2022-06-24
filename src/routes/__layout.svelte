@@ -17,10 +17,12 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
+  import { mdiBrightness6 } from '@mdi/js';
 	import type { PageProps } from '../store';
 	import { pageProps } from '../store';
 	import PageBody from '../components/page-body.svelte';
 	import Fab from '../components/fab.svelte';
+  import Icon from '../components/icon.svelte';
 	import '../app.scss';
 
 	export let key: string;
@@ -65,7 +67,9 @@
 	<header>
 		<nav class="lg:pl-3">
 			<div class="menu-container lg:pl-14" />
-			<Fab class="nav-fab" on:click={() => toggleTheme()}>T</Fab>
+			<Fab class="nav-fab" on:click={() => toggleTheme()}>
+				<Icon path={mdiBrightness6} size={1.2} />
+			</Fab>
 		</nav>
 		<div class="hidden lg:block">
 			{#if loaded}
