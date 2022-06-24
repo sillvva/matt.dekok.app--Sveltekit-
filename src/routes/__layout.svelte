@@ -1,10 +1,14 @@
 <script context="module" lang="ts">
 	import type { Load } from '@sveltejs/kit';
+	import { themes } from '../utils';
+	import { parse } from 'cookie';
+
 	export const load: Load = async ({ session, url }: any) => {
+		const cookie = typeof document !== 'undefined' ? parse(document.cookie) : session;
 		return {
 			props: {
-				theme: session.theme || 'dark',
-				key: url
+				theme: cookie.theme || themes[0],
+				key: url.pathname
 			}
 		};
 	};
