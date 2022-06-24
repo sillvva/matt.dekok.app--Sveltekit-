@@ -118,7 +118,6 @@
 #app {
 	@include universal-theme();
 	&,
-	[data-theme='system'],
 	[data-theme='light'] {
 		@include light-theme();
 	}
@@ -132,7 +131,6 @@
 	}
 	@media (prefers-color-scheme: dark) {
 		&,
-		[data-theme='system'],
 		[data-theme='dark'] {
 			@include dark-theme();
 		}
@@ -145,17 +143,21 @@
 			@include blue-theme();
 		}
 	}
-	background: transparent;
+  position: absolute;
 	color: var(--text) !important;
-	color-scheme: var(--scheme);
+  color-scheme: var(--scheme);
 	a {
 		color: var(--link);
 		text-decoration: none;
 	}
 }
 
-body {
+html {
 	overflow-y: scroll;
+  color-scheme: light;
+  @media (prefers-color-scheme: dark) {
+    color-scheme: dark;
+  }
 }
 
 h1, h2, h3, h4, h5, h6 {

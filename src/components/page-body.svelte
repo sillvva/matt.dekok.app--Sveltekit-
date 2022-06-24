@@ -15,7 +15,7 @@
 <style lang="scss">
 	main {
 		@apply flex flex-col;
-		@apply relative z-[4];
+		@apply relative z-[2];
 		&.page-body {
 			@apply mt-32;
 		}

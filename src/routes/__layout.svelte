@@ -1,6 +1,6 @@
 <script context="module" lang="ts">
 	import type { Load } from '@sveltejs/kit';
-	import { themes } from '../utils';
+	import { debounce, themes } from '../utils';
 	import { parse } from 'cookie';
 
 	export const load: Load = async ({ session, url }: any) => {
@@ -15,7 +15,7 @@
 </script>
 
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import type { PageProps } from '../store';
 	import { pageProps } from '../store';
@@ -25,9 +25,19 @@
 
 	export let key: string;
 
+	export let scroll = 0;
+	const scrollHandler = debounce(() => {
+		scroll = window.scrollY;
+	});
+
 	export let loaded = false;
 	onMount(() => {
 		loaded = true;
+		if (typeof window !== 'undefined') window.addEventListener('scroll', scrollHandler, { passive: true });
+	});
+
+	onDestroy(() => {
+		if (typeof window !== 'undefined') window.removeEventListener('scroll', scrollHandler);
 	});
 
 	export let theme: typeof themes[0];
@@ -41,11 +51,9 @@
 	pageProps.subscribe((p) => {
 		props = p;
 	});
-
-	export let scroll = 0;
 </script>
 
-<div id="app" data-scroll={scroll} data-theme={theme} class="min-h-screen min-w-screen">
+<div id="app" data-scroll={scroll} data-theme={theme} class="min-h-screen min-w-full">
 	{#key theme}
 		<div class="bg" data-theme={theme} in:fade out:fade />
 	{/key}
@@ -78,7 +86,7 @@
 	}
 
 	header {
-		@apply flex flex-col items-center;
+		@apply flex flex-col items-center transition-[backdrop-filter] duration-500;
 		@apply fixed top-0 left-0 right-0 z-[3];
 		#app[data-scroll]:not([data-scroll='0']) & {
 			@apply backdrop-blur-lg bg-[color:rgba(var(--background),var(--headerOpacity))];
