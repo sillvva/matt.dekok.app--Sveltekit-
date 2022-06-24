@@ -17,10 +17,10 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
-	import type { themes } from '../utils';
 	import type { PageProps } from '../store';
 	import { pageProps } from '../store';
 	import PageBody from '../components/page-body.svelte';
+	import Fab from '../components/fab.svelte';
 	import '../app.scss';
 
 	export let key: string;
@@ -30,29 +30,29 @@
 		loaded = true;
 	});
 
+	export let theme: typeof themes[0];
+	export const toggleTheme = (newtheme?: typeof themes[0]) => {
+		const nextTheme = themes[(themes.indexOf(newtheme || theme || '') + 1) % themes.length];
+		theme = newtheme || nextTheme;
+		document.cookie = `theme=${theme}`;
+	};
+
 	export let props: PageProps = {};
 	pageProps.subscribe((p) => {
 		props = p;
 	});
 
-	export let theme: typeof themes[0];
-	export const toggleTheme = (newtheme: typeof themes[0]) => {
-		theme = newtheme;
-		document.cookie = `theme=${theme}`;
-	};
+	export let scroll = 0;
 </script>
 
-<div id="app" data-theme={theme} class="min-h-screen min-w-screen">
+<div id="app" data-scroll={scroll} data-theme={theme} class="min-h-screen min-w-screen">
 	{#key theme}
 		<div class="bg" data-theme={theme} in:fade out:fade />
 	{/key}
 	<header>
-		<nav>
-			<div>
-				<button on:click={() => toggleTheme('dark')}>Dark</button>
-				<button on:click={() => toggleTheme('light')}>Light</button>
-				<button on:click={() => toggleTheme('blue')}>Blue</button>
-			</div>
+		<nav class="lg:pl-3">
+			<div class="menu-container lg:pl-14" />
+			<Fab class="nav-fab" on:click={() => toggleTheme()}>T</Fab>
 		</nav>
 		<div>
 			{#if loaded}
@@ -73,19 +73,35 @@
 
 <style lang="scss">
 	.bg {
-		@apply fixed inset-0 scale-x-[var(--bgScaleX)] z-0 transition-all duration-500;
+		@apply fixed inset-0 scale-x-[var(--bgScaleX)] z-0;
 		@apply bg-fixed bg-cover bg-no-repeat bg-[color:rgb(var(--background))] bg-[image:var(--bgImg)];
 	}
 
 	header {
 		@apply flex flex-col items-center;
 		@apply fixed top-0 left-0 right-0 z-[3];
+		#app[data-scroll]:not([data-scroll='0']) & {
+			@apply backdrop-blur-lg bg-[color:rgba(var(--background),var(--headerOpacity))];
+		}
 		nav {
+			@apply flex w-full px-3 items-center text-center max-h-[80px];
+			// .PageTitle {
+			//   @apply p-2;
+			//   &.SmallTitle {
+			//     @apply text-sm sm:text-lg md:text-2xl;
+			//   }
+			// }
+			@media (max-width: 400px) {
+				@apply px-0;
+			}
+			.menu-container {
+				@apply flex-1 hidden lg:block;
+			}
 		}
 		> div {
-			@apply relative h-9 w-full;
+			@apply relative h-14 w-full;
 			h1 {
-				@apply absolute top-0 left-1/2 -translate-x-1/2 lg:mt-4 lg:mb-4;
+				@apply absolute top-0 left-1/2 -translate-x-1/2 lg:mt-3 lg:mb-2;
 				@apply text-3xl text-center font-medium text-[color:var(--headers)];
 				@apply transition-all duration-500;
 				text-shadow: 1px 1px 0 rgba(var(--background), var(--headerOpacity)),
@@ -94,9 +110,5 @@
 					-1px 1px 0 rgba(var(--background), var(--headerOpacity));
 			}
 		}
-	}
-
-	button {
-		@apply bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded;
 	}
 </style>
