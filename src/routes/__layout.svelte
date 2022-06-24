@@ -33,7 +33,8 @@
 	export let loaded = false;
 	onMount(() => {
 		loaded = true;
-		if (typeof window !== 'undefined') window.addEventListener('scroll', scrollHandler, { passive: true });
+		if (typeof window !== 'undefined')
+			window.addEventListener('scroll', scrollHandler, { passive: true });
 	});
 
 	onDestroy(() => {
@@ -62,7 +63,7 @@
 			<div class="menu-container lg:pl-14" />
 			<Fab class="nav-fab" on:click={() => toggleTheme()}>T</Fab>
 		</nav>
-		<div>
+		<div class="hidden lg:block">
 			{#if loaded}
 				{#key props.title}
 					<h1 in:fade={{ delay: 250, duration: 250 }} out:fade={{ duration: 250 }}>
@@ -103,7 +104,7 @@
 				@apply px-0;
 			}
 			.menu-container {
-				@apply flex-1 hidden lg:block;
+				@apply flex-1;
 			}
 		}
 		> div {
