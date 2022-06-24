@@ -9,31 +9,25 @@
 
 	let className = '';
 	export { className as class };
+	export let href: string | undefined = '';
 </script>
 
-<button class={className} on:click={clickHandler}>
+<a role="button" href={href || null} class={className} on:click={clickHandler}>
 	<slot />
-</button>
+</a>
 
 <style lang="scss">
-	button {
+	a {
 		@apply flex justify-center items-center w-14 h-14 rounded-full text-2xl cursor-pointer;
-		@apply transition-[background] duration-500 ease-linear bg-transparent;
+		@apply transition-[background] duration-500 ease-linear bg-transparent text-[color:var(--text)];
 		&.menu-fab {
 			@apply lg:hidden;
 		}
 		&.nav-fab {
 			@apply my-2;
 		}
-		svg {
-			@apply w-7 text-[color:var(--text)] transition-all duration-500;
-		}
 		&:hover {
 			@apply bg-[color:var(--link)] text-[color:var(--menuText)];
-			svg {
-				@apply text-[color:var(--menuText)];
-				text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-			}
 		}
 	}
 </style>

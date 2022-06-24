@@ -146,7 +146,7 @@
   position: absolute;
 	color: var(--text) !important;
   color-scheme: var(--scheme);
-	a {
+	a:not([role="button"]) {
 		color: var(--link);
 		text-decoration: none;
 	}

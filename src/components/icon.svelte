@@ -1,6 +1,6 @@
 <script lang="ts">
 	export let path: string;
-	export let size = 1;
+	export let size: number | string = 1;
 	export let color: string | null = null;
 	export let flip: boolean | string | null = null;
 	export let rotate = 0;
@@ -16,32 +16,32 @@
 	if (Number(size)) size = Number(size);
 
 	const getStyles = (
-		size: string | number,
-		color: string | null = null,
-		flip: boolean | string | null = null,
-		rotate: number = 0
+		asize: typeof size,
+		acolor: typeof color = null,
+		aflip: typeof flip = null,
+		arotate: typeof rotate = 0
 	) => {
 		const transform = [];
 		const styles = [];
 
-		if (size !== null) {
-			const width = typeof size === 'string' ? size : `${size * 1.5}rem`;
+		if (asize !== null) {
+			const width = typeof asize === 'string' ? asize : `${asize * 1.5}rem`;
 			styles.push(['width', width]);
 			styles.push(['height', width]);
 		}
 
-		styles.push(['fill', color !== null ? color : 'currentColor']);
+		styles.push(['fill', acolor !== null ? acolor : 'currentColor']);
 
-		if (flip === true || flip === 'h') {
+		if (aflip === true || aflip === 'h') {
 			transform.push('scaleX(-1)');
 		}
 
-		if (flip === true || flip === 'v') {
+		if (aflip === true || aflip === 'v') {
 			transform.push('scaleY(-1)');
 		}
 
-		if (rotate != 0) {
-			transform.push(`rotate(${rotate}deg)`);
+		if (arotate != 0) {
+			transform.push(`rotate(${arotate}deg)`);
 		}
 
 		if (transform.length > 0) {
@@ -85,8 +85,9 @@
 	{/if}
 </svg>
 
-<style>
+<style lang="scss">
 	svg {
-		vertical-align: middle;
+		@apply align-middle transition-all duration-500;
+		text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 	}
 </style>
