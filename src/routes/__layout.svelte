@@ -18,7 +18,6 @@
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { mdiBrightness6, mdiMenu, mdiChevronLeft } from '@mdi/js';
-	import type { PageProps } from '$lib/store';
 	import { pageProps } from '$lib/store';
 	import PageBody from '$lib/components/page/body.svelte';
 	import Title from '$lib/components/page/title.svelte';
@@ -26,33 +25,28 @@
 	import Icon from '$lib/components/icon.svelte';
 	import '../app.scss';
 
-	export let path: string;
-	export let scroll = 0;
-
 	let loaded = false;
 	onMount(() => {
 		loaded = true;
 	});
 
+	export let path: string;
+	let scroll = 0;
+
 	export let theme: typeof themes[0];
-	export const toggleTheme = (newtheme?: typeof themes[0]) => {
+	const toggleTheme = (newtheme?: typeof themes[0]) => {
 		const nextTheme = themes[(themes.indexOf(newtheme || theme || '') + 1) % themes.length];
 		theme = newtheme || nextTheme;
 		document.cookie = `theme=${theme}`;
 	};
 
-	export let props: PageProps = {};
-	pageProps.subscribe((p) => {
-		props = p;
-	});
-
-	$: smallTitle = (props.title || '').length > 12 ? 'small-title' : '';
+	$: smallTitle = ($pageProps.title || '').length > 12 ? 'small-title' : '';
 </script>
 
 <svelte:window bind:scrollY={scroll} />
 
 <svelte:head>
-	<title>{props.title ? `${props.title} - ` : ''}Matt DeKok</title>
+	<title>{$pageProps.title ? `${$pageProps.title} - ` : ''}Matt DeKok</title>
 </svelte:head>
 
 <div id="app" data-scroll={scroll} data-theme={theme} class="min-h-screen min-w-full">
@@ -61,12 +55,12 @@
 	{/key}
 	<header>
 		<div class="navbar">
-			{#if props.backTo === true}
+			{#if $pageProps.backTo === true}
 				<Fab href="/">
 					<Icon path={mdiChevronLeft} />
 				</Fab>
-			{:else if props.backTo}
-				<Fab href={props?.backTo}>
+			{:else if $pageProps.backTo}
+				<Fab href={$pageProps?.backTo}>
 					<Icon path={mdiChevronLeft} />
 				</Fab>
 			{:else}
@@ -75,27 +69,29 @@
 				</Fab>
 			{/if}
 			<div class="menu-container">
-				{#if props.menu}
+				{#if $pageProps.menu}
 					<nav in:fade={{ delay: loaded ? 250 : 0, duration: 250 }} out:fade={{ duration: 250 }}>
 						Menu Goes Here
 					</nav>
 				{/if}
 			</div>
-			<Title key={props.title} class={`nav-title ${smallTitle}`}>{props.title || ''}</Title>
+			<Title key={$pageProps.title} class={`nav-title ${smallTitle}`}
+				>{$pageProps.title || ''}</Title
+			>
 			<Fab class="nav-fab" on:click={() => toggleTheme()}>
 				<Icon path={mdiBrightness6} size={1.2} />
 			</Fab>
 		</div>
 		<div class="relative h-14 w-full hidden lg:block">
 			{#if loaded}
-				<Title key={props.title}>
-					{props.title || ''}
+				<Title key={$pageProps.title}>
+					{$pageProps.title || ''}
 				</Title>
 			{/if}
 		</div>
 	</header>
 	{#if loaded}
-		<PageBody refresh={path} class={props.bodyClass}>
+		<PageBody refresh={path} class={$pageProps.bodyClass}>
 			<slot />
 		</PageBody>
 	{/if}

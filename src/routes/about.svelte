@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { pageProps } from '$lib/store';
 
-	pageProps.set({
+	$pageProps = {
 		title: 'About Me',
     bodyClass: "page-body",
     menu: true
-	});
+	};
 </script>
 
 <h1 class="text-3xl font-bold">Welcome to SvelteKit</h1>

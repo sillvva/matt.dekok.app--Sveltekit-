@@ -4,9 +4,9 @@
   // @ts-ignore
   import MeSS from '$lib/assets/images/me3x.webp?width=500;1000;1500;2000'
 
-	pageProps.set({
+	$pageProps = {
 		bodyClass: 'mt-20'
-	});
+	};
 </script>
 
 <div class="me">
