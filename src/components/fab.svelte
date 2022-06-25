@@ -1,18 +1,10 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
-
-	const dispatch = createEventDispatcher();
-
-	function clickHandler(ev: any) {
-		dispatch('click', ev);
-	}
-
 	let className = '';
 	export { className as class };
 	export let href: string | undefined = '';
 </script>
 
-<a role="button" href={href || null} class={className} on:click={clickHandler}>
+<a role="button" href={href || null} class={className} on:click>
 	<slot />
 </a>
 
