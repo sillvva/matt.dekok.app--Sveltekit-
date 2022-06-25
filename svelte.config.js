@@ -1,5 +1,6 @@
 import adapter from '@sveltejs/adapter-auto';
 import preprocess from 'svelte-preprocess';
+import { imagetools } from 'vite-imagetools';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -8,11 +9,14 @@ const config = {
 	preprocess: [
 		preprocess({
 			postcss: true
-		}),
+		})
 	],
 
 	kit: {
-		adapter: adapter()
+		adapter: adapter(),
+		vite: {
+			plugins: [imagetools()]
+		}
 	}
 };
 

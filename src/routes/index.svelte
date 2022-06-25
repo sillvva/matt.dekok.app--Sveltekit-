@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { pageProps } from '$lib/store';
   import Image from '$lib/components/image.svelte';
-  import Me from '$lib/assets/images/me3x.webp'
+  // @ts-ignore
+  import MeSS from '$lib/assets/images/me3x.webp?width=500;1000;1500;2000'
 
 	pageProps.set({
 		bodyClass: 'mt-20'
@@ -9,7 +10,7 @@
 </script>
 
 <div class="me">
-  <Image src={Me} id="me" container="cover-img" />
+  <Image src={MeSS[0]} set={MeSS} sizes={[500,1000,1500,2000]} id="me" container="cover-img" />
   <div class="intro">
     <div class="intro-subject">
       <h2 class="intro-name">Matt DeKok</h2>

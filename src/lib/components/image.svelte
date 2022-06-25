@@ -1,5 +1,7 @@
 <script lang="ts">
 	export let src = ``;
+	export let set: string[] = [];
+	export let sizes: number[] = [];
 	export let alt = ``;
 	export let id = ``;
 
@@ -7,10 +9,14 @@
 	export { containerClass as container };
 	let className = '';
 	export { className as class };
+
+	$: srcset = set.map((s, i) => {
+		return `${s} ${sizes[i]}w`;
+	}).join(', ');
 </script>
 
 <span class={containerClass}>
-	<img {id} {src} {alt} class={className} />
+	<img {id} {src} {srcset} {alt} loading="lazy" class={className} />
 </span>
 
 <style lang="scss">
