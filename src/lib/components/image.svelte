@@ -3,6 +3,7 @@
 	export let set: string[] = [];
 	export let sizes: number[] = [];
 	export let alt: string;
+	export let lazy = true;
 	export let id = ``;
 
 	let containerClass = '';
@@ -15,10 +16,12 @@
 			return `${s} ${sizes[i]}w`;
 		})
 		.join(', ');
+
+	$: loading = lazy ? 'lazy' : 'eager';
 </script>
 
 <span class={containerClass}>
-	<img {id} {src} {srcset} {alt} loading="lazy" class={className} />
+	<img {id} {src} {srcset} {alt} {loading} class={className} />
 </span>
 
 <style lang="scss">
