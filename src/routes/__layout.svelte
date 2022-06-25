@@ -75,9 +75,9 @@
 					</nav>
 				{/if}
 			</div>
-			<Title key={$pageProps.title} class={`nav-title ${smallTitle}`}
-				>{$pageProps.title || ''}</Title
-			>
+			<Title key={$pageProps.title} class={`nav-title ${smallTitle}`}>
+				{$pageProps.title || ''}
+			</Title>
 			<Fab class="nav-fab" on:click={() => toggleTheme()}>
 				<Icon path={mdiBrightness6} size={1.2} />
 			</Fab>
@@ -110,10 +110,7 @@
 			@apply backdrop-blur-lg bg-[color:rgba(var(--background),var(--headerOpacity))];
 		}
 		.navbar {
-			@apply flex w-full px-3 items-center text-center max-h-[80px];
-			@media (max-width: 400px) {
-				@apply px-0;
-			}
+			@apply flex w-full px-0 2xs:px-3 items-center text-center max-h-[80px];
 			.menu-container {
 				@apply flex-1 hidden lg:block lg:pl-14;
 			}

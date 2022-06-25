@@ -10,9 +10,11 @@
 	let className = '';
 	export { className as class };
 
-	$: srcset = set.map((s, i) => {
-		return `${s} ${sizes[i]}w`;
-	}).join(', ');
+	$: srcset = set
+		.map((s, i) => {
+			return `${s} ${sizes[i]}w`;
+		})
+		.join(', ');
 </script>
 
 <span class={containerClass}>
@@ -31,12 +33,10 @@
 		}
 		&.cover-img {
 			@apply -left-36 sm:-left-12 md:left-0;
-			@media (max-width: 1023px) {
-				&::after {
-					content: '';
-					@apply fixed z-0 left-0 right-0 bottom-0 h-[80vh];
-					background-image: linear-gradient(transparent, rgba(var(--background), 0.8));
-				}
+			&::after {
+				content: '';
+				@apply fixed z-0 left-0 right-0 bottom-0 h-[80vh] lg:hidden;
+				background-image: linear-gradient(transparent, rgba(var(--background), 0.8));
 			}
 			img {
 				@apply object-left lg:object-center;
