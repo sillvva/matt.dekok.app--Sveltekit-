@@ -15,8 +15,9 @@
       <h2 class="intro-name">Matt DeKok</h2>
       <h4 class="intro-title">Full&nbsp;Stack Web&nbsp;Developer</h4>
     </div>
-    <div class="menu-container hidden flex-row justify-end lg:flex mt-8">
+    <div class="menu-container hidden flex-col items-end lg:flex mt-8">
       <a href="/about">About Me</a>
+      <a href="/skills">Skills</a>
       <!-- <HexMenu items={items} maxLength={3} classes={["lg:scale-100"]} itemClasses={["Bounce"]} rotated={true} /> -->
     </div>
   </div>

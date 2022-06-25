@@ -2,7 +2,7 @@
 	import { pageProps } from '../store';
 
 	pageProps.set({
-		title: 'About Me',
+		title: 'Skills',
     bodyClass: "page-body",
     menu: true
 	});
@@ -11,4 +11,4 @@
 <h1 class="text-3xl font-bold">Welcome to SvelteKit</h1>
 <p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
 <a href="/">Home Page</a>
-<a href="/skills">Skills</a>
+<a href="/about">About Me</a>

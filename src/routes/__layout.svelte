@@ -1,7 +1,7 @@
 <script context="module" lang="ts">
 	import type { Load } from '@sveltejs/kit';
 	import { parse } from 'cookie';
-	import { debounce, themes } from '../utils';
+	import { themes } from '../utils';
 
 	export const load: Load = async ({ session, url }) => {
 		const cookie = typeof document !== 'undefined' ? parse(document.cookie) : session;
@@ -15,7 +15,7 @@
 </script>
 
 <script lang="ts">
-	import { onDestroy, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { mdiBrightness6, mdiMenu, mdiChevronLeft } from '@mdi/js';
 	import type { PageProps } from '../store';
@@ -26,21 +26,11 @@
 	import '../app.scss';
 
 	export let path: string;
-
 	export let scroll = 0;
-	const scrollHandler = debounce(() => {
-		scroll = window.scrollY;
-	});
 
 	export let loaded = false;
 	onMount(() => {
 		loaded = true;
-		if (typeof window !== 'undefined')
-			window.addEventListener('scroll', scrollHandler, { passive: true });
-	});
-
-	onDestroy(() => {
-		if (typeof window !== 'undefined') window.removeEventListener('scroll', scrollHandler);
 	});
 
 	export let theme: typeof themes[0];
@@ -55,8 +45,10 @@
 		props = p;
 	});
 
-	export const smallTitle = (props.title || "").length > 12 ? 'small-title' : '';
+	$: smallTitle = (props.title || "").length > 12 ? 'small-title' : '';
 </script>
+
+<svelte:window bind:scrollY={scroll} />
 
 <svelte:head>
 	<title>{props.title ? `${props.title} - ` : ''}Matt DeKok</title>
