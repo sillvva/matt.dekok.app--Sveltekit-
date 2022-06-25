@@ -1,13 +1,8 @@
 <script context="module" lang="ts">
 	import type { Load } from '@sveltejs/kit';
-	import { parse } from 'cookie';
-	import { themes } from '$lib/utils';
-
-	export const load: Load = async ({ session, url }) => {
-		const cookie = typeof document !== 'undefined' ? parse(document.cookie) : session;
+	export const load: Load = async ({ url }) => {
 		return {
 			props: {
-				theme: cookie.theme || themes[0],
 				path: url.pathname
 			}
 		};
@@ -17,8 +12,10 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
+	import { session } from '$app/stores';
 	import { mdiBrightness6, mdiMenu, mdiChevronLeft } from '@mdi/js';
 	import { pageProps } from '$lib/store';
+	import { themes } from '$lib/utils';
 	import PageBody from '$lib/components/page/body.svelte';
 	import Title from '$lib/components/page/title.svelte';
 	import Fab from '$lib/components/fab.svelte';
@@ -33,9 +30,9 @@
 	export let path: string;
 	let scroll = 0;
 
-	export let theme: typeof themes[0];
-	const toggleTheme = (newtheme?: typeof themes[0]) => {
-		const nextTheme = themes[(themes.indexOf(newtheme || theme || '') + 1) % themes.length];
+	let theme = $session.theme;
+	const toggleTheme = (newtheme?: typeof theme) => {
+		const nextTheme = themes[(themes.indexOf(newtheme || theme) + 1) % themes.length];
 		theme = newtheme || nextTheme;
 		document.cookie = `theme=${theme}`;
 	};
@@ -91,7 +88,7 @@
 		</div>
 	</header>
 	{#if loaded}
-		<PageBody refresh={path} class={$pageProps.bodyClass}>
+		<PageBody key={path} class={$pageProps.bodyClass}>
 			<slot />
 		</PageBody>
 	{/if}

@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 	
-	export let refresh = ``;
+	export let key = ``;
 
 	let delay = 0;
 	onMount(() => {
@@ -13,7 +13,7 @@
 	export { className as class };
 </script>
 
-{#key refresh}
+{#key key}
 	<main class={className} in:fade={{ delay, duration: 250 }} out:fade={{ duration: 250 }}>
 		<slot />
 	</main>

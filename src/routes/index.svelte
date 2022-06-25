@@ -17,6 +17,7 @@
       <h4 class="intro-title">Full&nbsp;Stack Web&nbsp;Developer</h4>
     </div>
     <div class="menu-container hidden flex-col items-end lg:flex mt-8">
+      <div>Menu Goes Here</div>
       <a href="/about">About Me</a>
       <a href="/skills">Skills</a>
       <!-- <HexMenu items={items} maxLength={3} classes={["lg:scale-100"]} itemClasses={["Bounce"]} rotated={true} /> -->
