@@ -10,7 +10,7 @@
 </script>
 
 <div class="me">
-  <Image src={MeSS[0]} set={MeSS} sizes={[500,1000,1500,2000]} id="me" container="cover-img" />
+  <Image src={MeSS[0]} set={MeSS} sizes={[500,1000,1500,2000]} alt="Me" id="me" container="cover-img" />
   <div class="intro">
     <div class="intro-subject">
       <h2 class="intro-name">Matt DeKok</h2>

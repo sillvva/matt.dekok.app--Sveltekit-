@@ -2,7 +2,7 @@
 	export let src = ``;
 	export let set: string[] = [];
 	export let sizes: number[] = [];
-	export let alt = ``;
+	export let alt: string;
 	export let id = ``;
 
 	let containerClass = '';
