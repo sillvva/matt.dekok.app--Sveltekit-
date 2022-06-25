@@ -3,7 +3,7 @@
 	import { parse } from 'cookie';
 	import { debounce, themes } from '../utils';
 
-	export const load: Load = async ({ session, url }: any) => {
+	export const load: Load = async ({ session, url }) => {
 		const cookie = typeof document !== 'undefined' ? parse(document.cookie) : session;
 		return {
 			props: {

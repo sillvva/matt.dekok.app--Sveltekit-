@@ -3,8 +3,12 @@
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces
 declare namespace App {
-	// interface Locals {}
+	interface Locals {
+		theme: string;
+	}
 	// interface Platform {}
-	// interface Session {}
+	interface Session {
+		theme: string;
+	}
 	// interface Stuff {}
 }

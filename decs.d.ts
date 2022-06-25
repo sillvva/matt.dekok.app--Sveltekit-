@@ -1,1 +1,1 @@
-declare module "@mdi/js"
+declare module '@mdi/js';
