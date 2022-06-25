@@ -3,7 +3,8 @@
 
 	pageProps.set({
 		title: 'About Me',
-    bodyClass: "page-body"
+    bodyClass: "page-body",
+    menu: true
 	});
 </script>
 

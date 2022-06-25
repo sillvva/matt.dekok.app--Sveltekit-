@@ -1,14 +1,14 @@
 <script context="module" lang="ts">
 	import type { Load } from '@sveltejs/kit';
-	import { debounce, themes } from '../utils';
 	import { parse } from 'cookie';
+	import { debounce, themes } from '../utils';
 
 	export const load: Load = async ({ session, url }: any) => {
 		const cookie = typeof document !== 'undefined' ? parse(document.cookie) : session;
 		return {
 			props: {
 				theme: cookie.theme || themes[0],
-				key: url.pathname
+				path: url.pathname
 			}
 		};
 	};
@@ -25,7 +25,7 @@
 	import Icon from '../components/icon.svelte';
 	import '../app.scss';
 
-	export let key: string;
+	export let path: string;
 
 	export let scroll = 0;
 	const scrollHandler = debounce(() => {
@@ -54,6 +54,8 @@
 	pageProps.subscribe((p) => {
 		props = p;
 	});
+
+	export const smallTitle = (props.title || "").length > 12 ? 'small-title' : '';
 </script>
 
 <svelte:head>
@@ -65,7 +67,7 @@
 		<div class="bg" data-theme={theme} in:fade out:fade />
 	{/key}
 	<header>
-		<nav class="lg:pl-3">
+		<div class="navbar">
 			{#if props.backTo === true}
 				<Fab href="/">
 					<Icon path={mdiChevronLeft} />
@@ -79,12 +81,19 @@
 					<Icon path={mdiMenu} />
 				</Fab>
 			{/if}
-			<div class="menu-container lg:pl-14" />
+			<div class="menu-container lg:pl-14">
+				{#if props.menu}
+					<nav in:fade={{ delay: 250, duration: 250 }} out:fade={{ duration: 250 }}>
+						Menu Goes Here
+					</nav>
+				{/if}
+			</div>
+			<h1 class={`nav-title ${smallTitle}`}>{props.title || ''}</h1>
 			<Fab class="nav-fab" on:click={() => toggleTheme()}>
 				<Icon path={mdiBrightness6} size={1.2} />
 			</Fab>
-		</nav>
-		<div class="hidden lg:block">
+		</div>
+		<div class="relative h-14 w-full hidden lg:block">
 			{#if loaded}
 				{#key props.title}
 					<h1 in:fade={{ delay: 250, duration: 250 }} out:fade={{ duration: 250 }}>
@@ -95,7 +104,7 @@
 		</div>
 	</header>
 	{#if loaded}
-		<PageBody refresh={key} class={props.bodyClass}>
+		<PageBody refresh={path} class={props.bodyClass}>
 			<slot />
 		</PageBody>
 	{/if}
@@ -113,31 +122,27 @@
 		#app[data-scroll]:not([data-scroll='0']) & {
 			@apply backdrop-blur-lg bg-[color:rgba(var(--background),var(--headerOpacity))];
 		}
-		nav {
+		.navbar {
 			@apply flex w-full px-3 items-center text-center max-h-[80px];
-			// .PageTitle {
-			//   @apply p-2;
-			//   &.SmallTitle {
-			//     @apply text-sm sm:text-lg md:text-2xl;
-			//   }
-			// }
 			@media (max-width: 400px) {
 				@apply px-0;
 			}
 			.menu-container {
-				@apply flex-1;
+				@apply flex-1 hidden lg:block;
 			}
 		}
-		> div {
-			@apply relative h-14 w-full;
-			h1 {
-				@apply absolute top-0 left-1/2 -translate-x-1/2 lg:mt-3 lg:mb-2;
-				@apply text-3xl text-center font-medium text-[color:var(--headers)];
-				@apply transition-all duration-500;
-				text-shadow: 1px 1px 0 rgba(var(--background), var(--headerOpacity)),
-					-1px -1px 0 rgba(var(--background), var(--headerOpacity)),
-					1px -1px 0 rgba(var(--background), var(--headerOpacity)),
-					-1px 1px 0 rgba(var(--background), var(--headerOpacity));
+		h1 {
+			font-family: 'Montserrat', sans-serif;
+			@apply text-3xl text-center lg:mt-4 lg:mb-4 font-medium text-[color:var(--headers)];
+			text-shadow: 1px 1px 0 rgba(var(--background), var(--headerOpacity)),
+				-1px -1px 0 rgba(var(--background), var(--headerOpacity)),
+				1px -1px 0 rgba(var(--background), var(--headerOpacity)),
+				-1px 1px 0 rgba(var(--background), var(--headerOpacity));
+			&.nav-title {
+				@apply block lg:hidden flex-1 p-2;
+			  &.small-title {
+			    @apply text-sm sm:text-lg md:text-2xl;
+			  }
 			}
 		}
 	}
