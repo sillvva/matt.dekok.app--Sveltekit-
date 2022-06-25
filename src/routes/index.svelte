@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { pageProps } from '../store';
-  import Image from '../components/image.svelte';
-  import Me from '../assets/images/me3x.webp'
+	import { pageProps } from '$lib/store';
+  import Image from '$lib/components/image.svelte';
+  import Me from '$lib/assets/images/me3x.webp'
 
 	pageProps.set({
 		bodyClass: 'mt-20'

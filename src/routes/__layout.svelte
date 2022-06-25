@@ -1,7 +1,7 @@
 <script context="module" lang="ts">
 	import type { Load } from '@sveltejs/kit';
 	import { parse } from 'cookie';
-	import { themes } from '../utils';
+	import { themes } from '$lib/utils';
 
 	export const load: Load = async ({ session, url }) => {
 		const cookie = typeof document !== 'undefined' ? parse(document.cookie) : session;
@@ -18,11 +18,11 @@
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { mdiBrightness6, mdiMenu, mdiChevronLeft } from '@mdi/js';
-	import type { PageProps } from '../store';
-	import { pageProps } from '../store';
-	import PageBody from '../components/page-body.svelte';
-	import Fab from '../components/fab.svelte';
-	import Icon from '../components/icon.svelte';
+	import type { PageProps } from '$lib/store';
+	import { pageProps } from '$lib/store';
+	import PageBody from '$lib/components/page-body.svelte';
+	import Fab from '$lib/components/fab.svelte';
+	import Icon from '$lib/components/icon.svelte';
 	import '../app.scss';
 
 	export let path: string;

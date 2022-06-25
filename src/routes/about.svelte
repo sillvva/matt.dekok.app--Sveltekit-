@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { pageProps } from '../store';
+	import { pageProps } from '$lib/store';
 
 	pageProps.set({
 		title: 'About Me',
