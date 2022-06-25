@@ -57,11 +57,11 @@
 					<Icon path={mdiChevronLeft} />
 				</Fab>
 			{:else if $pageProps.backTo}
-				<Fab href={$pageProps?.backTo}>
+				<Fab ariaLabel="Back" href={$pageProps?.backTo}>
 					<Icon path={mdiChevronLeft} />
 				</Fab>
 			{:else}
-				<Fab aria-label="Open Drawer" class={`menu-fab`}>
+				<Fab ariaLabel="Open Drawer" class={`menu-fab`}>
 					<Icon path={mdiMenu} />
 				</Fab>
 			{/if}
@@ -75,7 +75,7 @@
 			<Title key={$pageProps.title} class={`nav-title ${smallTitle}`}>
 				{$pageProps.title || ''}
 			</Title>
-			<Fab class="nav-fab" on:click={() => toggleTheme()}>
+			<Fab ariaLabel="Toggle Theme" class="nav-fab" on:click={() => toggleTheme()}>
 				<Icon path={mdiBrightness6} size={1.2} />
 			</Fab>
 		</div>

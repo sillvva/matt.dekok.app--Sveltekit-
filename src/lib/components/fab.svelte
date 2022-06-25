@@ -2,9 +2,10 @@
 	let className = '';
 	export { className as class };
 	export let href: string | undefined = '';
+	export let ariaLabel: string = "";
 </script>
 
-<a role="button" href={href || null} class={className} on:click>
+<a role="button" href={href || null} class={className} on:click aria-label={ariaLabel}>
 	<slot />
 </a>
 
