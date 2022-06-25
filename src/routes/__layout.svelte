@@ -20,7 +20,8 @@
 	import { mdiBrightness6, mdiMenu, mdiChevronLeft } from '@mdi/js';
 	import type { PageProps } from '$lib/store';
 	import { pageProps } from '$lib/store';
-	import PageBody from '$lib/components/page-body.svelte';
+	import PageBody from '$lib/components/page/body.svelte';
+	import Title from '$lib/components/page/title.svelte';
 	import Fab from '$lib/components/fab.svelte';
 	import Icon from '$lib/components/icon.svelte';
 	import '../app.scss';
@@ -28,7 +29,7 @@
 	export let path: string;
 	export let scroll = 0;
 
-	export let loaded = false;
+	let loaded = false;
 	onMount(() => {
 		loaded = true;
 	});
@@ -45,7 +46,7 @@
 		props = p;
 	});
 
-	$: smallTitle = (props.title || "").length > 12 ? 'small-title' : '';
+	$: smallTitle = (props.title || '').length > 12 ? 'small-title' : '';
 </script>
 
 <svelte:window bind:scrollY={scroll} />
@@ -73,25 +74,23 @@
 					<Icon path={mdiMenu} />
 				</Fab>
 			{/if}
-			<div class="menu-container lg:pl-14">
+			<div class="menu-container">
 				{#if props.menu}
-					<nav in:fade={{ delay: 250, duration: 250 }} out:fade={{ duration: 250 }}>
+					<nav in:fade={{ delay: loaded ? 250 : 0, duration: 250 }} out:fade={{ duration: 250 }}>
 						Menu Goes Here
 					</nav>
 				{/if}
 			</div>
-			<h1 class={`nav-title ${smallTitle}`}>{props.title || ''}</h1>
+			<Title key={props.title} class={`nav-title ${smallTitle}`}>{props.title || ''}</Title>
 			<Fab class="nav-fab" on:click={() => toggleTheme()}>
 				<Icon path={mdiBrightness6} size={1.2} />
 			</Fab>
 		</div>
 		<div class="relative h-14 w-full hidden lg:block">
 			{#if loaded}
-				{#key props.title}
-					<h1 in:fade={{ delay: 250, duration: 250 }} out:fade={{ duration: 250 }}>
-						{props.title || ''}
-					</h1>
-				{/key}
+				<Title key={props.title}>
+					{props.title || ''}
+				</Title>
 			{/if}
 		</div>
 	</header>
@@ -120,21 +119,7 @@
 				@apply px-0;
 			}
 			.menu-container {
-				@apply flex-1 hidden lg:block;
-			}
-		}
-		h1 {
-			font-family: 'Montserrat', sans-serif;
-			@apply text-3xl text-center lg:mt-4 lg:mb-4 font-medium text-[color:var(--headers)];
-			text-shadow: 1px 1px 0 rgba(var(--background), var(--headerOpacity)),
-				-1px -1px 0 rgba(var(--background), var(--headerOpacity)),
-				1px -1px 0 rgba(var(--background), var(--headerOpacity)),
-				-1px 1px 0 rgba(var(--background), var(--headerOpacity));
-			&.nav-title {
-				@apply block lg:hidden flex-1 p-2;
-			  &.small-title {
-			    @apply text-sm sm:text-lg md:text-2xl;
-			  }
+				@apply flex-1 hidden lg:block lg:pl-14;
 			}
 		}
 	}
