@@ -34,6 +34,7 @@
 			-1px 1px 0 rgba(var(--background), var(--headerOpacity));
 		&.nav-title {
 			@apply block lg:hidden flex-1 p-2;
+			@apply absolute inset-0;
 			&.small-title {
 				@apply text-sm sm:text-lg md:text-2xl;
 			}

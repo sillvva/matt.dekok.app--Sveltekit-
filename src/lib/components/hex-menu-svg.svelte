@@ -107,11 +107,6 @@
 				height: calc(125px * var(--scale));
 			}
 		}
-		@media (max-width: 960px) {
-			& {
-				display: none;
-			}
-		}
 	}
 
 	.hex-menu-item-container {

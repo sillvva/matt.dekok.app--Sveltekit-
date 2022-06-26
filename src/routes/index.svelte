@@ -39,10 +39,8 @@
 				{items}
 				maxLength={3}
 				classes={[
-					'[--scale:0.4]',
-					'xs:[--scale:0.6]',
-					'sm:[--scale:0.8]',
-					'md:[--scale:1]',
+          'hidden lg:block',
+					'[--scale:1]',
 					'xl:[--scale:1.2]'
 				]}
 				itemClasses={['bounce']}

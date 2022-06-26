@@ -7,3 +7,5 @@ export type PageProps = {
 	menu?: boolean;
 };
 export const pageProps = writable<PageProps>({});
+
+export const drawer = writable(false);
