@@ -1,8 +1,19 @@
 <script lang="ts">
 	import { pageProps } from '$lib/store';
-  import Image from '$lib/components/image.svelte';
-  // @ts-ignore
-  import MeSS from '$lib/assets/images/me3x.webp?width=500;1000;1500;2000'
+	import type { Item } from '$lib/types/hex-menu';
+	import Image from '$lib/components/image.svelte';
+	import HexMenu from '$lib/components/hex-menu-svg.svelte';
+	// @ts-ignore
+	import MeSS from '$lib/assets/images/me3x.webp?width=500;1000;1500;2000';
+
+	const items: (Item | null)[] = [
+		{ link: '/about', label: 'About Me' },
+		{ link: '/experience', label: 'Experience' },
+		{ link: '/skills', label: 'Skills' },
+		{ link: '/projects', label: 'Projects' },
+		null,
+		{ link: '/blog', label: 'Blog' }
+	];
 
 	$pageProps = {
 		bodyClass: 'mt-20'
@@ -10,19 +21,35 @@
 </script>
 
 <div class="me">
-  <Image src={MeSS[0]} set={MeSS} sizes={[500,1000,1500,2000]} alt="Me" id="me" container="cover-img" />
-  <div class="intro">
-    <div class="intro-subject">
-      <h2 class="intro-name">Matt DeKok</h2>
-      <h4 class="intro-title">Full&nbsp;Stack Web&nbsp;Developer</h4>
-    </div>
-    <div class="menu-container hidden flex-col items-end lg:flex mt-8">
-      <div>Menu Goes Here</div>
-      <a href="/about">About Me</a>
-      <a href="/skills">Skills</a>
-      <!-- <HexMenu items={items} maxLength={3} classes={["lg:scale-100"]} itemClasses={["Bounce"]} rotated={true} /> -->
-    </div>
-  </div>
+	<Image
+		src={MeSS[0]}
+		set={MeSS}
+		sizes={[500, 1000, 1500, 2000]}
+		alt="Me"
+		id="me"
+		container="cover-img"
+	/>
+	<div class="intro">
+		<div class="intro-subject">
+			<h2 class="intro-name">Matt DeKok</h2>
+			<h4 class="intro-title">Full&nbsp;Stack Web&nbsp;Developer</h4>
+		</div>
+		<div class="menu-container hidden flex-col items-end lg:flex mt-8">
+			<HexMenu
+				{items}
+				maxLength={3}
+				classes={[
+					'[--scale:0.4]',
+					'xs:[--scale:0.6]',
+					'sm:[--scale:0.8]',
+					'md:[--scale:1]',
+					'xl:[--scale:1.2]'
+				]}
+				itemClasses={['bounce']}
+				rotated={true}
+			/>
+		</div>
+	</div>
 </div>
 
 <style lang="scss">
@@ -33,7 +60,7 @@
 
 	.intro {
 		@apply col-start-6 col-span-6 row-start-2 row-span-3 2xl:col-start-5;
-    @apply relative z-[2];
+		@apply relative z-[2];
 	}
 
 	.intro-subject {

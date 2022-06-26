@@ -39,7 +39,7 @@
 	--ratingOn: rgb(240, 160, 0);
 	--ratingOff: rgb(232, 232, 232);
 	--menu: var(--link);
-	--menuHover: rgb(15, 76, 117);
+	--menuActive: rgb(15, 76, 117);
 	--menuText: rgb(255, 255, 255);
 	--loading: rgba(255, 255, 255, 0.7);
 	--shadowHoverOpacity: 0.4;
@@ -64,7 +64,7 @@
 	--ratingOn: rgb(255, 200, 0);
 	--ratingOff: rgb(32, 32, 32);
 	--menu: var(--link);
-	--menuHover: hwb(180 0% 67%);
+	--menuActive: hwb(180 0% 67%);
 	--menuText: rgb(255, 255, 255);
 	--loading: rgba(255, 255, 255, 0.2);
 	--shadowHoverOpacity: 0.6;
@@ -89,7 +89,7 @@
 	--ratingOn: rgb(255, 200, 0);
 	--ratingOff: rgb(16, 40, 72);
 	--menu: rgb(8, 158, 222);
-	--menuHover: rgb(35, 66, 135);
+	--menuActive: rgb(35, 66, 135);
 	--menuText: rgb(255, 255, 255);
 	--loading: rgba(255, 255, 255, 0.2);
 	--shadowHoverOpacity: 0.4;
