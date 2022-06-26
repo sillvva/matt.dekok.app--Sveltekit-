@@ -11,13 +11,13 @@
 
 <style lang="scss">
 	a {
-		@apply flex justify-center items-center w-14 h-14 rounded-full text-2xl cursor-pointer;
+		@apply flex justify-center items-center w-10 h-10 xs:w-14 xs:h-14 rounded-full text-2xl cursor-pointer;
 		@apply transition-[background] duration-500 ease-linear bg-transparent text-[color:var(--text)];
 		&.menu-fab {
 			@apply lg:hidden;
 		}
 		&.nav-fab {
-			@apply my-2;
+			@apply my-4 xs:my-2;
 		}
 		&:hover {
 			@apply bg-[color:var(--link)] text-[color:var(--menuText)];

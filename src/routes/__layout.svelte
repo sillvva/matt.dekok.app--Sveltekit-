@@ -97,7 +97,7 @@
 				</Title>
 			</div>
 			<Fab ariaLabel="Toggle Theme" class="nav-fab" on:click={() => toggleTheme()}>
-				<Icon path={mdiBrightness6} size={1.2} />
+				<Icon path={mdiBrightness6} size={1.1} />
 			</Fab>
 		</div>
 		<div class="relative h-14 w-full hidden lg:block">
@@ -131,7 +131,7 @@
 			@apply backdrop-blur-lg bg-[color:rgba(var(--background),var(--headerOpacity))];
 		}
 		.navbar {
-			@apply flex w-full px-0 2xs:px-3 items-center text-center max-h-[80px];
+			@apply flex w-full px-2 2xs:px-3 items-center text-center max-h-[80px];
 			.menu-container {
 				@apply flex-1 block lg:pl-14 relative h-14;
 				.page-menu {
