@@ -65,7 +65,7 @@
 							textColor && `--text-color: ${textColor};`
 						])}
 					>
-						<a href={item.link}>
+						<a href={item.link} sveltekit:prefetch>
 							{#if rotated}
 								<g transform="matrix(-6.92 0 0 -6.92 400.24 400.24)">
 									<polygon

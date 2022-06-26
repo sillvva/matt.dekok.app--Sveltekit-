@@ -10,23 +10,25 @@
 	export let textColor = 'var(--linkText)';
 	export let link = '';
 	// export let clickRipple = false;
-</script>
 
-<svelte:element
-	this={type}
-	role="button"
-	href={link}
-	on:click
-	class={conClasses(['button', active && 'active', ...itemClasses])}
-	style={conClasses([
+	$: className = conClasses(['button', active && 'active', ...itemClasses]);
+	$: styles = conClasses([
 		color && `--item-color: ${color};`,
 		hoverColor && `--hover-color: ${hoverColor};`,
 		activeColor && `--active-color: ${activeColor};`,
 		textColor && `--text-color: ${textColor};`
-	])}
->
-	<slot />
-</svelte:element>
+	]);
+</script>
+
+{#if type == 'a'}
+	<a sveltekit:prefetch role="button" href={link} on:click class={className} style={styles}>
+		<slot />
+	</a>
+{:else}
+	<button type="button" on:click class={className} style="{styles}}">
+		<slot />
+	</button>
+{/if}
 
 <style lang="scss">
 	.button {
