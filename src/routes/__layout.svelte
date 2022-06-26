@@ -1,14 +1,3 @@
-<script context="module" lang="ts">
-	import type { Load } from '@sveltejs/kit';
-	export const load: Load = async ({ url }) => {
-		return {
-			props: {
-				path: url.pathname
-			}
-		};
-	};
-</script>
-
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
@@ -18,6 +7,7 @@
 	import { pageProps, drawer } from '$lib/store';
 	import { themes } from '$lib/utils';
 	import PageBody from '$lib/components/page/body.svelte';
+	import Menu from '$lib/components/page/menu.svelte';
 	import Title from '$lib/components/page/title.svelte';
 	import Drawer from '$lib/components/page/drawer.svelte';
 	import Fab from '$lib/components/fab.svelte';
@@ -25,11 +15,14 @@
 	import '../app.scss';
 
 	let loaded = false;
+	let delay = 0;
 	onMount(() => {
 		loaded = true;
+		setTimeout(() => {
+			delay = 250;
+		}, 250);
 	});
 
-	export let path: string;
 	let scroll = 0;
 
 	let theme = $session.theme;
@@ -78,18 +71,8 @@
 			{/if}
 			<div class="menu-container">
 				{#if $pageProps.menu}
-					<nav
-						class="page-menu"
-						in:fade={{ delay: loaded ? 250 : 0, duration: 250 }}
-						out:fade={{ duration: 250 }}
-					>
-						<ul>
-							{#each menuItems as item}
-								<li>
-									<a href={item.link}>{item.label}</a>
-								</li>
-							{/each}
-						</ul>
+					<nav class="page-menu" in:fade={{ delay, duration: 250 }} out:fade={{ duration: 250 }}>
+						<Menu items={menuItems} />
 					</nav>
 				{/if}
 				<Title key={$pageProps.title} class={`nav-title ${smallTitle}`}>
@@ -109,7 +92,7 @@
 		</div>
 	</header>
 	{#if loaded}
-		<PageBody key={path} class={$pageProps.bodyClass}>
+		<PageBody class={$pageProps.bodyClass}>
 			<slot />
 		</PageBody>
 	{/if}
@@ -131,14 +114,11 @@
 			@apply backdrop-blur-lg bg-[color:rgba(var(--background),var(--headerOpacity))];
 		}
 		.navbar {
-			@apply flex w-full px-2 2xs:px-3 items-center text-center max-h-[80px];
+			@apply flex w-full py-4 px-2 2xs:px-3 items-center text-center max-h-[80px];
 			.menu-container {
 				@apply flex-1 block lg:pl-14 relative h-14;
 				.page-menu {
-					@apply hidden lg:block;
-					ul {
-						@apply flex flex-row max-w-2xl mx-auto justify-evenly;
-					}
+					@apply hidden lg:flex justify-center gap-3 px-3;
 				}
 			}
 		}

@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
-	
-	export let key = ``;
+	import { navigating } from '$app/stores';
 
 	let delay = 0;
 	onMount(() => {
@@ -13,7 +12,7 @@
 	export { className as class };
 </script>
 
-{#key key}
+{#key $navigating?.to}
 	<main class={className} in:fade={{ delay, duration: 250 }} out:fade={{ duration: 250 }}>
 		<slot />
 	</main>
