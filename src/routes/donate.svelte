@@ -5,7 +5,7 @@
 	import Header from '$lib/components/page/section-header.svelte';
 
 	$pageProps = {
-		title: 'Experience',
+		title: 'Donate',
 		bodyClass: 'page-body',
 		menu: true
 	};

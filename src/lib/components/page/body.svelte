@@ -20,10 +20,11 @@
 
 <style lang="scss">
 	main {
-		@apply flex flex-col;
+		@apply flex flex-col justify-center items-center;
+		@apply px-2 md:px-4 pb-4;
 		@apply relative z-[2];
 		&.page-body {
-			@apply mt-32;
+			@apply mt-36;
 		}
 	}
 </style>
