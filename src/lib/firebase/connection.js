@@ -16,7 +16,7 @@ try {
 }
 catch (err) {
   fbApp = admin.initializeApp({
-    credential: admin.credential.cert(JSON.parse(env.FIREBASE_ADMIN_CREDENTIAL || "{}")),
+    credential: admin.credential.cert(JSON.parse(env.FIREBASE_ADMIN_CREDENTIAL)),
     storageBucket: env.FIREBASE_STORAGE_BUCKET
   });
 }
