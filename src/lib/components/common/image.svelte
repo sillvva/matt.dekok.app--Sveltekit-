@@ -5,6 +5,7 @@
 	export let alt: string;
 	export let lazy = true;
 	export let id = ``;
+	export let objectFit = `cover`;
 
 	let containerClass = '';
 	export { containerClass as container };
@@ -20,7 +21,7 @@
 	$: loading = lazy ? 'lazy' : 'eager';
 </script>
 
-<span class={containerClass}>
+<span class={containerClass} style={`--fit: ${objectFit}`}>
 	<img {id} {src} {srcset} {alt} {loading} class={className} />
 </span>
 
@@ -31,7 +32,7 @@
 		@apply absolute inset-0;
 		img {
 			@apply absolute inset-0 border-none;
-			@apply p-0 m-auto block object-cover object-center;
+			@apply p-0 m-auto block [object-fit:var(--fit)] object-center;
 			@apply w-0 h-0 min-w-full max-w-full min-h-full max-h-full;
 		}
 		&.cover-img {

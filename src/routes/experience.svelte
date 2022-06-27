@@ -3,17 +3,23 @@
 	import Article from '$lib/components/page/article.svelte';
 	import Section from '$lib/components/page/section.svelte';
 	import Header from '$lib/components/page/section-header.svelte';
+	import SectionItems from '$lib/components/page/section-items.svelte';
+	import type { ExperienceArrSection } from './experience';
 
 	$pageProps = {
 		title: 'Experience',
 		bodyClass: 'page-body',
 		menu: true
 	};
+
+	export let experience: ExperienceArrSection[];
 </script>
 
 <Article class="w-full md:w-9/12 lg:w-9/12 xl:w-8/12 2xl:w-7/12">
-	<Section>
-		<Header>Welcome to SvelteKit</Header>
-		<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
-	</Section>
+	{#each experience as section}
+		<Section>
+			<Header>{section.name}</Header>
+			<SectionItems items={section.experience} />
+		</Section>
+	{/each}
 </Article>
