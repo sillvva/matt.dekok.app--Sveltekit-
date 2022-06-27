@@ -52,37 +52,4 @@
 			@apply text-right max-w-max;
 		}
 	}
-
-	.zoom {
-		svg {
-			@apply w-4 scale-0 inline-block;
-			animation: zoom 300ms ease-in-out forwards;
-		}
-		svg:nth-child(1) {
-			animation-delay: 0.4s;
-		}
-		svg:nth-child(2) {
-			animation-delay: 0.525s;
-		}
-		svg:nth-child(3) {
-			animation-delay: 0.65s;
-		}
-		svg:nth-child(4) {
-			animation-delay: 0.775s;
-		}
-		svg:nth-child(5) {
-			animation-delay: 0.9s;
-		}
-	}
-	@keyframes zoom {
-		0% {
-			transform: scale(0);
-		}
-		60% {
-			transform: scale(1.5);
-		}
-		100% {
-			transform: scale(1);
-		}
-	}
 </style>

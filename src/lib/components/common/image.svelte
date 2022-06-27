@@ -28,7 +28,7 @@
 <style lang="scss">
 	span {
 		@apply transition-all duration-500 bg-none;
-		@apply overflow-hidden w-[initial] h-[initial] m-0 p-0;
+		@apply overflow-hidden w-[initial] h-[initial] p-0;
 		@apply absolute inset-0;
 		img {
 			@apply absolute inset-0 border-none;
