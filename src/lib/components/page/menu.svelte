@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import Animatedbutton from '$lib/components/animated-button.svelte';
+	import Animatedbutton from '$lib/components/common/animated-button.svelte';
 
 	type Item = {
 		link: string;

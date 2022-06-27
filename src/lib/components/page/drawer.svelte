@@ -3,7 +3,7 @@
 	import { page } from '$app/stores';
 	import { drawer } from '$lib/store';
 	import type { Item } from '$lib/types/hex-menu';
-	import HexMenu from '$lib/components/hex-menu-svg.svelte';
+	import HexMenu from '$lib/components/hex-menu/svg.svelte';
 
 	export let menuItems: Item[];
 	const duration = 500;

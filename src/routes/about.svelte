@@ -2,8 +2,8 @@
 	import { pageProps } from '$lib/store';
 	import Article from '$lib/components/page/article.svelte';
 	import Section from '$lib/components/page/section.svelte';
-	import MyDetails from '$lib/components/my-details.svelte';
-	import AnimatedButton from '$lib/components/animated-button.svelte';
+	import Details from '$lib/components/common/details.svelte';
+	import AnimatedButton from '$lib/components/common/animated-button.svelte';
 
 	$pageProps = {
 		title: 'About Me',
@@ -31,14 +31,14 @@
 			</div>
 			<div class="basis-full md:basis-6/12">
 				<div class="me-details flex flex-wrap">
-					<MyDetails name="Name" value="Matt DeKok" />
-					<MyDetails name="Age" value={age(new Date('1988-05-09T00:00:00-05:00'))} />
-					<MyDetails name="Location" value="SD" />
-					<MyDetails
+					<Details name="Name" value="Matt DeKok" />
+					<Details name="Age" value={age(new Date('1988-05-09T00:00:00-05:00'))} />
+					<Details name="Location" value="SD" />
+					<Details
 						name="Experience"
 						value={`${age(new Date('2006-06-01T00:00:00-05:00'))} years`}
 					/>
-					<MyDetails
+					<Details
 						name="Hobbies"
 						value="Dungeons &amp; Dragons, Pokemon, coding, watching anime, reading manga"
 						full

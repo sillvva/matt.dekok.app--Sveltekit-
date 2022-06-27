@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { pageProps } from '$lib/store';
 	import type { Item } from '$lib/types/hex-menu';
-	import Image from '$lib/components/image.svelte';
-	import HexMenu from '$lib/components/hex-menu-svg.svelte';
+	import Image from '$lib/components/common/image.svelte';
+	import HexMenu from '$lib/components/hex-menu/svg.svelte';
 	// @ts-ignore
 	import MeSS from '$lib/assets/images/me3x.webp?width=500;1000;1500;2000';
 

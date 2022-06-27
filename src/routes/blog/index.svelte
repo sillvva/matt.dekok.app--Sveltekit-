@@ -6,7 +6,7 @@
 	import type { PostData } from '$lib/types/blog';
 	import Message from '$lib/components/page/message.svelte';
 	import Post from '$lib/components/blog/post.svelte';
-	import Pagination from '$lib/components/pagination.svelte';
+	import Pagination from '$lib/components/common/pagination.svelte';
 
 	const loaders: PostData[] = Array(blogPostsPerPage).fill({
 		title: '',
@@ -59,9 +59,3 @@
 {#if pages > 1}
 	<Pagination {page} {pages} />
 {/if}
-
-<div class="flex flex-row justify-evenly" style="gap: 2rem;">
-	<a href="/blog">Page 0</a>
-	<a href="/blog?page=1">Page 1</a>
-	<a href="/blog?page=2&limit=3">Page 2</a>
-</div>

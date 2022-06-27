@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Image from '$lib/components/image.svelte';
+	import Image from '$lib/components/common/image.svelte';
 	import type { PostData } from '$lib/types/blog';
 	import { conClasses } from '$lib/utils';
 

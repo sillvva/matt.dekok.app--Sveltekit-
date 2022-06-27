@@ -22,8 +22,8 @@
 	import Menu from '$lib/components/page/menu.svelte';
 	import Title from '$lib/components/page/title.svelte';
 	import Drawer from '$lib/components/page/drawer.svelte';
-	import Fab from '$lib/components/fab.svelte';
-	import Icon from '$lib/components/icon.svelte';
+	import Fab from '$lib/components/common/fab.svelte';
+	import Icon from '$lib/components/common/icon.svelte';
 	import '../app.scss';
 	import '../misc.scss';
 
