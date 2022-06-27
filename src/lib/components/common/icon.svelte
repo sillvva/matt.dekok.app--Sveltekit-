@@ -6,6 +6,10 @@
 	export let rotate = 0;
 	export let spin: number | boolean = false;
 	export let title = '';
+	export let styles = "";
+	
+	let className = '';
+	export { className as class };
 
 	// SPIN properties
 	$: inverse = typeof spin !== 'boolean' && spin < 0 ? true : false;
@@ -54,10 +58,10 @@
 		}, '');
 	};
 
-	$: style = getStyles(size, color, flip, rotate);
+	$: style = `${getStyles(size, color, flip, rotate)} ${styles}`;
 </script>
 
-<svg viewBox="0 0 24 24" {style}>
+<svg viewBox="0 0 24 24" {style} class={className}>
 	{#if title}<title>{title}</title>{/if}
 	{#if spin !== false}
 		{#if inverse}

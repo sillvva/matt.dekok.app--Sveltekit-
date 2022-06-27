@@ -26,6 +26,7 @@
 	import Icon from '$lib/components/common/icon.svelte';
 	import '../app.scss';
 	import '../misc.scss';
+	import '../anim.scss';
 
 	let loaded = false;
 	let delay = 0;
