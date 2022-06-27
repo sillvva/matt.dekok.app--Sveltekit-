@@ -2,10 +2,11 @@
 import { existsSync } from "fs";
 import admin from "firebase-admin";
 import path from "path";
+import { env } from "$lib/constants";
 
 export const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  apiKey: env.FIREBASE_API_KEY,
+  storageBucket: env.FIREBASE_STORAGE_BUCKET,
   blogCollection: "posts",
 };
 
@@ -15,8 +16,8 @@ try {
 }
 catch (err) {
   fbApp = admin.initializeApp({
-    credential: admin.credential.cert(JSON.parse(import.meta.env.VITE_FIREBASE_ADMIN_CREDENTIAL || "{}")),
-    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET
+    credential: admin.credential.cert(JSON.parse(env.FIREBASE_ADMIN_CREDENTIAL || "{}")),
+    storageBucket: env.FIREBASE_STORAGE_BUCKET
   });
 }
 

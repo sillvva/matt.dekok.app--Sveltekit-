@@ -15,7 +15,10 @@ const config = {
 	kit: {
 		adapter: adapter(),
 		vite: {
-			plugins: [imagetools()]
+			plugins: [imagetools()],
+			define: {
+				'process.env': process.env
+			}
 		}
 	}
 };
