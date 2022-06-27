@@ -1,12 +1,13 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
+	import { transitionDuration } from '$lib/constants';
 
 	export let key = '';
 
 	let delay = 0;
 	onMount(() => {
-		const d = 250;
+		const d = transitionDuration / 2;
 		if (key) {
 			setTimeout(() => {
 				delay = d;
@@ -19,7 +20,11 @@
 </script>
 
 {#key key}
-	<h1 class={className} in:fade={{ delay, duration: 250 }} out:fade={{ duration: 250 }}>
+	<h1
+		class={className}
+		in:fade={{ delay, duration: transitionDuration / 2 }}
+		out:fade={{ duration: transitionDuration / 2 }}
+	>
 		<slot />
 	</h1>
 {/key}

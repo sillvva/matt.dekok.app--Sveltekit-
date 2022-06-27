@@ -1,12 +1,12 @@
 <script lang="ts" context="module">
 	import type { Load } from './__types/__layout';
 	export const load: Load = async ({ url }) => {
-    return {
-      props: {
-        path: `${url.pathname}${url.search}`,
-      }
-    };
-  }
+		return {
+			props: {
+				path: `${url.pathname}${url.search}`
+			}
+		};
+	};
 </script>
 
 <script lang="ts">
@@ -17,6 +17,7 @@
 	import type { Item } from '$lib/types/hex-menu';
 	import { pageProps, drawer } from '$lib/store';
 	import { themes } from '$lib/utils';
+	import { transitionDuration } from '$lib/constants';
 	import PageBody from '$lib/components/page/body.svelte';
 	import Menu from '$lib/components/page/menu.svelte';
 	import Title from '$lib/components/page/title.svelte';
@@ -31,8 +32,8 @@
 	onMount(() => {
 		loaded = true;
 		setTimeout(() => {
-			delay = 250;
-		}, 250);
+			delay = transitionDuration / 2;
+		}, transitionDuration / 2);
 	});
 
 	let scroll = 0;
@@ -65,7 +66,12 @@
 
 <div id="app" data-scroll={scroll} data-theme={theme} class="min-h-screen min-w-full">
 	{#key theme}
-		<div class="bg" data-theme={theme} in:fade out:fade />
+		<div
+			class="bg"
+			data-theme={theme}
+			in:fade={{ duration: transitionDuration }}
+			out:fade={{ duration: transitionDuration }}
+		/>
 	{/key}
 	<header>
 		<div class="navbar">
@@ -84,7 +90,11 @@
 			{/if}
 			<div class="menu-container">
 				{#if $pageProps.menu}
-					<nav class="page-menu" in:fade={{ delay, duration: 250 }} out:fade={{ duration: 250 }}>
+					<nav
+						class="page-menu"
+						in:fade={{ delay, duration: transitionDuration / 2 }}
+						out:fade={{ duration: transitionDuration / 2 }}
+					>
 						<Menu items={menuItems} />
 					</nav>
 				{/if}
