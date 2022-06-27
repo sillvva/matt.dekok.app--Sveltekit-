@@ -10,9 +10,10 @@
 </script>
 
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { session } from '$app/stores';
+	import { browser } from '$app/env';
 	import { mdiBrightness6, mdiMenu, mdiChevronLeft } from '@mdi/js';
 	import type { Item } from '$lib/types/hex-menu';
 	import { pageProps, drawer } from '$lib/store';
@@ -28,24 +29,34 @@
 	import '../misc.scss';
 	import '../anim.scss';
 
-	let loaded = false;
-	let delay = 0;
-	onMount(() => {
-		loaded = true;
-		setTimeout(() => {
-			delay = transitionDuration / 2;
-		}, transitionDuration / 2);
-	});
-
-	let scroll = 0;
-	export let path: string;
-
 	let theme = $session.theme;
 	const toggleTheme = (newtheme?: typeof theme) => {
 		const nextTheme = themes[(themes.indexOf(newtheme || theme) + 1) % themes.length];
 		theme = newtheme || nextTheme;
 		document.cookie = `theme=${theme}`;
 	};
+
+	let mm: MediaQueryList;
+	if (browser) mm = matchMedia('(prefers-color-scheme: dark)');
+	const listener = () => mm && toggleTheme(mm.matches ? 'dark' : 'light');
+
+	let loaded = false;
+	let delay = 0;
+	onMount(() => {
+		loaded = true;
+		if (mm) mm.addEventListener('change', listener);
+
+		setTimeout(() => {
+			delay = transitionDuration / 2;
+		}, transitionDuration / 2);
+	});
+
+	onDestroy(() => {
+		if (mm) mm.removeEventListener('change', listener);
+	});
+
+	let scroll = 0;
+	export let path: string;
 
 	const menuItems: Item[] = [
 		{ link: '/', label: 'Intro' },
