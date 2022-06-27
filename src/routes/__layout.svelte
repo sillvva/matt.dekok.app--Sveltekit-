@@ -1,3 +1,14 @@
+<script lang="ts" context="module">
+	import type { Load } from './__types/__layout';
+	export const load: Load = async ({ url }) => {
+    return {
+      props: {
+        path: `${url.pathname}${url.search}`,
+      }
+    };
+  }
+</script>
+
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
@@ -13,6 +24,7 @@
 	import Fab from '$lib/components/fab.svelte';
 	import Icon from '$lib/components/icon.svelte';
 	import '../app.scss';
+	import '../misc.scss';
 
 	let loaded = false;
 	let delay = 0;
@@ -24,6 +36,7 @@
 	});
 
 	let scroll = 0;
+	export let path: string;
 
 	let theme = $session.theme;
 	const toggleTheme = (newtheme?: typeof theme) => {
@@ -92,7 +105,7 @@
 		</div>
 	</header>
 	{#if loaded}
-		<PageBody class={$pageProps.bodyClass}>
+		<PageBody key={path} class={$pageProps.bodyClass}>
 			<slot />
 		</PageBody>
 	{/if}

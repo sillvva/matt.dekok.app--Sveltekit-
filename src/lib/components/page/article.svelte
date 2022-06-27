@@ -9,7 +9,7 @@
 
 <style lang="scss">
 	article {
-		@apply shadow-xl ring-1 rounded-lg ring-gray-900/5 overflow-hidden;
+		@apply shadow-xl ring-1 rounded-lg mb-4 ring-gray-900/5 overflow-hidden;
 		@apply bg-[color:var(--article)];
 	}
 </style>
