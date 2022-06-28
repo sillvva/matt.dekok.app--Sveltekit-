@@ -6,10 +6,10 @@ import { firestore, storage, firebaseConfig, getContentDir } from './connection.
 
 /**
  *
- * @param {boolean} getPosts
- * @param {number} page
- * @param {number} perpage
- * @param {string} query
+ * @param {boolean=} getPosts
+ * @param {number=} page
+ * @param {number=} perpage
+ * @param {string=} query
  * @returns
  */
 export async function fetchPosts(getPosts, page, perpage, query) {

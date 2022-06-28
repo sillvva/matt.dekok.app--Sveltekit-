@@ -8,6 +8,7 @@ export const firebaseConfig = {
   apiKey: env.FIREBASE_API_KEY,
   storageBucket: env.FIREBASE_STORAGE_BUCKET,
   blogCollection: "posts",
+  blogStorage: "blog/articles"
 };
 
 let fbApp;
