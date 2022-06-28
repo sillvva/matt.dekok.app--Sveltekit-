@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { conClasses } from '$lib/utils';
+	import { ripple } from '$lib/directives';
 
 	export let type: 'a' | 'button' = 'a';
 	export let active = false;
@@ -27,6 +28,7 @@
 		style:--hover-color={hoverColor}
 		style:--active-color={activeColor}
 		style:--text-color={textColor}
+		use:ripple={{ active }}
 	>
 		<slot />
 	</a>
@@ -40,6 +42,7 @@
 		style:--hover-color={hoverColor}
 		style:--active-color={activeColor}
 		style:--text-color={textColor}
+		use:ripple={{ active }}
 	>
 		<slot />
 	</button>

@@ -28,3 +28,20 @@
 		transform: scale(1);
 	}
 }
+
+.ripple {
+  @apply isolate relative;
+  .rip-el {
+    @apply absolute inset-0 overflow-hidden;
+    span {
+      @apply absolute top-[var(--y)] left-[var(--x)] -translate-x-1/2 -translate-y-1/2;
+      @apply w-0 h-0 rounded-full bg-white/20;
+			animation: ripples 0.8s linear;
+    }
+  }
+}
+@keyframes ripples {
+  to {
+		@apply w-[calc(var(--d))] h-[calc(var(--d))] opacity-0;
+	}
+}

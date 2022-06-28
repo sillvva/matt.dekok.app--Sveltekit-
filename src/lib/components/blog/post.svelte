@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { ripple } from '$lib/directives';
 	import Image from '$lib/components/common/image.svelte';
 	import type { PostData } from '$lib/types/blog';
 
@@ -12,7 +13,7 @@
 	rel={post.link ? 'noreferrer noopener' : ''}
 	onClick={() => (active = true)}
 >
-	<div class="post-container" class:focused={active && !post.link}>
+	<div class="post-container" class:focused={active && !post.link} use:ripple>
 		<div class="post-image" class:animate-pulse={!post.slug && !post.link}>
 			{#if post.image}
 				<Image src={post.image} alt={post.title} />

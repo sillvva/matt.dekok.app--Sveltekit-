@@ -3,23 +3,7 @@ module.exports = {
   content: ['./src/**/*.{html,js,svelte,ts}'],
   theme: {
     extend: {
-      keyframes: {
-        ripple: {
-          "0%": {
-            width: "5%",
-            opacity: 0
-          },
-          "80%": {
-            width: "100%",
-            opacity: 0.25
-          },
-          "100%": {
-            opacity: 0
-          }
-        }
-      },
       animation: {
-        ripple: "ripple .5s linear",
         "spin-slow": "spin 4s linear infinite",
         "spin-medium": "spin 2s linear infinite"
       }
