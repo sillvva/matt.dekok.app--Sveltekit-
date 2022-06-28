@@ -21,7 +21,7 @@
 </script>
 
 {#if type == 'a'}
-	<a sveltekit:prefetch role="button" href={link} on:click class={className} style={styles}>
+	<a sveltekit:prefetch sveltekit:noscroll role="button" href={link} on:click class={className} style={styles}>
 		<slot />
 	</a>
 {:else}
