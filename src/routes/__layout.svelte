@@ -31,8 +31,7 @@
 
 	let theme = $session.theme;
 	const toggleTheme = (newtheme?: typeof theme) => {
-		const nextTheme = themes[(themes.indexOf(newtheme || theme) + 1) % themes.length];
-		theme = newtheme || nextTheme;
+		theme = newtheme || themes[(themes.indexOf(theme) + 1) % themes.length];
 		document.cookie = `theme=${theme}`;
 	};
 
@@ -118,7 +117,7 @@
 				<Icon path={mdiBrightness6} size={1.1} />
 			</Fab>
 		</div>
-		<div class="relative h-14 w-full hidden lg:block">
+		<div class="relative h-16 w-full hidden lg:block">
 			{#if loaded}
 				<Title key={$pageProps.title}>
 					{$pageProps.title || ''}

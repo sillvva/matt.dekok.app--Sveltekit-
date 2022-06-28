@@ -2,9 +2,9 @@
 import { existsSync, readFileSync } from 'fs';
 import type { RequestHandler } from './__types/posts';
 import type { PostData } from '$lib/types/blog';
+import { fetchPosts } from '$lib/firebase/blog';
 import { blogPostsPerPage } from '$lib/constants';
-import { fetchPosts } from '$lib/firebase/blog.js';
-import { firebaseConfig, getContentDir } from '$lib/firebase/connection.js';
+import { firebaseConfig, getContentDir } from '$lib/firebase/connection';
 
 type PostFetchOptions = {
 	page?: number;

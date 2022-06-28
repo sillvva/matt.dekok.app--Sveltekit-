@@ -1,5 +1,5 @@
 import type { RequestHandler } from './__types/experience';
-import { firestore } from '$lib/firebase/connection.js';
+import { firestore } from '$lib/firebase/connection';
 
 export type ExperienceItem = {
   name?: string;

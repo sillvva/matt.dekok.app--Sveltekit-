@@ -3,16 +3,9 @@ import path from "path";
 import matter from 'gray-matter';
 import { writeFileSync } from 'fs';
 import { firestore, storage, firebaseConfig, getContentDir } from './connection.js';
+import type { PostData } from '../types/blog';
 
-/**
- *
- * @param {boolean=} getPosts
- * @param {number=} page
- * @param {number=} perpage
- * @param {string=} query
- * @returns
- */
-export async function fetchPosts(getPosts, page, perpage, query) {
+export async function fetchPosts(getPosts?: boolean, page?: number, perpage?: number, query?: string) {
 	let [contentList] = await storage.getFiles({ prefix: firebaseConfig.blogStorage });
 
 	contentList = contentList.filter((file) => {
@@ -24,10 +17,7 @@ export async function fetchPosts(getPosts, page, perpage, query) {
 	if (getPosts && page && perpage && !query) collection.limit(perpage).offset((page - 1) * perpage);
 	const docs = await collection.get();
 
-	/**
-	 * @type {Array<import('../types/blog').PostData>}
-	 */
-	let posts = [];
+	const posts: PostData[] = [];
 	docs.forEach((doc) => {
 		const post = doc.data();
 		posts.push({
@@ -43,18 +33,9 @@ export async function fetchPosts(getPosts, page, perpage, query) {
 	if (getPosts && page && perpage) return { posts, num: list.length };
 
 	let changes = 0;
-	/**
-	 * @type {Array<string>}
-	 */
-	let added = [];
-	/**
-	 * @type {Array<string>}
-	 */
-	let updated = [];
-	/**
-	 * @type {Array<string>}
-	 */
-	let removed = [];
+	const added: string[] = [];
+	const updated: string[] = [];
+	const removed: string[] = [];
 
 	for (const file of contentList) {
 		const timeCreated = new Date(file.metadata.timeCreated).toISOString();
@@ -75,7 +56,7 @@ export async function fetchPosts(getPosts, page, perpage, query) {
 			changes++;
 		} else continue;
 
-		const result = await new Promise((resolve) => {
+		const result: string = await new Promise((resolve) => {
 			let content = '';
 			file
 				.createReadStream({

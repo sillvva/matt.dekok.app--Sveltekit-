@@ -1,5 +1,5 @@
 import type { RequestHandler } from './__types/skills';
-import { firestore } from '$lib/firebase/connection.js';
+import { firestore } from '$lib/firebase/connection';
 import type { Rating } from '$lib/types/rating';
 
 type Skill = {
