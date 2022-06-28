@@ -46,9 +46,9 @@
 	])}
 >
 	{#each menuRows as row, r}
-		<div class={conClasses(['hex-row', r % 2 === 1 && !rotated && 'shift'])}>
+		<div class="hex-row" class:shift={r % 2 === 1 && !rotated}>
 			{#each row as item}
-				<div class={conClasses(['hex-menu-item-container', rotated && 'rotated'])}>
+				<div class="hex-menu-item-container" class:rotated>
 					<svg
 						viewBox="0 0 800 800"
 						class={conClasses([

@@ -1,15 +1,13 @@
 <script lang="ts">
-	import { conClasses } from '$lib/utils';
-
 	export let name: string;
 	export let value: string | number;
 	export let full: boolean = false;
 </script>
 
-<p class={conClasses(['my-details__name', full && 'full'])}>
+<p class="my-details__name" class:full>
 	{name}:
 </p>
-<p class={conClasses(['my-details__value', full && 'full'])}>
+<p class="my-details__value" class:full>
 	{value}
 </p>
 

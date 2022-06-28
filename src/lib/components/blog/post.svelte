@@ -1,7 +1,6 @@
 <script lang="ts">
 	import Image from '$lib/components/common/image.svelte';
 	import type { PostData } from '$lib/types/blog';
-	import { conClasses } from '$lib/utils';
 
 	export let post: PostData;
 	let active = false;
@@ -13,8 +12,8 @@
 	rel={post.link ? 'noreferrer noopener' : ''}
 	onClick={() => (active = true)}
 >
-	<div class={conClasses(['post-container', active && !post.link && 'focused'])}>
-		<div class={conClasses(['post-image', !post.slug && !post.link && 'animate-pulse'])}>
+	<div class="post-container" class:focused={active && !post.link}>
+		<div class="post-image" class:animate-pulse={!post.slug && !post.link}>
 			{#if post.image}
 				<Image src={post.image} alt={post.title} />
 			{/if}
