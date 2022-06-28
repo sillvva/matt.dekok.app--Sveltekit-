@@ -22,3 +22,7 @@ export const debounce = (fn: (...args: any[]) => void) => {
 export const conClasses = (str: boolean | string | (string | boolean | undefined)[]) => {
   return (Array.isArray(str) ? str : typeof str == "string" ? str.split(" ") : []).filter(s => !!s && typeof s == "string").join(" ");
 };
+
+export const slug = (str: string) => {
+  return str.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+}

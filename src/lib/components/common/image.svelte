@@ -3,6 +3,7 @@
 	export let set: string[] = [];
 	export let sizes: number[] = [];
 	export let alt: string;
+	export let title: string | undefined = undefined;
 	export let lazy = true;
 	export let id = ``;
 	export let objectFit = `cover`;
@@ -22,7 +23,7 @@
 </script>
 
 <span class={containerClass} style={`--fit: ${objectFit}`}>
-	<img {id} {src} {srcset} {alt} {loading} class={className} />
+	<img {id} {src} {srcset} {title} {alt} {loading} class={className} />
 </span>
 
 <style lang="scss">

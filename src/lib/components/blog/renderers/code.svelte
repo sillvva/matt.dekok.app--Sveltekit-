@@ -1,0 +1,24 @@
+<script lang="ts">
+	export let lang: string;
+	export let text: string;
+
+	$: language = lang.replace(/^([a-z]+).*$/i, '$1');
+	$: filename = lang.replace(/^[a-z]+ \[([^\]]+)\].*$/i, '$1');
+</script>
+
+<pre class={language}>
+	{#if filename}<span>{filename}</span>{/if}
+  <code class={filename ? 'mt-2' : ''}>{text}</code>
+</pre>
+
+<style lang="scss">
+	pre {
+		@apply flex flex-col text-sm mb-4 md:p-2 pb-0 bg-gray-800 rounded-lg;
+		span {
+			@apply self-end max-w-fit top-4 right-4 p-1 px-2 rounded-sm bg-gray-700;
+		}
+		code {
+			@apply flex-1 bg-gray-900 p-4 overflow-x-auto rounded-md;
+		}
+	}
+</style>
