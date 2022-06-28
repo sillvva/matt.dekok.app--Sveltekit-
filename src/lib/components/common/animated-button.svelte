@@ -11,21 +11,36 @@
 	export let link = '';
 	// export let clickRipple = false;
 
-	$: className = conClasses(['button', active && 'active', ...itemClasses]);
-	$: styles = conClasses([
-		color && `--item-color: ${color};`,
-		hoverColor && `--hover-color: ${hoverColor};`,
-		activeColor && `--active-color: ${activeColor};`,
-		textColor && `--text-color: ${textColor};`
-	]);
+	$: className = conClasses(['button', ...itemClasses]);
 </script>
 
 {#if type == 'a'}
-	<a sveltekit:prefetch sveltekit:noscroll role="button" href={link} on:click class={className} style={styles}>
+	<a
+		sveltekit:prefetch
+		sveltekit:noscroll
+		role="button"
+		href={link}
+		on:click
+		class={className}
+		class:active
+		style:--item-color={color}
+		style:--hover-color={hoverColor}
+		style:--active-color={activeColor}
+		style:--text-color={textColor}
+	>
 		<slot />
 	</a>
 {:else}
-	<button type="button" on:click class={className} style="{styles}}">
+	<button
+		type="button"
+		on:click
+		class={className}
+		class:active
+		style:--item-color={color}
+		style:--hover-color={hoverColor}
+		style:--active-color={activeColor}
+		style:--text-color={textColor}
+	>
 		<slot />
 	</button>
 {/if}

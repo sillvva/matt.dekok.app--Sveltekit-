@@ -40,10 +40,10 @@
 <nav
 	class={conClasses([
 		'hex-wrapper',
-		rotated && 'rotated',
 		!classes.find((c) => c.startsWith('[--scale:')) && '[--scale:1]',
 		...classes
 	])}
+	class:rotated
 >
 	{#each menuRows as row, r}
 		<div class="hex-row" class:shift={r % 2 === 1 && !rotated}>
@@ -51,19 +51,14 @@
 				<div class="hex-menu-item-container" class:rotated>
 					<svg
 						viewBox="0 0 800 800"
-						class={conClasses([
-							'hex-item',
-							!item.label && 'empty',
-							item.active && 'active',
-							rotated && 'rotated',
-							...itemClasses
-						])}
-						style={conClasses([
-							color && `--color: ${color};`,
-							hoverColor && `--hover-color: ${hoverColor};`,
-							activeColor && `--active-color: ${activeColor};`,
-							textColor && `--text-color: ${textColor};`
-						])}
+						class={conClasses(['hex-item', ...itemClasses])}
+						class:rotated
+						class:empty={!item.label}
+						class:active={item.active}
+						style:--color={color}
+						style:--hover-color={hoverColor}
+						style:--active-color={activeColor}
+						style:--text-color={textColor}
 					>
 						<a href={item.link} sveltekit:prefetch>
 							{#if rotated}

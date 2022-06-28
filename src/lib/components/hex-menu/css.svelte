@@ -46,12 +46,10 @@
 						class={conClasses(['hex-item', ...itemClasses])}
 						class:active={item.active}
 						class:rotated
-						style={conClasses([
-							color && `--color: ${color};`,
-							hoverColor && `--hover-color: ${hoverColor};`,
-							activeColor && `--active-color: ${activeColor};`,
-							textColor && `--text-color: ${textColor};`
-						])}
+						style:--item-color={color}
+						style:--hover-color={hoverColor}
+						style:--active-color={activeColor}
+						style:--text-color={textColor}
 					>
 						<span class="label">{item.label}</span>
 						<div class="face backface face1" />

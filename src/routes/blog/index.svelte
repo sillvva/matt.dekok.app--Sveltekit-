@@ -47,7 +47,7 @@
 {#if error.message}
 	<Message>{error.message}</Message>
 {:else}
-	<div class="flex justify-center" style="max-width: 1800px;">
+	<div class="flex justify-center" style:max-width="1800px">
 		<div class="flex flex-wrap w-full -m-3 md:m-0">
 			{#each posts as post}
 				<Post {post} />

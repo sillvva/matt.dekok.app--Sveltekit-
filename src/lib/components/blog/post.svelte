@@ -29,7 +29,7 @@
 						day: 'numeric'
 					})}
 				</p>
-				<p style="color: var(--text)">{post.description}</p>
+				<p style:color="var(--text)">{post.description}</p>
 			</div>
 		{:else}
 			<div class="p-3 w-full">
