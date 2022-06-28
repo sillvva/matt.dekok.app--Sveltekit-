@@ -1,15 +1,22 @@
 <script lang="ts">
+	import CodePenEmbed from './codepen.svelte';
+
 	export let lang: string;
 	export let text: string;
 
 	$: language = lang.replace(/^([a-z]+).*$/i, '$1');
 	$: filename = lang.replace(/^[a-z]+ \[([^\]]+)\].*$/i, '$1');
+	$: codepenConfig = language === "codepen" ? JSON.parse(text) : {};
 </script>
 
+{#if language === "codepen"}
+	<CodePenEmbed {...codepenConfig} />
+{:else}
 <pre class={language}>
 	{#if filename}<span>{filename}</span>{/if}
   <code class={filename ? 'mt-2' : ''}>{text}</code>
 </pre>
+{/if}
 
 <style lang="scss">
 	pre {

@@ -40,7 +40,7 @@
 	<Section>
 		<p class="mb-4 text-gray-400" aria-label="Date published">
 			{data.date}
-			{data.updated && `(Updated: ${data.updated})`}
+			{#if data.updated}(Updated: ${data.updated}){/if}
 		</p>
 		<div class="blog-content">
 			<SvelteMarkdown source={content} {renderers} />
