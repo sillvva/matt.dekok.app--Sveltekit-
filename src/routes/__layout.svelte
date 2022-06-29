@@ -3,7 +3,7 @@
 	export const load: Load = async ({ url }) => {
 		return {
 			props: {
-				path: `${url.pathname}${url.search}`
+				path: `${url.pathname}`
 			}
 		};
 	};
@@ -12,12 +12,12 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
 	import { fade } from 'svelte/transition';
-	import { session } from '$app/stores';
+	import { session, page } from '$app/stores';
 	import { browser } from '$app/env';
 	import { mdiBrightness6, mdiMenu, mdiChevronLeft } from '@mdi/js';
 	import type { Item } from '$lib/types/hex-menu';
 	import { pageProps, drawer } from '$lib/store';
-	import { themes } from '$lib/utils';
+	import { themes, metaTags } from '$lib/utils';
 	import { transitionDuration } from '$lib/constants';
 	import PageBody from '$lib/components/page/body.svelte';
 	import Menu from '$lib/components/page/menu.svelte';
@@ -66,13 +66,21 @@
 		{ link: '/blog', label: 'Blog' }
 	];
 
+	$: metaProps = metaTags($pageProps, $page.url.origin, theme);
 	$: smallTitle = ($pageProps.title || '').length > 12 ? 'small-title' : '';
 </script>
 
 <svelte:window bind:scrollY={scroll} />
 
 <svelte:head>
-	<title>{$pageProps.title ? `${$pageProps.title} - ` : ''}Matt DeKok</title>
+	<link rel="icon" href="/favicon.png" />
+	<link rel="apple-touch-icon" href={`${metaProps.origin}/apple-touch-icon.png`} />
+	<link rel="manifest" href="/manifest.webmanifest" />
+
+	<meta name="mobile-web-app-capable" content="yes" />
+	<meta name="msapplication-TileColor" content={metaProps.color} />
+	<meta name="msapplication-tap-highlight" content="no" />
+	<meta name="theme-color" content={metaProps.color} />
 </svelte:head>
 
 <div id="app" data-scroll={scroll} data-theme={theme}>
@@ -103,6 +111,7 @@
 				{#if $pageProps.menu}
 					<nav
 						class="page-menu"
+						class:loaded
 						in:fade={{ delay, duration: transitionDuration / 2 }}
 						out:fade={{ duration: transitionDuration / 2 }}
 					>
@@ -125,18 +134,15 @@
 			{/if}
 		</div>
 	</header>
-	{#if loaded}
-		<PageBody key={path} class={$pageProps.bodyClass}>
-			<slot />
-		</PageBody>
-	{/if}
+	<PageBody key={path} class={$pageProps.bodyClass} {loaded}>
+		<slot />
+	</PageBody>
 	{#if $drawer}
 		<Drawer {menuItems} />
 	{/if}
 </div>
 
 <style lang="scss">
-
 	#app {
 		@apply min-h-screen min-w-full max-w-[100vw];
 	}
@@ -156,7 +162,10 @@
 			.menu-container {
 				@apply flex-1 block lg:pl-14 relative h-14;
 				.page-menu {
-					@apply hidden lg:flex justify-center gap-3 px-3;
+					@apply hidden justify-center gap-3 px-3;
+					&.loaded {
+						@apply lg:flex;
+					}
 				}
 			}
 		}

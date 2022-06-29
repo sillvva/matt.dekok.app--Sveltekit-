@@ -1,7 +1,9 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import { pageProps } from '$lib/store';
 	import GalleryItem from '$lib/components/gallery/item.svelte';
 	import type { Project } from './projects';
+	import { metaTags } from '$lib/utils';
 
 	$pageProps = {
 		title: 'Projects',
@@ -10,7 +12,21 @@
 	};
 
 	export let projects: Project[] = [];
+
+	$: metaProps = metaTags($pageProps, $page.url.origin, $page.url.pathname);
 </script>
+
+<svelte:head>
+	<title>{metaProps.title}</title>
+	<meta name="description" content={metaProps.description} />
+
+	{#each Object.entries(metaProps.ogProperties) as t}
+		<meta name={`og:${t[0]}`} property={`og:${t[0]}`} content={t[1]} />
+	{/each}
+	{#each Object.entries(metaProps.twProperties) as t}
+		<meta name={`twitter:${t[0]}`} content={t[1]} />
+	{/each}
+</svelte:head>
 
 <div class="flex flex-wrap justify-center lg:mt-0 pb-4 w-full">
 	<div class="p-0 md:p-2 basis-full 2xl:basis-11/12">
