@@ -75,7 +75,7 @@
 	<title>{$pageProps.title ? `${$pageProps.title} - ` : ''}Matt DeKok</title>
 </svelte:head>
 
-<div id="app" data-scroll={scroll} data-theme={theme} class="min-h-screen min-w-full">
+<div id="app" data-scroll={scroll} data-theme={theme}>
 	{#key theme}
 		<div
 			class="bg"
@@ -136,6 +136,10 @@
 </div>
 
 <style lang="scss">
+
+	#app {
+		@apply min-h-screen min-w-full max-w-[100vw];
+	}
 	.bg {
 		@apply fixed inset-0 scale-x-[var(--bgScaleX)] z-0;
 		@apply bg-fixed bg-cover bg-no-repeat bg-[color:rgb(var(--background))] bg-[image:var(--bgImg)];

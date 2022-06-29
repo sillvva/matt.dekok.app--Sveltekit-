@@ -28,9 +28,8 @@
 			maxLength={3}
 			classes={[
 				'[--scale:0.7]',
-				'3xs:[--scale:0.8]',
-				'2xs:[--scale:0.9]',
-				'xs:[--scale:1]',
+				'3xs:[--scale:0.9]',
+				'2xs:[--scale:1]',
 				'xl:[--scale:1.2]'
 			]}
 			rotated={true}
@@ -40,7 +39,7 @@
 
 <style lang="scss">
 	.backdrop {
-		@apply fixed inset-0 z-10 bg-black/50;
+		@apply fixed inset-0 z-10 bg-black/60;
 		@apply flex justify-center items-center;
 	}
 </style>
