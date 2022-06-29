@@ -36,6 +36,7 @@
 	onMount(() => {
 		if (!_isMounted) _isMounted = true;
 		if (_isMobile) return;
+		if (!browser) return;
 
 		const codepenScript = document.getElementById(scriptId);
 		if (codepenScript) return;
@@ -59,6 +60,7 @@
 	});
 
 	onDestroy(() => {
+		if (!browser) return;
 		document.getElementById(scriptId)?.remove();
 	});
 

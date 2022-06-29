@@ -2,9 +2,12 @@ import { writable } from 'svelte/store';
 
 export type PageProps = {
 	title?: string;
+	description?: string;
 	bodyClass?: string;
 	backTo?: boolean | string;
 	menu?: boolean;
+	articleMeta?: object;
+	image?: string;
 };
 export const pageProps = writable<PageProps>({});
 

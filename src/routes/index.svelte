@@ -1,10 +1,16 @@
+<script context="module">
+	export const prerender = true;
+</script>
+
 <script lang="ts">
+	import { page } from '$app/stores';
 	import { pageProps } from '$lib/store';
 	import type { Item } from '$lib/types/hex-menu';
 	import Image from '$lib/components/common/image.svelte';
 	import HexMenu from '$lib/components/hex-menu/svg.svelte';
 	// @ts-ignore
 	import MeSS from '$lib/assets/images/me3x.webp?width=500;1000;1500;2000';
+	import { metaTags } from '$lib/utils';
 
 	const items: (Item | null)[] = [
 		{ link: '/about', label: 'About Me' },
@@ -18,7 +24,21 @@
 	$pageProps = {
 		bodyClass: 'mt-20'
 	};
+
+	$: metaProps = metaTags($pageProps, $page.url.origin, $page.url.pathname);
 </script>
+
+<svelte:head>
+	<title>{metaProps.title}</title>
+	<meta name="description" content={metaProps.description} />
+
+	{#each Object.entries(metaProps.ogProperties) as t}
+		<meta name={`og:${t[0]}`} property={`og:${t[0]}`} content={t[1]} />
+	{/each}
+	{#each Object.entries(metaProps.twProperties) as t}
+		<meta name={`twitter:${t[0]}`} content={t[1]} />
+	{/each}
+</svelte:head>
 
 <div class="me">
 	<Image
@@ -28,6 +48,7 @@
 		alt="Me"
 		id="me"
 		container="cover-img"
+		lazy={false}
 	/>
 	<div class="intro">
 		<div class="intro-subject">
@@ -38,11 +59,7 @@
 			<HexMenu
 				{items}
 				maxLength={3}
-				classes={[
-          'hidden lg:block',
-					'[--scale:1]',
-					'xl:[--scale:1.2]'
-				]}
+				classes={['hidden lg:block', '[--scale:1]', 'xl:[--scale:1.2]']}
 				itemClasses={['bounce']}
 				rotated={true}
 			/>

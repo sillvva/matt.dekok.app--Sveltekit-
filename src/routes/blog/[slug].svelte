@@ -1,10 +1,12 @@
 <script lang="ts">
-	import { pageProps } from '$lib/store';
-  import SvelteMarkdown from 'svelte-markdown'
+	import { page } from '$app/stores';
+	import SvelteMarkdown from 'svelte-markdown';
 	import Article from '$lib/components/page/article.svelte';
 	import Section from '$lib/components/page/section.svelte';
 	import Image from '$lib/components/common/image.svelte';
 	import type { PostProps } from '$lib/types/blog';
+	import { pageProps } from '$lib/store';
+	import { metaTags } from '$lib/utils';
 
 	// Renderers
 	import code from '$lib/components/blog/renderers/code.svelte';
@@ -18,7 +20,13 @@
 
 	$pageProps = {
 		title: data.title,
+		description: data?.description,
+		image: data?.image || '',
 		bodyClass: 'page-body',
+		articleMeta: {
+			published_date: data?.dateISO,
+			...(data?.updatedISO && { modified_date: data?.updatedISO })
+		},
 		menu: true
 	};
 
@@ -29,7 +37,26 @@
 		codespan,
 		image
 	};
+
+	$: metaProps = metaTags($pageProps, $page.url.origin, $page.url.pathname);
 </script>
+
+<svelte:head>
+	<title>{metaProps.title}</title>
+	<meta name="description" content={metaProps.description} />
+
+	{#if metaProps.articleMeta}
+		{#each Object.entries(metaProps.articleMeta) as t}
+			<meta property={`article:${t[0]}`} content={t[1]} />
+		{/each}
+	{/if}
+	{#each Object.entries(metaProps.ogProperties) as t}
+		<meta name={`og:${t[0]}`} property={`og:${t[0]}`} content={t[1]} />
+	{/each}
+	{#each Object.entries(metaProps.twProperties) as t}
+		<meta name={`twitter:${t[0]}`} content={t[1]} />
+	{/each}
+</svelte:head>
 
 <Article class="w-full md:w-9/12 lg:w-9/12 xl:w-8/12 2xl:w-7/12">
 	{#if !data.full}
