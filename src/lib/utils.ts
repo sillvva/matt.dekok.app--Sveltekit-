@@ -1,3 +1,6 @@
+import type { PageProps } from './store';
+import { vercelUrl, env } from '$lib/constants';
+
 export type Theme = 'dark' | 'light' | 'blue';
 export const themes: Theme[] = ['dark', 'light', 'blue'];
 
@@ -36,4 +39,50 @@ export const wait = (callback: TimerHandler, id: string | number, ms?: number, .
 	if (!ms) ms = 100;
 	if (timeouts.get(id)) clearTimeout(timeouts.get(id));
 	timeouts.set(id, setTimeout(callback, ms, ...args));
+}
+
+export const checkOrigin = (origin: string) => {
+	return origin.match(/prerender/)
+		? vercelUrl
+			? `https://${vercelUrl}`
+			: process.env.NODE_ENV === 'development'
+			? 'http://localhost:3000'
+			: env.PROD_URL
+		: origin;
+};
+
+export const metaTags = (pageProps: PageProps, origin: string, path: string, theme?: string) => {
+	const originCheck = checkOrigin(origin);
+	const themeColors: { [key: string]: string } = {
+		dark: '#00aa99',
+		blue: '#32b2e8',
+		light: '#0070e7'
+	};
+
+	const description =
+		pageProps.description ||
+		'Experienced full stack web developer with a demonstrated history of working in the wireless industry.';
+	const ogProperties = {
+		type: pageProps.articleMeta ? 'article' : 'website',
+		title: pageProps.title || 'Matt DeKok',
+		description: description,
+		image: pageProps.image?.startsWith('http')
+			? pageProps.image
+			: `${originCheck}${pageProps.image || '/images/preview-me3.jpeg'}`,
+		url: originCheck + path
+	};
+
+	return {
+		title: pageProps.title ? `${pageProps.title} - Matt DeKok` : 'Matt DeKok',
+		description: description,
+		origin: originCheck,
+		color: themeColors[theme || 'dark'] ?? '#111',
+		ogProperties: ogProperties,
+		twProperties: {
+			site: '@sillvvasensei',
+			card: 'summary_large_image',
+			...ogProperties
+		},
+		articleMeta: pageProps.articleMeta
+	};
 };

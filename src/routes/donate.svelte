@@ -1,21 +1,45 @@
+<script context="module">
+	export const prerender = true;
+</script>
+
 <script lang="ts">
+	import { page } from '$app/stores';
 	import { pageProps } from '$lib/store';
 	import Article from '$lib/components/page/article.svelte';
 	import Section from '$lib/components/page/section.svelte';
-	import Header from '$lib/components/page/section-header.svelte';
+	import { metaTags } from '$lib/utils';
 
 	$pageProps = {
 		title: 'Donate',
 		bodyClass: 'page-body',
 		menu: true
 	};
+
+	$: metaProps = metaTags($pageProps, $page.url.origin, $page.url.pathname);
 </script>
+
+<svelte:head>
+	<title>{metaProps.title}</title>
+	<meta name="description" content={metaProps.description} />
+
+	{#each Object.entries(metaProps.ogProperties) as t}
+		<meta name={`og:${t[0]}`} property={`og:${t[0]}`} content={t[1]} />
+	{/each}
+	{#each Object.entries(metaProps.twProperties) as t}
+		<meta name={`twitter:${t[0]}`} content={t[1]} />
+	{/each}
+</svelte:head>
 
 <Article class="w-full md:w-9/12 lg:w-9/12 xl:w-8/12 2xl:w-7/12">
 	<Section>
 		<div class="flex flex-wrap justify-center gap-4 static-payment">
 			<div class="text-center static-payment-options">
-				<a href="https://www.paypal.me/Sillvva" title="PayPal" target="_blank" rel="noreferrer noopener">
+				<a
+					href="https://www.paypal.me/Sillvva"
+					title="PayPal"
+					target="_blank"
+					rel="noreferrer noopener"
+				>
 					<svg width="64" height="64" viewBox="-23 0 302 302">
 						<path
 							d="M217.168 23.507C203.234 7.625 178.046.816 145.823.816h-93.52A13.393 13.393 0 0 0 39.076 12.11L.136 259.077c-.774 4.87 2.997 9.28 7.933 9.28h57.736l14.5-91.971-.45 2.88c1.033-6.501 6.593-11.296 13.177-11.296h27.436c53.898 0 96.101-21.892 108.429-85.221.366-1.873.683-3.696.957-5.477-1.556-.824-1.556-.824 0 0 3.671-23.407-.025-39.34-12.686-53.765"
@@ -39,7 +63,12 @@
 				</a>
 			</div>
 			<div class="text-center static-payment-options">
-				<a href="https://cash.app/$SillvvaSensei" title="Cash App" target="_blank" rel="noreferrer noopener">
+				<a
+					href="https://cash.app/$SillvvaSensei"
+					title="Cash App"
+					target="_blank"
+					rel="noreferrer noopener"
+				>
 					<svg width="64" height="64" viewBox="0 0 24 24">
 						<path
 							fill="#00D54B"
