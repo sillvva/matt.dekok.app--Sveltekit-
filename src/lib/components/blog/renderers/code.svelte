@@ -1,5 +1,6 @@
 <script lang="ts">
 	import CodePenEmbed from './codepen.svelte';
+	import ComponentEmbed from './component.svelte';
 
 	export let lang: string;
 	export let text: string;
@@ -7,10 +8,13 @@
 	$: language = lang.replace(/^([a-z]+).*$/i, '$1');
 	$: filename = lang.replace(/^[a-z]+ \[([^\]]+)\].*$/i, '$1');
 	$: codepenConfig = language === "codepen" ? JSON.parse(text) : {};
+	$: componentProps = language === "component" ? JSON.parse(text) : {};
 </script>
 
 {#if language === "codepen"}
 	<CodePenEmbed {...codepenConfig} />
+{:else if language === "component"}
+	<ComponentEmbed {...componentProps} />
 {:else}
 <pre class={language}>
 	{#if filename}<span>{filename}</span>{/if}

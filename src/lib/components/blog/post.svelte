@@ -8,9 +8,9 @@
 </script>
 
 <a
-	href={post.link ? post.link : `/blog/${post.slug}`}
-	target={post.link ? '_blank' : ''}
-	rel={post.link ? 'noreferrer noopener' : ''}
+	href={post.link ? post.link.trim() : `/blog/${post.slug}`}
+	target={post.link && post.link.startsWith('http') ? '_blank' : ''}
+	rel={post.link && post.link.startsWith('http') ? 'noreferrer noopener' : ''}
 	onClick={() => (active = true)}
 >
 	<div class="post-container" class:focused={active && !post.link} use:ripple>

@@ -19,3 +19,10 @@
     }
   }
 }
+
+.component-container {
+  @apply flex w-full;
+  > * {
+    @apply flex-1 #{!important};
+  }
+}
