@@ -28,7 +28,7 @@
 		style:--hover-color={hoverColor}
 		style:--active-color={activeColor}
 		style:--text-color={textColor}
-		use:ripple={{ active }}
+		use:ripple={{ enabled: !active }}
 	>
 		<slot />
 	</a>
@@ -42,13 +42,18 @@
 		style:--hover-color={hoverColor}
 		style:--active-color={activeColor}
 		style:--text-color={textColor}
-		use:ripple={{ active }}
+		use:ripple={{ enabled: !active }}
 	>
 		<slot />
 	</button>
 {/if}
 
 <style lang="scss">
+	a,
+	button {
+		@apply relative;
+	}
+
 	.button {
 		@apply relative py-4 px-6 no-underline uppercase duration-200 ease-linear select-none;
 		color: var(--text-color);

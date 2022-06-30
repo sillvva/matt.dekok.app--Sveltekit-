@@ -55,8 +55,8 @@
 	a {
 		@apply basis-full md:basis-6/12 xl:basis-4/12 p-1 md:p-3;
 		.post-container {
-			@apply flex h-full shadow-lg ring-1 rounded-lg ring-gray-900/5 overflow-hidden;
-			@apply bg-[color:var(--article)] transition-all duration-500 ease-linear;
+			@apply flex relative h-full shadow-lg ring-1 rounded-lg ring-gray-900/5 overflow-hidden;
+			@apply bg-[color:var(--article)] transition-all duration-500 ease-linear isolate;
 			@apply [--tw-shadow-color:var(--shadowColor)] [--tw-shadow:var(--tw-shadow-colored)];
 			&:hover {
 				@apply shadow-xl [--tw-shadow-color:var(--shadowHover)];

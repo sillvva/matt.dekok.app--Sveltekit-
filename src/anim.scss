@@ -30,18 +30,27 @@
 }
 
 .ripple {
-  @apply isolate relative;
-  .rip-el {
-    @apply absolute inset-0 overflow-hidden;
-    span {
-      @apply absolute top-[var(--y)] left-[var(--x)] -translate-x-1/2 -translate-y-1/2;
-      @apply w-0 h-0 rounded-full bg-white/20;
-			animation: ripples 0.8s linear;
-    }
-  }
+	overflow: hidden;
+	position: absolute;
+	inset: 0;
+	span {
+		position: absolute;
+		top: var(--y);
+		left: var(--x);
+		transform: translate(-50%, -50%);
+		width: 0;
+		height: 0;
+		border-radius: 100%;
+		background: var(--color);
+		animation-name: ripples;
+		animation-duration: var(--duration);
+		animation-timing-function: var(--easing);
+	}
 }
 @keyframes ripples {
-  to {
-		@apply w-[calc(var(--d))] h-[calc(var(--d))] opacity-0;
+	to {
+		width: var(--diameter);
+		height: var(--diameter);
+		opacity: 0;
 	}
 }

@@ -1,48 +1,52 @@
-import { wait } from '$lib/utils';
+import { getCursorPosition, wait } from '$lib/utils';
 
-type RippleParams = { enabled?: boolean; duration?: number };
-const defaultRippleParams = { enabled: true, duration: 800, active: false };
+type RippleParams = { enabled?: boolean; duration?: number; easing?: string; color?: string };
+const defaultRippleParams = { enabled: true, duration: 800, easing: 'linear', color: '#ffffff22' };
 
 export function ripple(el: HTMLElement, params?: RippleParams) {
-	const duration = params?.duration || defaultRippleParams.duration;
 	const ripples: HTMLElement[] = [];
-
-	const rippleUnload = () => {
-		wait(
-			() => {
-				ripples.forEach((r) => r.remove());
-				ripples.splice(0, ripples.length);
-			},
-			'ripples',
-			duration
-		);
-	};
 
 	const createMouseHandler = (params?: RippleParams) => {
 		const enabled = params?.enabled || defaultRippleParams.enabled;
+		const duration = params?.duration || defaultRippleParams.duration;
+		const color = params?.color || defaultRippleParams.color;
+		const easing = params?.easing || defaultRippleParams.easing;
+
 		return (e: any) => {
 			if (!enabled) return;
-			const key = ripples.length;
-
 			const ripple = document.createElement('div');
 			const span = document.createElement('span');
-			const bcr = el.getBoundingClientRect();
-			const style = `--x: ${e.layerX}px; --y: ${e.layerY}px; --d: ${Math.max(bcr.width, bcr.height) * 4}px;`;
+			const cursor = getCursorPosition(el, e);
 
-			ripple.className = 'rip-el';
-			ripple.setAttribute('style', style);
-			ripple.dataset.key = key.toString();
+			ripple.className = 'ripple';
+			ripple.setAttribute(
+				'style',
+				[
+					`--x: ${cursor.x}px;`,
+					`--y: ${cursor.y}px;`,
+					`--diameter: ${Math.max(cursor.rect.width, cursor.rect.height) * 4}px;`,
+					`--duration: ${duration}ms;`,
+					`--easing: ${easing};`,
+					`--color: ${color};`
+				].join(' ')
+			);
 			ripple.appendChild(span);
 
 			el.appendChild(ripple);
 			ripples.push(ripple);
 
-			rippleUnload();
+			wait(
+				() => {
+					ripples.forEach((r) => r.remove());
+					ripples.splice(0, ripples.length);
+				},
+				'ripples',
+				duration
+			);
 		};
 	};
 
 	let mouseHandler = createMouseHandler(params);
-	if (!el.classList.contains('ripple')) el.classList.add('ripple');
 	el.addEventListener('pointerdown', mouseHandler);
 
 	return {
