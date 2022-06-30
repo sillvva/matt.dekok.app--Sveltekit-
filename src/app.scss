@@ -157,6 +157,7 @@
 
 html {
 	overflow-y: scroll;
+	overflow-x: hidden;
   color-scheme: light;
   @media (prefers-color-scheme: dark) {
     color-scheme: dark;
