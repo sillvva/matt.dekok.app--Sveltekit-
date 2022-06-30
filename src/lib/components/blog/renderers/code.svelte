@@ -8,12 +8,13 @@
 	$: language = lang.replace(/^([a-z]+).*$/i, '$1');
 	$: filename = lang.replace(/^[a-z]+ \[([^\]]+)\].*$/i, '$1');
 	$: codepenConfig = language === "codepen" ? JSON.parse(text) : {};
-	$: componentProps = language === "component" ? JSON.parse(text) : {};
+	$: componentProps = language === "sveltecomponent" ? JSON.parse(text) : {};
 </script>
 
 {#if language === "codepen"}
 	<CodePenEmbed {...codepenConfig} />
-{:else if language === "component"}
+{:else if language === "sveltecomponent"}
+	{#if componentProps.description}<p>{componentProps.description}</p>{/if}
 	<ComponentEmbed {...componentProps} />
 {:else}
 <pre class={language}>
