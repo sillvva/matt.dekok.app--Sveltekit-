@@ -14,11 +14,13 @@
 	});
 </script>
 
-{#if description}
-	<p>{description}</p>
-{/if}
-{#if LoadedComponent}
-	<div class="component-container">
-		<svelte:component this={LoadedComponent} {...props} on:click={e => e.preventDefault()} />
-	</div>
-{/if}
+<div class="demo">
+	{#if description}
+		<p>{description}</p>
+	{/if}
+	{#if LoadedComponent}
+		<div class="component-container">
+			<svelte:component this={LoadedComponent} {...props} on:click={e => e.preventDefault()} />
+		</div>
+	{/if}
+</div>

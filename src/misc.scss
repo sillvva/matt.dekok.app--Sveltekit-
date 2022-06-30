@@ -28,12 +28,15 @@
 }
 
 .blog-content {
-  pre {
+  pre, .demo {
     @apply flex flex-col text-sm mb-4 pt-2 md:p-2 pb-0 bg-gray-800 rounded-lg;
-    span {
-      @apply self-end max-w-fit top-4 right-4 p-1 px-2 mr-2 md:mr-0 rounded-sm bg-gray-700;
+    > p {
+      @apply m-3 mb-0 text-white;
     }
-    code {
+    > span.filename {
+      @apply self-end max-w-fit top-4 right-4 p-1 px-2 mr-2 md:mr-0 rounded-sm bg-gray-700 text-white;
+    }
+    > code {
       @apply flex-1 bg-gray-900 p-4 overflow-x-auto rounded-md text-white;
     }
   }
