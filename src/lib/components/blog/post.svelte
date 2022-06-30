@@ -11,9 +11,9 @@
 	href={post.link ? post.link.trim() : `/blog/${post.slug}`}
 	target={post.link && post.link.startsWith('http') ? '_blank' : ''}
 	rel={post.link && post.link.startsWith('http') ? 'noreferrer noopener' : ''}
-	onClick={() => (active = true)}
+	on:click
 >
-	<div class="post-container" class:focused={active && !post.link} use:ripple>
+	<div class="post-container" class:focused={active && !post.link} use:ripple on:click={e => active = true}>
 		<div class="post-image" class:animate-pulse={!post.slug && !post.link}>
 			{#if post.image}
 				<Image src={post.image} alt={post.title} />
