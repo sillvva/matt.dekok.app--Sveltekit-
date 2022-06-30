@@ -59,7 +59,7 @@
 </svelte:head>
 
 <Article class="w-full xl:w-9/12 2xl:w-8/12">
-	{#if !data.full}
+	{#if !data.full && data.image}
 		<div class="aspect-video relative">
 			<Image src={data.image} alt="Cover" objectFit="cover" />
 		</div>

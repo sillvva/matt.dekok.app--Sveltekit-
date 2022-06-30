@@ -93,3 +93,13 @@ export const getCursorPosition = (canvas: HTMLElement, event: MouseEvent | Point
 	const y = event.clientY - rect.top;
 	return { x, y, rect };
 };
+
+export const isJSON = (text: string) => {
+	try {
+		JSON.parse(text);
+		return true;
+	}
+	catch(e) {
+		return false;
+	}
+}

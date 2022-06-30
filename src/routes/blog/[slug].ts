@@ -17,16 +17,23 @@ export const get: RequestHandler = async ({ params: { slug } }) => {
 
 	let meta: any;
 	let file: any;
+	const result = { data: '' };
+	
 	if (existsSync(postsPath)) {
 		const data = readFileSync(postsPath, 'utf8');
 		const posts: PostData[] = JSON.parse(data);
 		meta = posts.find((p) => p.slug == slug);
-	} else {
+	}
+	if (!meta && existsSync(filePath)) {
+		result.data = readFileSync(filePath, 'utf8');
+		const { data } = matter(result.data);
+		meta = data;
+	}
+	if (!meta) {
 		file = storage.file(`${firebaseConfig.blogStorage}/${slug}.md`);
 		[meta] = await file.getMetadata();
 	}
 
-	const result = { data: '' };
 	let write = false;
 	if (existsSync(filePath)) {
 		const stat = statSync(filePath);
@@ -40,13 +47,13 @@ export const get: RequestHandler = async ({ params: { slug } }) => {
 	} else write = true;
 
 	if (write) {
+		console.log('Revalidating...', slug);
 		if (!file) file = storage.file(`${firebaseConfig.blogStorage}/${slug}.md`);
 		await file.download({ destination: filePath });
 		result.data = readFileSync(filePath, 'utf8');
 	}
 
 	const { content, data } = matter(result.data);
-	console.log('Revalidating...', slug);
 	if (data.date) data.dateISO = new Date(data.date).toISOString();
 	if (data.updated) data.updatedISO = new Date(data.updated).toISOString();
 	for (const key in data) {

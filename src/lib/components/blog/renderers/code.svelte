@@ -1,21 +1,21 @@
 <script lang="ts">
+	import { isJSON } from '$lib/utils';
+
 	import CodePenEmbed from './codepen.svelte';
 	import ComponentEmbed from './component.svelte';
 
 	export let lang: string;
 	export let text: string;
 
-	$: language = lang.replace(/^([a-z]+).*$/i, '$1');
-	$: filename = lang.replace(/^[a-z]+ \[([^\]]+)\].*$/i, '$1');
-	$: codepenConfig = language === "codepen" ? JSON.parse(text) : {};
-	$: componentProps = language === "sveltecomponent" ? JSON.parse(text) : {};
+  $: language = lang.replace(/^([^ ]+).*$/i, '$1');
+  $: filename = lang.replace(/^[^ ]+ \[([^\]]+)\].*$/i, '$1');
+  $: props = isJSON(text) ? JSON.parse(text) : {};
 </script>
 
 {#if language === "codepen"}
-	<CodePenEmbed {...codepenConfig} />
+	<CodePenEmbed {...props} />
 {:else if language === "sveltecomponent"}
-	{#if componentProps.description}<p>{componentProps.description}</p>{/if}
-	<ComponentEmbed {...componentProps} />
+	<ComponentEmbed {...props} />
 {:else}
 <pre class={language}>
 	{#if filename}<span>{filename}</span>{/if}
