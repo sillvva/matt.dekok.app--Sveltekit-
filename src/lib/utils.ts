@@ -32,6 +32,15 @@ export const slug = (str: string) => {
 	return str.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 };
 
+const timeouts = new Map<string | number, number>();
+export const wait = (callback: TimerHandler, id: string | number, ms?: number, ...args: any[]) => {
+	if (!callback) throw new Error("'callback' not defined");
+	if (!id) throw new Error("'id' not defined");
+	if (!ms) ms = 100;
+	if (timeouts.get(id)) clearTimeout(timeouts.get(id));
+	timeouts.set(id, setTimeout(callback, ms, ...args));
+};
+
 export const checkOrigin = (origin: string) => {
 	return origin.match(/prerender/)
 		? vercelUrl
@@ -76,4 +85,11 @@ export const metaTags = (pageProps: PageProps, origin: string, path: string, the
 		},
 		articleMeta: pageProps.articleMeta
 	};
+};
+
+export const getCursorPosition = (canvas: HTMLElement, event: MouseEvent | PointerEvent) => {
+	const rect = canvas.getBoundingClientRect();
+	const x = event.clientX - rect.left;
+	const y = event.clientY - rect.top;
+	return { x, y, rect };
 };

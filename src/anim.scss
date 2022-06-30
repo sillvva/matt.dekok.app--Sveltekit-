@@ -28,3 +28,29 @@
 		transform: scale(1);
 	}
 }
+
+.ripple {
+	overflow: hidden;
+	position: absolute;
+	inset: 0;
+	span {
+		position: absolute;
+		top: var(--y);
+		left: var(--x);
+		transform: translate(-50%, -50%);
+		width: 0;
+		height: 0;
+		border-radius: 100%;
+		background: var(--color);
+		animation-name: ripples;
+		animation-duration: var(--duration);
+		animation-timing-function: var(--easing);
+	}
+}
+@keyframes ripples {
+	to {
+		width: var(--diameter);
+		height: var(--diameter);
+		opacity: 0;
+	}
+}

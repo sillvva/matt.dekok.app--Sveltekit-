@@ -1,20 +1,20 @@
 <script lang="ts">
+	import { ripple } from '$lib/directives';
 	import Image from '$lib/components/common/image.svelte';
 	import type { PostData } from '$lib/types/blog';
-	import { conClasses } from '$lib/utils';
 
 	export let post: PostData;
 	let active = false;
 </script>
 
 <a
-	href={post.link ? post.link : `/blog/${post.slug}`}
-	target={post.link ? '_blank' : ''}
-	rel={post.link ? 'noreferrer noopener' : ''}
+	href={post.link ? post.link.trim() : `/blog/${post.slug}`}
+	target={post.link && post.link.startsWith('http') ? '_blank' : ''}
+	rel={post.link && post.link.startsWith('http') ? 'noreferrer noopener' : ''}
 	onClick={() => (active = true)}
 >
-	<div class={conClasses(['post-container', active && !post.link && 'focused'])}>
-		<div class={conClasses(['post-image', !post.slug && !post.link && 'animate-pulse'])}>
+	<div class="post-container" class:focused={active && !post.link} use:ripple>
+		<div class="post-image" class:animate-pulse={!post.slug && !post.link}>
 			{#if post.image}
 				<Image src={post.image} alt={post.title} />
 			{/if}
@@ -30,7 +30,7 @@
 						day: 'numeric'
 					})}
 				</p>
-				<p style="color: var(--text)">{post.description}</p>
+				<p style:color="var(--text)">{post.description}</p>
 			</div>
 		{:else}
 			<div class="p-3 w-full">
@@ -55,8 +55,8 @@
 	a {
 		@apply basis-full md:basis-6/12 xl:basis-4/12 p-1 md:p-3;
 		.post-container {
-			@apply flex h-full shadow-lg ring-1 rounded-lg ring-gray-900/5 overflow-hidden;
-			@apply bg-[color:var(--article)] transition-all duration-500 ease-linear;
+			@apply flex relative h-full shadow-lg ring-1 rounded-lg ring-gray-900/5 overflow-hidden;
+			@apply bg-[color:var(--article)] transition-all duration-500 ease-linear isolate;
 			@apply [--tw-shadow-color:var(--shadowColor)] [--tw-shadow:var(--tw-shadow-colored)];
 			&:hover {
 				@apply shadow-xl [--tw-shadow-color:var(--shadowHover)];

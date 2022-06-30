@@ -11,6 +11,10 @@ export const get: RequestHandler = async ({ params: { slug } }) => {
 	const postsPath = `${dirPath}/posts.json`;
 	const filePath = `${dirPath}/${slug}.md`;
 
+	if (slug.match(/\.[a-z]*$/)) return {
+		status: 200
+	};
+
 	let meta: any;
 	let file: any;
 	if (existsSync(postsPath)) {

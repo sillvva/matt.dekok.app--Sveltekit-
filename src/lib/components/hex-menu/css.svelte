@@ -37,24 +37,19 @@
 
 <div class={conClasses(['hex-wrapper', rotated && 'rotated', ...classes])}>
 	{#each menuRows as row, r}
-		<div class={conClasses(['hex-row', r % 2 === 1 && !rotated && 'shift'])}>
+		<div class="hex-row" class:shift={r % 2 === 1 && !rotated}>
 			{#each row as item}
 				{#if item.label}
 					<svelte:element
 						this={item.link ? 'a' : 'span'}
 						href={item.link}
-						class={conClasses([
-							'hex-item',
-							item.active && 'active',
-							rotated && 'rotated',
-							...itemClasses
-						])}
-						style={conClasses([
-							color && `--color: ${color};`,
-							hoverColor && `--hover-color: ${hoverColor};`,
-							activeColor && `--active-color: ${activeColor};`,
-							textColor && `--text-color: ${textColor};`
-						])}
+						class={conClasses(['hex-item', ...itemClasses])}
+						class:active={item.active}
+						class:rotated
+						style:--item-color={color}
+						style:--hover-color={hoverColor}
+						style:--active-color={activeColor}
+						style:--text-color={textColor}
 					>
 						<span class="label">{item.label}</span>
 						<div class="face backface face1" />
@@ -65,7 +60,7 @@
 						<div class="face face3" />
 					</svelte:element>
 				{:else}
-					<span class={conClasses(['hex-item', rotated && 'rotated', 'empty'])} />
+					<span class="hex-item empty" class:rotated />
 				{/if}
 			{/each}
 		</div>

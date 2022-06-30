@@ -22,7 +22,7 @@
 	$: loading = lazy ? 'lazy' : 'eager';
 </script>
 
-<span class={containerClass} style={`--fit: ${objectFit}`}>
+<span class={containerClass} style:--fit={objectFit}>
 	<img {id} {src} {srcset} {title} {alt} {loading} class={className} />
 </span>
 
