@@ -152,7 +152,7 @@
 	}
 
 	header {
-		@apply flex flex-col items-center transition-[backdrop-filter] duration-500;
+		@apply flex flex-col items-center transition-all duration-500;
 		@apply fixed top-0 left-0 right-0 z-[3];
 		#app[data-scroll]:not([data-scroll='0']) & {
 			@apply backdrop-blur-lg bg-[color:rgba(var(--background),var(--headerOpacity))];
