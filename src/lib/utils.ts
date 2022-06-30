@@ -1,8 +1,8 @@
 import type { PageProps } from './store';
 import { vercelUrl, env } from '$lib/constants';
 
-export type Theme = 'dark' | 'light' | 'blue';
-export const themes: Theme[] = ['dark', 'light', 'blue'];
+export const themes = ['dark', 'light', 'blue'] as const;
+export type Theme = typeof themes[number];
 
 // The debounce function receives our function as a parameter
 export const debounce = (fn: (...args: any[]) => void) => {

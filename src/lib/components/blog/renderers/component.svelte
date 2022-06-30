@@ -14,11 +14,20 @@
 	});
 </script>
 
-{#if description}
-	<p>{description}</p>
-{/if}
-{#if LoadedComponent}
-	<div class="component-container">
-		<svelte:component this={LoadedComponent} {...props} on:click={e => e.preventDefault()} />
-	</div>
-{/if}
+<div class="component-container">
+	{#if description}
+		<p>{description}</p>
+	{/if}
+	{#if LoadedComponent}
+		<svelte:component this={LoadedComponent} {...props} on:click={(e) => e.preventDefault()} />
+	{/if}
+</div>
+
+<style lang="scss">
+	.component-container {
+		@apply grid text-sm mb-4 pt-2 pb-0 md:p-2 bg-gray-800 rounded-lg;
+		p {
+			@apply m-3 md:mb-0 text-white;
+		}
+	}
+</style>

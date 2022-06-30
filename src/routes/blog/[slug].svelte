@@ -14,6 +14,7 @@
 	import paragraph from '$lib/components/blog/renderers/paragraph.svelte';
 	import codespan from '$lib/components/blog/renderers/codespan.svelte';
 	import image from '$lib/components/blog/renderers/image.svelte';
+	import html from '$lib/components/blog/renderers/html.svelte';
 
 	export let data: PostProps;
 	export let content: string;
@@ -35,7 +36,8 @@
 		heading,
 		paragraph,
 		codespan,
-		image
+		image,
+		html
 	};
 
 	$: metaProps = metaTags($pageProps, $page.url.origin, $page.url.pathname);
