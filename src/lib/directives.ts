@@ -7,7 +7,7 @@ export function ripple(el: HTMLElement, params?: RippleParams) {
 	const ripples: HTMLElement[] = [];
 
 	const createMouseHandler = (params?: RippleParams) => {
-		const enabled = params?.enabled || defaultRippleParams.enabled;
+		const enabled = params?.enabled ?? defaultRippleParams.enabled;
 		const duration = params?.duration || defaultRippleParams.duration;
 		const color = params?.color || defaultRippleParams.color;
 		const easing = params?.easing || defaultRippleParams.easing;
