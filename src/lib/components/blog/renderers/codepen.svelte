@@ -38,6 +38,13 @@
 		if (_isMobile) return;
 		if (!browser) return;
 
+		if (window.innerWidth < 768) {
+			_loadState = LOAD_STATE.ERROR;
+			_error = 'Codepen embeds are not supported on mobile devices.';
+			hash = "";
+			return;
+		}
+
 		const codepenScript = document.getElementById(scriptId);
 		if (codepenScript) return;
 
@@ -90,3 +97,9 @@
 		<a href="https://codepen.io">CodePen</a>.
 	</div>
 </div>
+
+<style lang="scss">
+	.codepen-container {
+		@apply p-4 pt-2 md:p-0;
+	}
+</style>

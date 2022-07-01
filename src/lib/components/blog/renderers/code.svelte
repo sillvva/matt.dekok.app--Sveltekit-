@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { isJSON } from '$lib/utils';
 
-	import CodePenEmbed from './codepen.svelte';
 	import ComponentEmbed from './component.svelte';
 
 	export let lang: string;
@@ -12,9 +11,7 @@
 	$: props = isJSON(text) ? JSON.parse(text) : {};
 </script>
 
-{#if language === 'codepen'}
-	<CodePenEmbed {...props} />
-{:else if language === 'sveltecomponent'}
+{#if language === 'sveltecomponent'}
 	<ComponentEmbed {...props} />
 {:else}
 	<pre class={language}>
