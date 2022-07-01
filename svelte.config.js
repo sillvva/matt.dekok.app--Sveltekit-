@@ -18,6 +18,9 @@ const config = {
 			plugins: [imagetools()],
 			define: {
 				'process.env': process.env
+			},
+			optimizeDeps: {
+				include: ['highlight.js', 'highlight.js/lib/core']
 			}
 		}
 	}
