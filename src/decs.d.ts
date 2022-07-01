@@ -1,0 +1,10 @@
+declare module 'svelte-highlight/styles/atom-one-dark';
+declare module 'svelte-highlight/languages/typescript';
+declare module 'svelte-highlight/languages/javascript';
+declare module 'svelte-highlight/languages/css';
+declare module 'svelte-highlight/languages/scss';
+declare module 'svelte-highlight/languages/html';
+declare module 'svelte-highlight/languages/svelte';
+declare module 'svelte-highlight/languages/markdown';
+declare module 'svelte-highlight/languages/json';
+declare module 'svelte-highlight/languages/yaml';
