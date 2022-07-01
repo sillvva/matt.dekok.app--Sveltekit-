@@ -7,8 +7,10 @@
 	export let lang: string;
 	export let text: string;
 
-	$: language = lang.replace(/^([^ ]+).*$/i, '$1');
-	$: filename = lang.replace(/^[^ ]+ \[([^\]]+)\].*$/i, '$1');
+	$: language = lang.replace(/^ *([^ ]+).*/, '$1');
+	$: filename = lang
+		.replace(new RegExp(`^ *${language} ?`), '')
+		.replace(/^\[([^\]]+)\].*$/i, '$1');
 	$: props = isJSON(text) ? JSON.parse(text) : {};
 
 	let CustomEmbed: any;
