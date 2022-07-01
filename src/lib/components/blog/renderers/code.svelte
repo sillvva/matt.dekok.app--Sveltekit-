@@ -1,8 +1,6 @@
 <script lang="ts">
 	import { isJSON } from '$lib/utils';
-
-	import CodePenEmbed from './codepen.svelte';
-	import ComponentEmbed from './component.svelte';
+	import { onMount } from 'svelte';
 
 	export let lang: string;
 	export let text: string;
@@ -10,12 +8,21 @@
 	$: language = lang.replace(/^([^ ]+).*$/i, '$1');
 	$: filename = lang.replace(/^[^ ]+ \[([^\]]+)\].*$/i, '$1');
 	$: props = isJSON(text) ? JSON.parse(text) : {};
+
+	let CustomEmbed: any;
+
+	onMount(async () => {
+		if (language == "codepen") {
+			CustomEmbed = await import('$lib/components/blog/renderers/codepen.svelte').then((c) => c.default);
+		}
+		if (language == "sveltecomponent") {
+			CustomEmbed = await import('$lib/components/blog/renderers/component.svelte').then((c) => c.default);
+		}
+	});
 </script>
 
-{#if language === 'codepen'}
-	<CodePenEmbed {...props} />
-{:else if language === 'sveltecomponent'}
-	<ComponentEmbed {...props} />
+{#if language === 'codepen' || language === 'sveltecomponent'}
+	<svelte:component this={CustomEmbed} {...props} />
 {:else}
 	<pre class={language}>
 	{#if filename}<span class="filename">{filename}</span>{/if}
