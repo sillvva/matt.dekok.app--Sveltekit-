@@ -12,7 +12,7 @@ export function ripple(el: HTMLElement, params?: RippleParams) {
 		const color = params?.color || defaultRippleParams.color;
 		const easing = params?.easing || defaultRippleParams.easing;
 
-		return (e: any) => {
+		return (e: MouseEvent | PointerEvent) => {
 			if (!enabled) return;
 			const ripple = document.createElement('div');
 			const span = document.createElement('span');
