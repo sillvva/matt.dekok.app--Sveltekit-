@@ -49,29 +49,37 @@
 {#if language === 'codepen' || language === 'sveltecomponent'}
 	<svelte:component this={CustomEmbed} {...props} />
 {:else if language == 'svelte' || language == 'html' || language == 'env'}
-	<HighlightSvelte code={text} />
+	<div class="code">
+		{#if filename}<span class="filename">{filename}</span>{/if}
+		<HighlightSvelte code={text} />
+	</div>
 {:else if highlight}
-	<Highlight language={highlight} code={text} />
+	<div class="code">
+		{#if filename}<span class="filename">{filename}</span>{/if}
+		<Highlight language={highlight} code={text} />
+	</div>
 {:else}
 	<pre class={language}>
 		{#if filename}<span class="filename">{filename}</span>{/if}
-		<code class={filename ? 'mt-2' : ''}>
+		<code>
 			{text.trim()}
 		</code>
 	</pre>
 {/if}
 
 <style lang="scss">
-	pre, :global(pre[data-language]) {
-		@apply flex flex-col text-sm mb-4 pt-2 md:p-2 pb-0 bg-gray-800 rounded-lg;
+	pre,
+	.code {
+		@apply flex flex-col gap-2 text-sm mb-4 pt-2 md:p-2 pb-0 bg-gray-800 rounded-lg;
 		> span.filename {
 			@apply self-end max-w-fit top-4 right-4 p-1 px-2 mr-2 md:mr-0 rounded-sm bg-gray-700 text-white;
 		}
-		> :global(code) {
+		:global(code) {
 			@apply flex-1 bg-gray-900 p-4 overflow-x-auto rounded-md text-white;
 			tab-size: 0 !important;
 			:global(*) {
-				font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+				font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
+					'Courier New', monospace;
 			}
 		}
 	}
