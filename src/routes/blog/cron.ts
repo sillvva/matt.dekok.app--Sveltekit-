@@ -2,7 +2,6 @@
 import type { RequestHandler } from './__types/cron';
 import { fetchPosts } from '$lib/supabase/blog';
 import { blogPostsPerPage } from '$lib/constants';
-// import { env } from '$lib/constants';
 
 export const post: RequestHandler = async ({ url }) => {
 	try {
