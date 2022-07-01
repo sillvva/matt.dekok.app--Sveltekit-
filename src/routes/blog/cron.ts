@@ -1,17 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { RequestHandler } from './__types/cron';
-import { fetchPosts } from '$lib/firebase/blog';
-import { env } from '$lib/constants';
+import { fetchPosts } from '$lib/supabase/blog';
+import { blogPostsPerPage } from '$lib/constants';
+// import { env } from '$lib/constants';
 
-export const post: RequestHandler = async ({ request, url }) => {
+export const post: RequestHandler = async ({ url }) => {
 	try {
-		const authorization = request.headers.get('authorization');
-		if (authorization !== `Bearer ${env.API_SECRET_KEY}`)
-			throw new Error(`Unauthorized: ${authorization}`);
-
 		const getPosts = !!url.searchParams.get('posts');
+		const page = parseInt(url.searchParams.get('page') || "1");
+		const perpage = parseInt(url.searchParams.get('limit') || blogPostsPerPage.toString());
+		const query = url.searchParams.get('s') || "";
 
-		const result = await fetchPosts(getPosts);
+		const result = await fetchPosts(getPosts, page, perpage, query);
 		const added = result.added || [];
 		const updated = result.updated || [];
 		const revalidations = [...added, ...updated];

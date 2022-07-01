@@ -1,50 +1,41 @@
 import type { RequestHandler } from './__types/experience';
-import { firestore } from '$lib/firebase/connection';
+import { supabase } from '$lib/supabase/connection';
 
 export type ExperienceItem = {
-  name?: string;
-  nameLink?: string;
-  image: string;
-  h4: string;
-  h4Link?: string;
-  h5: string;
-  h5Link?: string;
+	name?: string;
+	nameLink?: string;
+	image: string;
+	h4: string;
+	h4Link?: string;
+	h5: string;
+	h5Link?: string;
+	created_at: string;
 };
 
-export type ExperienceArrSection = {
-  name: string;
-  experience: ExperienceItem[];
-};
-
-type ExperienceSection = {
-  [name: string]: ExperienceItem;
-};
-
-type ExperienceSections = {
-  [name: string]: ExperienceSection;
+export type ExperienceSection = {
+	name: string;
+	experience: ExperienceItem[];
+	sort: number;
 };
 
 export const get: RequestHandler = async () => {
-	const doc = firestore.doc('website/experience');
-	const document = await doc.get();
-	const experience: ExperienceSections = document.data() || {};
+	const { data } = await supabase
+		.from('experience_categories')
+		.select('name, experience ( name, nameLink, image, h4, h4Link, h5, h5Link, created_at ), sort');
+	const experience: ExperienceSection[] =
+		(<ExperienceSection[]>data || [])
+			.sort((a, b) => (a.sort > b.sort ? 1 : -1))
+			.map((section) => ({
+				...section,
+				experience: section.experience.sort((a, b) => (a.created_at > b.created_at ? -1 : 1))
+			})) || [];
 
 	return {
 		body: {
-			experience: Object.entries(experience)
-				.sort(([nameA], [nameB]) => (nameA > nameB ? 1 : -1))
-				.map(([sectionName, section]) => ({
-					name: sectionName.replace(/^\d+\. /, ''),
-					experience: Object.entries(section)
-						.sort(([nameA], [nameB]) => (nameA > nameB ? 1 : -1))
-						.map(([expName, exp]) => ({
-							name: expName.replace(/^\d+\. /, ''),
-							...exp
-						}))
-				}))
+			experience
 		},
-    headers: {
-      'Cache-Control': 'public, max-age=86400',
-    }
+		headers: {
+			'Cache-Control': 'public, max-age=86400'
+		}
 	};
 };
