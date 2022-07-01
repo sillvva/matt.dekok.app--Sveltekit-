@@ -37,6 +37,8 @@
 			highlight = await import('svelte-highlight/languages/yaml').then((c) => c.default);
 		else if (language == 'markdown')
 			highlight = await import('svelte-highlight/languages/markdown').then((c) => c.default);
+		else if (language == 'bash')
+			highlight = await import('svelte-highlight/languages/bash').then((c) => c.default);
 	});
 </script>
 
@@ -46,7 +48,7 @@
 
 {#if language === 'codepen' || language === 'sveltecomponent'}
 	<svelte:component this={CustomEmbed} {...props} />
-{:else if language == 'svelte' || language == 'html'}
+{:else if language == 'svelte' || language == 'html' || language == 'env'}
 	<HighlightSvelte code={text} />
 {:else if highlight}
 	<Highlight language={highlight} code={text} />
