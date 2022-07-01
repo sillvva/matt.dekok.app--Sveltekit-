@@ -2,17 +2,14 @@
 	import { onMount } from 'svelte';
 
 	export let component: string;
-	export let description: string = "";
-	export let props: any = {};
+	export let description: string;
+	export let props: any;
 
 	let LoadedComponent: any;
 
 	onMount(async () => {
 		if (component == 'post') {
 			LoadedComponent = await import('$lib/components/blog/post.svelte').then((c) => c.default);
-		}
-		if (component == 'codepen') {
-			LoadedComponent = await import('$lib/components/blog/renderers/codepen.svelte').then((c) => c.default);
 		}
 	});
 </script>
