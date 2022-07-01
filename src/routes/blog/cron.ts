@@ -10,8 +10,6 @@ export const post: RequestHandler = async ({ url }) => {
 		const perpage = parseInt(url.searchParams.get('limit') || blogPostsPerPage.toString());
 		const query = url.searchParams.get('s') || "";
 
-		if (url.searchParams.get('test')) await testLog();
-
 		const result = await fetchPosts(getPosts, page, perpage, query);
 		const added = result.added || [];
 		const updated = result.updated || [];
