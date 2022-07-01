@@ -4,6 +4,11 @@ import { writeFileSync } from 'fs';
 import { supabase, getContentDir } from './connection';
 import type { PostData } from '../types/blog';
 
+export async function testLog() {
+  const result = await supabase.from('test_log').upsert({});
+  return result.data;
+}
+
 export async function fetchPosts(
 	getPosts?: boolean,
 	page?: number,

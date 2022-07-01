@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { RequestHandler } from './__types/cron';
-import { fetchPosts } from '$lib/supabase/blog';
+import { fetchPosts, testLog } from '$lib/supabase/blog';
 import { blogPostsPerPage } from '$lib/constants';
 
 export const post: RequestHandler = async ({ url }) => {
@@ -9,6 +9,8 @@ export const post: RequestHandler = async ({ url }) => {
 		const page = parseInt(url.searchParams.get('page') || "1");
 		const perpage = parseInt(url.searchParams.get('limit') || blogPostsPerPage.toString());
 		const query = url.searchParams.get('s') || "";
+
+		if (url.searchParams.get('test')) await testLog();
 
 		const result = await fetchPosts(getPosts, page, perpage, query);
 		const added = result.added || [];
