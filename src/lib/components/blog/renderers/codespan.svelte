@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 
+	let codespan: HTMLElement;
+
 	onMount(() => {
-		document.querySelectorAll('.codespan').forEach((el) => {
-			el.innerHTML = el.innerHTML.replace(/^`*([^`]+)`*$/, '$1');
-		});
+		codespan.innerHTML = codespan.innerHTML.replace(/^`*([^`]+)`*$/, '$1');
 	});
 </script>
 
-<code class="codespan"><slot /></code>
+<code bind:this={codespan}><slot /></code>
 
 <style lang="scss">
 	code {
