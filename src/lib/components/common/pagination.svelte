@@ -1,5 +1,8 @@
 <script lang="ts">
+import { goto } from '$app/navigation';
+
 	import { page as p } from '$app/stores';
+	import { pathname } from '$lib/store';
 
 	export let page: number;
 	export let pages: number;
@@ -21,10 +24,12 @@
 		if (pages - inMax >= 2) pagination.splice(-1, 0, null);
 	}
 
-	const pageHandler = (page: number) => {
+	const pageHandler = (newPage: number) => {
 		const query = $p.url.searchParams;
-		if (page === 1) query.delete('page');
-		else query.set('page', page.toString());
+		if (newPage === 1) query.delete('page');
+		else query.set('page', newPage.toString());
+		$pathname = `/blog${query.toString() ? `?${query.toString()}` : ''}`;
+		goto($pathname);
 	};
 </script>
 
@@ -35,7 +40,7 @@
 				{p}
 			</span>
 		{:else if p}
-			<button class="page" on:click={() => pageHandler(p)}>
+			<button on:click={() => pageHandler(p)} class="page">
 				{p}
 			</button>
 		{:else}

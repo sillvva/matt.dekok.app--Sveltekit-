@@ -1,5 +1,5 @@
 <script lang="ts">
-	// import { onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import { page as p } from '$app/stores';
 	import { browser } from '$app/env';
 	import { blogPostsPerPage } from '$lib/constants';
@@ -23,19 +23,19 @@
 	export let posts: PostData[] = loaders;
 	export let error: Error = { name: '', message: '' };
 
-	// onMount(async () => {
-	// 	let request: any = await fetch(`/blog/posts${$p.url.search}`);
-	// 	const data = await request?.json();
-	// 	if (data.error) error = data.error;
-	// 	else {
-	// 		num = data.num;
-	// 		pages = data.pages;
-	// 		posts = data.posts;
-	if (num === 0) {
-		error = { name: '', message: 'No posts found.' };
-	}
-	// 	}
-	// });
+	onMount(async () => {
+		let request: any = await fetch(`/blog/posts${$p.url.search}`);
+		const data = await request?.json();
+		if (data.error) error = data.error;
+		else {
+			num = data.num;
+			pages = data.pages;
+			posts = data.posts;
+			if (num === 0) {
+				error = { name: '', message: 'No posts found.' };
+			}
+		}
+	});
 
 	$pageProps = {
 		title: 'Blog',

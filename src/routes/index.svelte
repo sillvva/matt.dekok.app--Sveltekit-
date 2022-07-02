@@ -1,7 +1,3 @@
-<script context="module">
-	export const prerender = true;
-</script>
-
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { pageProps } from '$lib/store';

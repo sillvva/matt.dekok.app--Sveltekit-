@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { existsSync, readFileSync } from 'fs';
-import type { RequestHandler } from './__types/index';
+import type { RequestHandler } from './__types/posts';
 import type { PostData } from '$lib/types/blog';
 import { fetchPosts } from '$lib/supabase/blog';
 import { blogPostsPerPage } from '$lib/constants';

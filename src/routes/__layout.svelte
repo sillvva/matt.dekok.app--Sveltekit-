@@ -3,7 +3,7 @@
 	export const load: Load = async ({ url }) => {
 		return {
 			props: {
-				path: `${url.pathname}`
+				path: `${url.pathname}${url.search}`,
 			}
 		};
 	};
@@ -16,7 +16,7 @@
 	import { browser } from '$app/env';
 	import { mdiBrightness6, mdiMenu, mdiChevronLeft } from '@mdi/js';
 	import type { Item } from '$lib/types/hex-menu';
-	import { pageProps, drawer } from '$lib/store';
+	import { pageProps, drawer, pathname } from '$lib/store';
 	import { themes, metaTags } from '$lib/utils';
 	import { transitionDuration } from '$lib/constants';
 	import PageBody from '$lib/components/page/body.svelte';
@@ -28,6 +28,8 @@
 	import '../app.scss';
 	import '../misc.scss';
 	import '../anim.scss';
+
+	export let path: string;
 
 	let theme = $session.theme;
 	const toggleTheme = (newtheme?: typeof theme) => {
@@ -55,7 +57,6 @@
 	});
 
 	let scroll = 0;
-	export let path: string;
 
 	const menuItems: Item[] = [
 		{ link: '/', label: 'Intro' },
@@ -68,6 +69,7 @@
 
 	$: metaProps = metaTags($pageProps, $page.url.origin, theme);
 	$: smallTitle = ($pageProps.title || '').length > 12 ? 'small-title' : '';
+	$: $pathname = path;
 </script>
 
 <svelte:window bind:scrollY={scroll} />
@@ -134,7 +136,7 @@
 			{/if}
 		</div>
 	</header>
-	<PageBody key={path} class={$pageProps.bodyClass} {loaded}>
+	<PageBody key={$pathname} class={$pageProps.bodyClass} {loaded}>
 		<slot />
 	</PageBody>
 	{#if $drawer}

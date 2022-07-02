@@ -9,6 +9,7 @@ export type PageProps = {
 	articleMeta?: object;
 	image?: string;
 };
+export const pathname = writable('');
 export const pageProps = writable<PageProps>({});
 
 export const drawer = writable(false);
