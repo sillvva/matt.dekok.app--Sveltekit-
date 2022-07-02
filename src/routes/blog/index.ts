@@ -4,7 +4,7 @@ import type { RequestHandler } from './__types/index';
 import type { PostData } from '$lib/types/blog';
 import { fetchPosts } from '$lib/supabase/blog';
 import { blogPostsPerPage } from '$lib/constants';
-import { getContentDir } from '$lib/supabase/connection';
+import { getContentDir, supabase } from '$lib/supabase/connection';
 
 type PostFetchOptions = {
 	page?: number;
@@ -14,17 +14,24 @@ type PostFetchOptions = {
 };
 
 export const getPosts = async (options?: PostFetchOptions) => {
-	const { page = 1, query = '', limit = blogPostsPerPage, refresh = 0 } = options || {};
+	const { page = 1, query = '', limit = blogPostsPerPage } = options || {};
 	const jsonFile = `${getContentDir()}/blog.json`;
+	
+	const { data: stgData } = await supabase.storage.from('blog').list();
+	const contentList = (stgData || []).filter((post) => post.name.endsWith('.md'));
 
 	let posts: PostData[] = [];
 	let num = 0;
-	if (refresh || process.env.NODE_ENV === "development") await fetchPosts();
 	if (existsSync(jsonFile)) {
 		const metaJson = readFileSync(jsonFile, { encoding: 'utf-8' });
 		posts = JSON.parse(metaJson);
 		num = posts.length;
-	} else {
+	}
+	if (num !== contentList.length) {
+		await fetchPosts();
+		num = 0;
+	}
+	if (!num) {
 		const result = await fetchPosts(true, page, limit, query);
 		posts = result.posts;
 		num = result.num;

@@ -8,19 +8,23 @@ export async function fetchPosts(
 	getPosts?: boolean,
 	page?: number,
 	perpage?: number,
-	query?: string,
-	refresh?: number
-): Promise<any> {
+	query?: string
+) {
+	let changes = 0;
+	let added = 0;
+	const upserted: string[] = [];
+	const removed: string[] = [];
+	const errors: { slug: string; error: any }[] = [];
+
 	const { data: stgData } = await supabase.storage.from('blog').list();
 	const contentList = (stgData || []).filter((post) => post.name.endsWith('.md'));
 	let num = contentList.length;
 
 	let result: { data: PostData[] | null; count: number | null };
-	if (query && !refresh) {
-    result = await supabase.rpc('search_posts', { keyword: query });
-    num = (result.data || []).length;
-  }
-	else if (page && perpage && !refresh)
+	if (query) {
+		result = await supabase.rpc('search_posts', { keyword: query });
+		num = (result.data || []).length;
+	} else if (page && perpage)
 		result = await supabase
 			.from('blog')
 			.select('*')
@@ -29,12 +33,7 @@ export async function fetchPosts(
 
 	const posts = result.data || [];
 
-	if (getPosts && page && perpage && !refresh) return { posts, num };
-
-	let changes = 0;
-	let added = 0;
-	const upserted: string[] = [];
-	const removed: string[] = [];
+	if (query || (page && perpage)) return { changes, upserted, removed, errors, posts, num };
 
 	for (const file of contentList) {
 		const slug = file.name.slice(0, file.name.length - 3);
@@ -79,8 +78,6 @@ export async function fetchPosts(
 	});
 
 	writeFileSync(`${getContentDir()}/blog.json`, JSON.stringify(posts));
-
-	const errors: { slug: string; error: any }[] = [];
 
 	if (changes) {
 		console.log('Storing metadata to Firestore');
