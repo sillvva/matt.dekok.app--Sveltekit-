@@ -19,12 +19,13 @@ export const getPosts = async (options?: PostFetchOptions) => {
 
 	let posts: PostData[] = [];
 	let num = 0;
-	if (existsSync(jsonFile) && !refresh) {
+	if (refresh || process.env.NODE_ENV === "development") await fetchPosts();
+	if (existsSync(jsonFile)) {
 		const metaJson = readFileSync(jsonFile, { encoding: 'utf-8' });
 		posts = JSON.parse(metaJson);
 		num = posts.length;
 	} else {
-		const result = await fetchPosts(true, page, limit, query, refresh);
+		const result = await fetchPosts(true, page, limit, query);
 		posts = result.posts;
 		num = result.num;
 	}
