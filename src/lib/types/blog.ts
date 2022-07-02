@@ -13,7 +13,8 @@ export type PostProps = {
 };
 
 export type PostData = {
-  timeCreated: string;
-  path: string;
+  name: string;
+  created_at: string;
+  updated_at: string;
   match: number;
 } & PostProps;

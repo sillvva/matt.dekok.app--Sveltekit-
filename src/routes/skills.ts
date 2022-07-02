@@ -1,41 +1,30 @@
 import type { RequestHandler } from './__types/skills';
-import { firestore } from '$lib/firebase/connection';
+import { supabase } from '$lib/supabase/connection';
 import type { Rating } from '$lib/types/rating';
 
-type Skill = {
-  [name: string]: number;
-};
-
-type SkillSection = {
-  [section: string]: Skill;
-};
-
-export type SkillPropsSection = {
-  name: string;
-  skills: Rating[];
+export type SkillSection = {
+	name: string;
+	skills: Rating[];
+	sort: number;
 };
 
 export const get: RequestHandler = async () => {
-	const doc = firestore.doc("website/skills");
-  const document = await doc.get();
-  const sections: SkillSection = document.data() || {};
+	const { data } = await supabase
+		.from('skill_categories')
+		.select('name, skills ( name, rating ), sort');
+	let skills: SkillSection[] =
+		data?.sort((a: SkillSection, b: SkillSection) => (a.sort > b.sort ? 1 : -1)) || [];
+	skills = skills.map((section) => ({
+		...section,
+		skills: section.skills.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1))
+	}));
 
-  return {
-    body: {
-      skills: Object.entries(sections)
-        .sort((a, b) => (a[0] > b[0] ? 1 : -1))
-        .map(([section, skills]) => ({
-          name: section.replace(/^\d+\. /, ""),
-          skills: Object.entries(skills)
-            .map(([skill, rating]) => ({
-              name: skill,
-              rating: rating
-            }))
-            .sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1))
-        }))
-    },
-    headers: {
-      'Cache-Control': 'public, max-age=86400',
-    }
+	return {
+		body: {
+			skills
+		},
+		headers: {
+			'Cache-Control': 'public, max-age=86400'
+		}
 	};
 };

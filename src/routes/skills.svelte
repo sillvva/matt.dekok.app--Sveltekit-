@@ -4,7 +4,7 @@
 	import Article from '$lib/components/page/article.svelte';
 	import Section from '$lib/components/rating/section.svelte';
 	import Item from '$lib/components/rating/item.svelte';
-	import type { SkillPropsSection } from './skills';
+	import type { SkillSection } from './skills';
 	import { metaTags } from '$lib/utils';
 
 	$pageProps = {
@@ -13,7 +13,7 @@
 		menu: true
 	};
 
-	export let skills: SkillPropsSection[] = [];
+	export let skills: SkillSection[] = [];
 	const cols = {
 		sm: 12,
 		md: 6,
