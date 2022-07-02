@@ -1,8 +1,5 @@
 <script lang="ts">
-import { goto } from '$app/navigation';
-
 	import { page as p } from '$app/stores';
-	import { pathname } from '$lib/store';
 
 	export let page: number;
 	export let pages: number;
@@ -14,7 +11,7 @@ import { goto } from '$app/navigation';
 		const inserts =
 			pages <= 2
 				? []
-				: inMax - Math.min(page, inMin) >= 2
+				: inMax - Math.min(page, inMin) + 1 >= 2
 				? Array(inMax - inMin + 1)
 						.fill(null)
 						.map((x, i) => i + inMin)
@@ -25,11 +22,11 @@ import { goto } from '$app/navigation';
 	}
 
 	const pageHandler = (newPage: number) => {
-		const query = $p.url.searchParams;
+		const query = new URLSearchParams($p.url.search);
 		if (newPage === 1) query.delete('page');
 		else query.set('page', newPage.toString());
-		$pathname = `/blog${query.toString() ? `?${query.toString()}` : ''}`;
-		goto($pathname);
+		const q = query.toString();
+		return `/blog${q ? `?${q}` : ''}`;
 	};
 </script>
 
@@ -40,9 +37,9 @@ import { goto } from '$app/navigation';
 				{p}
 			</span>
 		{:else if p}
-			<button on:click={() => pageHandler(p)} class="page">
+			<a href={pageHandler(p)} class="page">
 				{p}
-			</button>
+			</a>
 		{:else}
 			<span class="separator"> | </span>
 		{/if}

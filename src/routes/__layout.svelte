@@ -16,7 +16,7 @@
 	import { browser } from '$app/env';
 	import { mdiBrightness6, mdiMenu, mdiChevronLeft } from '@mdi/js';
 	import type { Item } from '$lib/types/hex-menu';
-	import { pageProps, drawer, pathname } from '$lib/store';
+	import { pageProps, drawer } from '$lib/store';
 	import { themes, metaTags } from '$lib/utils';
 	import { transitionDuration } from '$lib/constants';
 	import PageBody from '$lib/components/page/body.svelte';
@@ -69,7 +69,6 @@
 
 	$: metaProps = metaTags($pageProps, $page.url.origin, theme);
 	$: smallTitle = ($pageProps.title || '').length > 12 ? 'small-title' : '';
-	$: $pathname = path;
 </script>
 
 <svelte:window bind:scrollY={scroll} />
@@ -136,7 +135,7 @@
 			{/if}
 		</div>
 	</header>
-	<PageBody key={$pathname} class={$pageProps.bodyClass} {loaded}>
+	<PageBody key={path} class={$pageProps.bodyClass} {loaded}>
 		<slot />
 	</PageBody>
 	{#if $drawer}
