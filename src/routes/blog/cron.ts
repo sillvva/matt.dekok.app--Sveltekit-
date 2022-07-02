@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { RequestHandler } from './__types/cron';
-import { fetchPosts, testLog } from '$lib/supabase/blog';
+import { fetchPosts } from '$lib/supabase/blog';
 import { blogPostsPerPage } from '$lib/constants';
 
 export const post: RequestHandler = async ({ url }) => {
