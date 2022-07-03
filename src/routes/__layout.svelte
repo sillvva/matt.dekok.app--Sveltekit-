@@ -104,7 +104,7 @@
 					<Icon path={mdiChevronLeft} />
 				</Fab>
 			{:else}
-				<Fab ariaLabel="Open Drawer" class={`menu-fab`} on:click={() => ($drawer = !$drawer)}>
+				<Fab ariaLabel="Open Drawer" class={`menu-fab ${$page.url.pathname == '/' ? 'drawer-fab' : ''}`} on:click={() => ($drawer = !$drawer)}>
 					<Icon path={mdiMenu} />
 				</Fab>
 			{/if}

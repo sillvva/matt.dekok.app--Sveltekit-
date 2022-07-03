@@ -76,9 +76,11 @@
 <style lang="scss">
 	pre,
 	.code {
-		@apply flex flex-col gap-2 text-sm mb-4 pt-2 md:p-2 pb-0 bg-[color:var(--codePre)] rounded-lg transition-[background-color] duration-500;
+		@apply flex flex-col gap-2 text-sm mb-4 pt-2 md:p-2 pb-0 rounded-lg;
+		@apply bg-[color:var(--codePre)] transition-[background-color] duration-500;
 		> span.filename {
-			@apply self-end max-w-fit top-4 right-4 p-1 px-2 mr-2 md:mr-0 rounded-sm bg-[color:var(--codeFile)] transition-[background-color] duration-500;
+			@apply self-end max-w-[calc(100%-1rem)] md:max-w-fit overflow-hidden top-4 right-4 p-1 px-2 mx-2 md:mx-0 rounded-sm;
+			@apply bg-[color:var(--codeFile)] transition-[background-color] duration-500;
 		}
 		:global(code) {
 			@apply flex-1 bg-[color:var(--code)] p-4 overflow-x-auto rounded-md transition-[background-color] duration-500;

@@ -19,6 +19,9 @@
 		&.nav-fab {
 			@apply my-4 xs:my-2;
 		}
+		&.drawer-fab {
+			@apply hidden;
+		}
 		&:hover {
 			@apply bg-[color:var(--link)] text-[color:var(--menuText)];
 		}
