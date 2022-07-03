@@ -52,7 +52,7 @@
 	{/if}
 </svelte:head>
 
-{#if language === 'codepen' || language === 'sveltecomponent'}
+{#if CustomEmbed}
 	<svelte:component this={CustomEmbed} {...props} />
 {:else if language == 'svelte' || language == 'html' || language == 'env'}
 	<div class="code">

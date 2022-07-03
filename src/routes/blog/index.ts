@@ -10,31 +10,19 @@ type PostFetchOptions = {
 	page?: number;
 	query?: string;
 	limit?: number;
-	refresh?: number;
 };
 
 export const getPosts = async (options?: PostFetchOptions) => {
 	const { page = 1, query = '', limit = blogPostsPerPage } = options || {};
 	const jsonFile = `${getContentDir()}/blog.json`;
-	
-	const { data: stgData } = await supabase.storage.from('blog').list();
-	const contentList = (stgData || []).filter((post) => post.name.endsWith('.md'));
 
 	let posts: PostData[] = [];
 	let num = 0;
+	await fetchPosts();
 	if (existsSync(jsonFile)) {
 		const metaJson = readFileSync(jsonFile, { encoding: 'utf-8' });
 		posts = JSON.parse(metaJson);
 		num = posts.length;
-	}
-	if (num !== contentList.length) {
-		await fetchPosts();
-		num = 0;
-	}
-	if (!num) {
-		const result = await fetchPosts(true, page, limit, query);
-		posts = result.posts;
-		num = result.num;
 	}
 
 	if (query) {

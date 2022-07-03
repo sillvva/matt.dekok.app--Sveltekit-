@@ -41,7 +41,7 @@ export async function fetchPosts(
 		const fsIndex = posts.findIndex((p) => p.slug == slug);
 		const fsItem = posts[fsIndex];
 		if (!fsItem) added++;
-		if (!fsItem || !fsItem.created_at || file.created_at > fsItem.created_at) {
+		if (!fsItem || !fsItem.created_at || file.created_at > fsItem.updated_at) {
 			console.log(`Upserting: ${slug}`);
 			upserted.push(slug);
 			changes++;
@@ -53,14 +53,20 @@ export async function fetchPosts(
 
 		const parsedData = matter(result);
 		const postData = {
+			id: fsItem.id,
 			name: file.name,
 			slug: slug,
 			created_at: file.created_at,
-			updated_at: file.updated_at,
+			updated_at: file.created_at,
 			...{
-				...parsedData.data,
-				...(parsedData.data.date && { date: parsedData.data.date.toISOString() }),
-				...(parsedData.data.updated && { updated: parsedData.data.updated.toISOString() })
+				title: parsedData.data.title,
+				description: parsedData.data.description,
+				...(parsedData.data.date && { date: new Date(parsedData.data.date).toISOString() }),
+				...(parsedData.data.updated && { updated: new Date(parsedData.data.updated).toISOString() }),
+				link: parsedData.data.link,
+				image: parsedData.data.image,
+				tags: parsedData.data.tags,
+				full: parsedData.data.full,
 			}
 		};
 		if (fsItem) posts.splice(fsIndex, 1, postData);
