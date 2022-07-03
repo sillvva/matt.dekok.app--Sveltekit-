@@ -44,6 +44,9 @@
 	--menuText: rgb(255, 255, 255);
 	--loading: rgba(255, 255, 255, 0.7);
 	--shadowHoverOpacity: 0.4;
+	--codePre: rgb(209 213 219);
+	--codeFile: rgb(229 231 235);
+	--code: rgb(243 244 246);
 }
 
 @mixin dark-theme {
@@ -70,6 +73,9 @@
 	--menuText: rgb(255, 255, 255);
 	--loading: rgba(255, 255, 255, 0.2);
 	--shadowHoverOpacity: 0.6;
+	--codePre: rgb(31, 41, 55);
+	--codeFile: rgb(55, 65, 81);
+	--code: rgb(17, 24, 39);
 }
 
 @mixin blue-theme {
@@ -96,6 +102,9 @@
 	--menuText: rgb(255, 255, 255);
 	--loading: rgba(255, 255, 255, 0.2);
 	--shadowHoverOpacity: 0.4;
+	--codePre: rgb(31, 41, 55);
+	--codeFile: rgb(55, 65, 81);
+	--code: rgb(17, 24, 39);
 }
 
 @mixin universal-theme {

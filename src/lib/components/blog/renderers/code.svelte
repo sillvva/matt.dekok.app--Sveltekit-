@@ -1,16 +1,16 @@
 <script lang="ts">
+	import { session } from '$app/stores';
 	import { isJSON } from '$lib/utils';
 	import { onMount } from 'svelte';
 	import Highlight, { HighlightSvelte } from 'svelte-highlight';
-	import styles from 'svelte-highlight/styles/atom-one-dark';
+	import stylesDark from 'svelte-highlight/styles/atom-one-dark';
+	import stylesLight from 'svelte-highlight/styles/atom-one-light';
 
 	export let lang: string;
 	export let text: string;
 
 	$: language = lang.replace(/^ *([^ ]+).*/, '$1');
-	$: filename = lang
-		.replace(new RegExp(`^ *${language} ?`), '')
-		.replace(/^\[([^\]]+)\].*$/i, '$1');
+	$: filename = lang.replace(new RegExp(`^ *${language} ?`), '').replace(/^\[([^\]]+)\].*$/i, '$1');
 	$: props = isJSON(text) ? JSON.parse(text) : {};
 
 	let CustomEmbed: any;
@@ -45,7 +45,11 @@
 </script>
 
 <svelte:head>
-	{@html styles}
+	{#if $session.theme == 'light'}
+		{@html stylesLight}
+	{:else}
+		{@html stylesDark}
+	{/if}
 </svelte:head>
 
 {#if language === 'codepen' || language === 'sveltecomponent'}
@@ -72,12 +76,12 @@
 <style lang="scss">
 	pre,
 	.code {
-		@apply flex flex-col gap-2 text-sm mb-4 pt-2 md:p-2 pb-0 bg-gray-800 rounded-lg;
+		@apply flex flex-col gap-2 text-sm mb-4 pt-2 md:p-2 pb-0 bg-[color:var(--codePre)] rounded-lg transition-[background-color] duration-500;
 		> span.filename {
-			@apply self-end max-w-fit top-4 right-4 p-1 px-2 mr-2 md:mr-0 rounded-sm bg-gray-700 text-white;
+			@apply self-end max-w-fit top-4 right-4 p-1 px-2 mr-2 md:mr-0 rounded-sm bg-[color:var(--codeFile)] transition-[background-color] duration-500;
 		}
 		:global(code) {
-			@apply flex-1 bg-gray-900 p-4 overflow-x-auto rounded-md text-white;
+			@apply flex-1 bg-[color:var(--code)] p-4 overflow-x-auto rounded-md transition-[background-color] duration-500;
 			tab-size: 0 !important;
 			:global(*) {
 				font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',

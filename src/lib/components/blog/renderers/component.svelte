@@ -25,9 +25,9 @@
 
 <style lang="scss">
 	.component-container {
-		@apply grid text-sm mb-4 pt-2 pb-0 md:p-2 bg-gray-800 rounded-lg;
+		@apply grid text-sm mb-4 pt-2 pb-0 md:p-2 bg-[color:var(--codePre)] rounded-lg;
 		p {
-			@apply m-3 md:mb-0 text-white;
+			@apply m-3 md:mb-0;
 		}
 	}
 </style>
