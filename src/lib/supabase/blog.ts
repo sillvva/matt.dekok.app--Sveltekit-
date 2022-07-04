@@ -1,26 +1,31 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import matter from 'gray-matter';
 import { writeFileSync } from 'fs';
-import { supabase, getContentDir } from './connection';
+import { supabase } from './connection';
+import { getContentDir } from './func';
 import type { PostData } from '../types/blog';
 
 export async function fetchPosts(
 	getPosts?: boolean,
 	page?: number,
 	perpage?: number,
-	query?: string,
-	refresh?: number
-): Promise<any> {
+	query?: string
+) {
+	let changes = 0;
+	let added = 0;
+	const upserted: string[] = [];
+	const removed: string[] = [];
+	const errors: { slug: string; error: any }[] = [];
+
 	const { data: stgData } = await supabase.storage.from('blog').list();
 	const contentList = (stgData || []).filter((post) => post.name.endsWith('.md'));
 	let num = contentList.length;
 
 	let result: { data: PostData[] | null; count: number | null };
-	if (query && !refresh) {
-    result = await supabase.rpc('search_posts', { keyword: query });
-    num = (result.data || []).length;
-  }
-	else if (page && perpage && !refresh)
+	if (query) {
+		result = await supabase.rpc('search_posts', { keyword: query });
+		num = (result.data || []).length;
+	} else if (page && perpage)
 		result = await supabase
 			.from('blog')
 			.select('*')
@@ -29,12 +34,7 @@ export async function fetchPosts(
 
 	const posts = result.data || [];
 
-	if (getPosts && page && perpage && !refresh) return { posts, num };
-
-	let changes = 0;
-	let added = 0;
-	const upserted: string[] = [];
-	const removed: string[] = [];
+	if (query || (page && perpage)) return { changes, upserted, removed, errors, posts, num };
 
 	for (const file of contentList) {
 		const slug = file.name.slice(0, file.name.length - 3);
@@ -42,7 +42,7 @@ export async function fetchPosts(
 		const fsIndex = posts.findIndex((p) => p.slug == slug);
 		const fsItem = posts[fsIndex];
 		if (!fsItem) added++;
-		if (!fsItem || !fsItem.created_at || file.created_at > fsItem.created_at) {
+		if (!fsItem || !fsItem.created_at || file.updated_at > fsItem.updated_at) {
 			console.log(`Upserting: ${slug}`);
 			upserted.push(slug);
 			changes++;
@@ -54,14 +54,20 @@ export async function fetchPosts(
 
 		const parsedData = matter(result);
 		const postData = {
+			id: fsItem?.id,
 			name: file.name,
 			slug: slug,
 			created_at: file.created_at,
 			updated_at: file.updated_at,
 			...{
-				...parsedData.data,
-				...(parsedData.data.date && { date: parsedData.data.date.toISOString() }),
-				...(parsedData.data.updated && { updated: parsedData.data.updated.toISOString() })
+				title: parsedData.data.title,
+				description: parsedData.data.description,
+				...(parsedData.data.date && { date: new Date(parsedData.data.date).toISOString() }),
+				...(parsedData.data.updated && { updated: new Date(parsedData.data.updated).toISOString() }),
+				link: parsedData.data.link,
+				image: parsedData.data.image,
+				tags: parsedData.data.tags,
+				full: parsedData.data.full,
 			}
 		};
 		if (fsItem) posts.splice(fsIndex, 1, postData);
@@ -79,8 +85,6 @@ export async function fetchPosts(
 	});
 
 	writeFileSync(`${getContentDir()}/blog.json`, JSON.stringify(posts));
-
-	const errors: { slug: string; error: any }[] = [];
 
 	if (changes) {
 		console.log('Storing metadata to Firestore');

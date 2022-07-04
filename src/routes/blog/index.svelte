@@ -1,5 +1,4 @@
 <script lang="ts">
-	// import { onMount } from 'svelte';
 	import { page as p } from '$app/stores';
 	import { browser } from '$app/env';
 	import { blogPostsPerPage } from '$lib/constants';
@@ -31,9 +30,9 @@
 	// 		num = data.num;
 	// 		pages = data.pages;
 	// 		posts = data.posts;
-	if (num === 0) {
-		error = { name: '', message: 'No posts found.' };
-	}
+			if (num === 0) {
+				error = { name: '', message: 'No posts found.' };
+			}
 	// 	}
 	// });
 

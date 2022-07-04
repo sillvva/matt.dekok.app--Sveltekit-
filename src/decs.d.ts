@@ -1,4 +1,5 @@
 declare module 'svelte-highlight/styles/atom-one-dark';
+declare module 'svelte-highlight/styles/atom-one-light';
 declare module 'svelte-highlight/languages/typescript';
 declare module 'svelte-highlight/languages/javascript';
 declare module 'svelte-highlight/languages/css';

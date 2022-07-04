@@ -34,6 +34,9 @@
 		@apply relative z-[2];
 		&.page-body {
 			@apply mt-24 lg:mt-36;
+			&.admin-body {
+				@apply mt-20;
+			}
 		}
 		&.loaded {
 			@apply flex;

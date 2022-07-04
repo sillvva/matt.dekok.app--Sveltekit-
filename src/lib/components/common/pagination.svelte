@@ -11,7 +11,7 @@
 		const inserts =
 			pages <= 2
 				? []
-				: inMax - Math.min(page, inMin) >= 2
+				: inMax - Math.min(page, inMin) + 1 >= 2
 				? Array(inMax - inMin + 1)
 						.fill(null)
 						.map((x, i) => i + inMin)
@@ -21,10 +21,12 @@
 		if (pages - inMax >= 2) pagination.splice(-1, 0, null);
 	}
 
-	const pageHandler = (page: number) => {
-		const query = $p.url.searchParams;
-		if (page === 1) query.delete('page');
-		else query.set('page', page.toString());
+	const pageHandler = (newPage: number) => {
+		const query = new URLSearchParams($p.url.search);
+		if (newPage === 1) query.delete('page');
+		else query.set('page', newPage.toString());
+		const q = query.toString();
+		return `/blog${q ? `?${q}` : ''}`;
 	};
 </script>
 
@@ -35,9 +37,9 @@
 				{p}
 			</span>
 		{:else if p}
-			<button class="page" on:click={() => pageHandler(p)}>
+			<a href={pageHandler(p)} class="page">
 				{p}
-			</button>
+			</a>
 		{:else}
 			<span class="separator"> | </span>
 		{/if}

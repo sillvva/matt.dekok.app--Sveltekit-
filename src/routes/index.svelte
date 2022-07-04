@@ -1,7 +1,3 @@
-<script context="module">
-	export const prerender = true;
-</script>
-
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { pageProps } from '$lib/store';
@@ -55,11 +51,17 @@
 			<h2 class="intro-name">Matt DeKok</h2>
 			<h4 class="intro-title">Full&nbsp;Stack Web&nbsp;Developer</h4>
 		</div>
-		<div class="menu-container hidden flex-col items-end lg:flex mt-8">
+		<div class="menu-container">
 			<HexMenu
 				{items}
 				maxLength={3}
-				classes={['hidden lg:block', '[--scale:1]', 'xl:[--scale:1.2]']}
+				classes={[
+					'hidden lg:block',
+					'[--scale:0.7]',
+					'3xs:[--scale:0.8]',
+					'md:[--scale:0.9]',
+					'xl:[--scale:1.2]'
+				]}
 				itemClasses={['bounce']}
 				rotated={true}
 			/>
@@ -69,27 +71,31 @@
 
 <style lang="scss">
 	.me {
-		@apply fixed inset-0 grid grid-cols-12 grid-rows-6;
+		@apply fixed inset-0 md:grid grid-cols-12 grid-rows-6;
 		@apply bg-left-bottom bg-no-repeat bg-cover;
 	}
 
 	.intro {
-		@apply col-start-6 col-span-6 row-start-2 row-span-3 2xl:col-start-5;
+		@apply flex md:block flex-col h-full justify-end col-start-6 col-span-6 row-start-2 row-span-3 2xl:col-start-5;
 		@apply relative z-[2];
 	}
 
 	.intro-subject {
-		@apply mt-0 fixed bottom-12 left-0 right-0 z-10 text-center lg:relative lg:text-right lg:bottom-0;
+		@apply flex flex-col mt-0 md:fixed bottom-12 left-0 right-0 z-10 text-center md:relative md:text-right md:bottom-0;
 		font-family: 'Montserrat', sans-serif;
 		text-shadow: 2px 2px rgb(var(--background)), 1px 1px 5px rgb(var(--background));
 	}
 
 	.intro-name {
-		@apply text-3xl sm:text-5xl lg:text-5xl font-semibold tracking-widest;
+		@apply text-3xl sm:text-4xl md:text-4xl lg:text-5xl font-semibold tracking-widest;
 		font-family: 'Montserrat', sans-serif;
 	}
 
 	.intro-title {
 		@apply text-xl sm:text-3xl xl:text-4xl font-medium tracking-normal;
+	}
+
+	.menu-container {
+		@apply flex flex-row justify-center md:flex-col md:items-end my-4 md:mt-8;
 	}
 </style>

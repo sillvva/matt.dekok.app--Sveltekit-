@@ -4,30 +4,26 @@ import type { RequestHandler } from './__types/index';
 import type { PostData } from '$lib/types/blog';
 import { fetchPosts } from '$lib/supabase/blog';
 import { blogPostsPerPage } from '$lib/constants';
-import { getContentDir } from '$lib/supabase/connection';
+import { getContentDir } from '$lib/supabase/func';
 
 type PostFetchOptions = {
 	page?: number;
 	query?: string;
 	limit?: number;
-	refresh?: number;
 };
 
 export const getPosts = async (options?: PostFetchOptions) => {
-	const { page = 1, query = '', limit = blogPostsPerPage, refresh = 0 } = options || {};
-	const jsonFile = `${getContentDir()}/blog.json`;
+	const { page = 1, query = '', limit = blogPostsPerPage } = options || {};
+	// const jsonFile = `${getContentDir()}/blog.json`;
 
-	let posts: PostData[] = [];
-	let num = 0;
-	if (existsSync(jsonFile) && !refresh) {
-		const metaJson = readFileSync(jsonFile, { encoding: 'utf-8' });
-		posts = JSON.parse(metaJson);
-		num = posts.length;
-	} else {
-		const result = await fetchPosts(true, page, limit, query, refresh);
-		posts = result.posts;
-		num = result.num;
-	}
+	// let posts: PostData[] = [];
+	// let num = 0;
+	let {posts, num} = await fetchPosts(true, page, limit, query);
+	// if (existsSync(jsonFile)) {
+	// 	const metaJson = readFileSync(jsonFile, { encoding: 'utf-8' });
+	// 	posts = JSON.parse(metaJson);
+	// 	num = posts.length;
+	// }
 
 	if (query) {
 		posts = posts

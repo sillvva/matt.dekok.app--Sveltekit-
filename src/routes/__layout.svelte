@@ -3,7 +3,7 @@
 	export const load: Load = async ({ url }) => {
 		return {
 			props: {
-				path: `${url.pathname}`
+				path: `${url.pathname}${url.search}`
 			}
 		};
 	};
@@ -14,6 +14,7 @@
 	import { fade } from 'svelte/transition';
 	import { session, page } from '$app/stores';
 	import { browser } from '$app/env';
+	import { goto } from '$app/navigation';
 	import { mdiBrightness6, mdiMenu, mdiChevronLeft } from '@mdi/js';
 	import type { Item } from '$lib/types/hex-menu';
 	import { pageProps, drawer } from '$lib/store';
@@ -28,6 +29,14 @@
 	import '../app.scss';
 	import '../misc.scss';
 	import '../anim.scss';
+	import { supabase } from '$lib/supabase/connection';
+
+	if (browser) $session.auth = supabase.auth.session();
+	supabase.auth.onAuthStateChange((event) => {
+		if (event === 'SIGNED_IN' && $page.url.hash) goto('/admin');
+	});
+
+	export let path: string;
 
 	let theme = $session.theme;
 	const toggleTheme = (newtheme?: typeof theme) => {
@@ -55,7 +64,11 @@
 	});
 
 	let scroll = 0;
-	export let path: string;
+
+	const signout = async () => {
+		await supabase.auth.signOut();
+		session.set({ ...$session, auth: null });
+	};
 
 	const menuItems: Item[] = [
 		{ link: '/', label: 'Intro' },
@@ -93,46 +106,90 @@
 		/>
 	{/key}
 	<header>
-		<div class="navbar">
-			{#if $pageProps.backTo === true}
-				<Fab href="/">
-					<Icon path={mdiChevronLeft} />
-				</Fab>
-			{:else if $pageProps.backTo}
-				<Fab ariaLabel="Back" href={$pageProps?.backTo}>
-					<Icon path={mdiChevronLeft} />
-				</Fab>
-			{:else}
-				<Fab ariaLabel="Open Drawer" class={`menu-fab`} on:click={() => ($drawer = !$drawer)}>
+		{#if $session.auth?.user && $page.url.pathname.startsWith('/admin')}
+			<div
+				class="navbar"
+				in:fade={{ delay: loaded ? transitionDuration / 2 : 0, duration: transitionDuration / 2 }}
+				out:fade={{ duration: transitionDuration / 2 }}
+			>
+				<Fab ariaLabel="Open Drawer" on:click={() => ($drawer = !$drawer)}>
 					<Icon path={mdiMenu} />
 				</Fab>
-			{/if}
-			<div class="menu-container">
-				{#if $pageProps.menu}
-					<nav
-						class="page-menu"
-						class:loaded
-						in:fade={{ delay, duration: transitionDuration / 2 }}
-						out:fade={{ duration: transitionDuration / 2 }}
+				<div class="flex flex-1 justify-end items-center w-full gap-4">
+					<a href="/" on:click={signout}>Sign Out</a>
+					<span class="hidden xs:inline">|</span>
+					<a
+						href={`https://github.com/${$session.auth?.user.user_metadata.user_name}`}
+						target="_blank"
+						rel="noreferrer noopener"
+						class="flex gap-4 items-center"
 					>
-						<Menu items={menuItems} />
-					</nav>
-				{/if}
-				<Title key={$pageProps.title} class={`nav-title ${smallTitle}`}>
-					{$pageProps.title || ''}
-				</Title>
+						<span class="hidden xs:inline">
+							{$session.auth?.user.user_metadata.user_name}
+						</span>
+						<img
+							src={$session.auth?.user.user_metadata.avatar_url}
+							alt=""
+							class="w-12 h-12 rounded-full"
+						/>
+					</a>
+					<span class="hidden xs:inline">
+						<Fab ariaLabel="Toggle Theme" active class="nav-fab" on:click={() => toggleTheme()}>
+							<Icon path={mdiBrightness6} size={1.1} />
+						</Fab>
+					</span>
+				</div>
 			</div>
-			<Fab ariaLabel="Toggle Theme" class="nav-fab" on:click={() => toggleTheme()}>
-				<Icon path={mdiBrightness6} size={1.1} />
-			</Fab>
-		</div>
-		<div class="relative h-16 w-full hidden lg:block">
-			{#if loaded}
-				<Title key={$pageProps.title}>
-					{$pageProps.title || ''}
-				</Title>
-			{/if}
-		</div>
+		{:else}
+			<div
+				class="navbar"
+				in:fade={{ delay: loaded ? transitionDuration / 2 : 0, duration: transitionDuration / 2 }}
+				out:fade={{ duration: transitionDuration / 2 }}
+			>
+				{#if $pageProps.backTo === true}
+					<Fab href="/">
+						<Icon path={mdiChevronLeft} />
+					</Fab>
+				{:else if $pageProps.backTo}
+					<Fab ariaLabel="Back" href={$pageProps?.backTo}>
+						<Icon path={mdiChevronLeft} />
+					</Fab>
+				{:else}
+					<Fab
+						ariaLabel="Open Drawer"
+						class={`menu-fab ${$page.url.pathname == '/' ? 'drawer-fab' : ''}`}
+						on:click={() => ($drawer = !$drawer)}
+					>
+						<Icon path={mdiMenu} />
+					</Fab>
+				{/if}
+				<div class="menu-container">
+					{#if $pageProps.menu}
+						<nav
+							class="page-menu"
+							class:loaded
+							in:fade={{ delay, duration: transitionDuration / 2 }}
+							out:fade={{ duration: transitionDuration / 2 }}
+						>
+							<Menu items={menuItems} />
+						</nav>
+					{/if}
+					<Title key={$pageProps.title} class={`nav-title ${smallTitle}`}>
+						{$pageProps.title || ''}
+					</Title>
+				</div>
+				<Fab ariaLabel="Toggle Theme" class="nav-fab" on:click={() => toggleTheme()}>
+					<Icon path={mdiBrightness6} size={1.1} />
+				</Fab>
+			</div>
+			<div class="relative h-16 w-full hidden lg:block">
+				{#if loaded}
+					<Title key={$pageProps.title}>
+						{$pageProps.title || ''}
+					</Title>
+				{/if}
+			</div>
+		{/if}
 	</header>
 	<PageBody key={path} class={$pageProps.bodyClass} {loaded}>
 		<slot />
@@ -160,7 +217,7 @@
 		.navbar {
 			@apply flex w-full py-4 px-2 2xs:px-3 items-center text-center max-h-[80px];
 			.menu-container {
-				@apply flex-1 block lg:pl-14 relative h-14;
+				@apply flex-1 block lg:pl-12 relative h-14;
 				.page-menu {
 					@apply hidden justify-center gap-3 px-3;
 					&.loaded {

@@ -11,12 +11,9 @@ export const post: RequestHandler = async ({ url }) => {
 		const query = url.searchParams.get('s') || "";
 
 		const result = await fetchPosts(getPosts, page, perpage, query);
-		const added = result.added || [];
-		const updated = result.updated || [];
-		const revalidations = [...added, ...updated];
 		return {
 			status: 200,
-			body: { success: true, revalidated: !!revalidations.length, ...result },
+			body: { success: true, revalidated: !!result.upserted.length, ...result },
 			headers: {
 				'Cache-Control': 'no-cache'
 			}

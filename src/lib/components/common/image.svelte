@@ -37,11 +37,11 @@
 			@apply w-0 h-0 min-w-full max-w-full min-h-full max-h-full;
 		}
 		&.cover-img {
-			@apply -left-36 sm:-left-12 md:left-0;
+			@apply -left-36 xs:-left-20 sm:-left-8 md:-left-28 lg:left-0;
 			&::after {
 				content: '';
 				@apply fixed z-0 left-0 right-0 bottom-0 h-[80vh] lg:hidden;
-				background-image: linear-gradient(transparent, rgba(var(--background), 0.8));
+				background-image: linear-gradient(transparent, rgba(var(--background), 1));
 			}
 			img {
 				@apply object-left lg:object-center;

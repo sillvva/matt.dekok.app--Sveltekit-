@@ -1,20 +1,20 @@
 <script lang="ts">
+	import { session } from '$app/stores';
 	import { isJSON } from '$lib/utils';
 	import { onMount } from 'svelte';
-	import Highlight, { HighlightSvelte } from 'svelte-highlight';
-	import styles from 'svelte-highlight/styles/atom-one-dark';
+	import stylesDark from 'svelte-highlight/styles/atom-one-dark';
+	import stylesLight from 'svelte-highlight/styles/atom-one-light';
 
 	export let lang: string;
 	export let text: string;
 
 	$: language = lang.replace(/^ *([^ ]+).*/, '$1');
-	$: filename = lang
-		.replace(new RegExp(`^ *${language} ?`), '')
-		.replace(/^\[([^\]]+)\].*$/i, '$1');
+	$: filename = lang.replace(new RegExp(`^ *${language} ?`), '').replace(/^\[([^\]]+)\].*$/i, '$1');
 	$: props = isJSON(text) ? JSON.parse(text) : {};
 
 	let CustomEmbed: any;
 	let highlight: any;
+	let SyntaxHighlighter: any;
 
 	onMount(async () => {
 		if (language == 'codepen')
@@ -41,24 +41,27 @@
 			highlight = await import('svelte-highlight/languages/markdown').then((c) => c.default);
 		else if (language == 'bash')
 			highlight = await import('svelte-highlight/languages/bash').then((c) => c.default);
+		else if (language == 'svelte' || language == 'html' || language == 'env')
+			SyntaxHighlighter = await import('svelte-highlight').then((c) => c.HighlightSvelte);
+		if (highlight && !SyntaxHighlighter)
+			SyntaxHighlighter = await import('svelte-highlight').then((c) => c.default);
 	});
 </script>
 
 <svelte:head>
-	{@html styles}
+	{#if $session.theme == 'light'}
+		{@html stylesLight}
+	{:else}
+		{@html stylesDark}
+	{/if}
 </svelte:head>
 
-{#if language === 'codepen' || language === 'sveltecomponent'}
+{#if CustomEmbed}
 	<svelte:component this={CustomEmbed} {...props} />
-{:else if language == 'svelte' || language == 'html' || language == 'env'}
+{:else if SyntaxHighlighter}
 	<div class="code">
 		{#if filename}<span class="filename">{filename}</span>{/if}
-		<HighlightSvelte code={text} />
-	</div>
-{:else if highlight}
-	<div class="code">
-		{#if filename}<span class="filename">{filename}</span>{/if}
-		<Highlight language={highlight} code={text} />
+		<svelte:component this={SyntaxHighlighter} language={highlight} code={text} />
 	</div>
 {:else}
 	<pre class={language}>
@@ -72,12 +75,14 @@
 <style lang="scss">
 	pre,
 	.code {
-		@apply flex flex-col gap-2 text-sm mb-4 pt-2 md:p-2 pb-0 bg-gray-800 rounded-lg;
+		@apply flex flex-col gap-2 text-sm mb-4 pt-2 md:p-2 pb-0 rounded-lg;
+		@apply bg-[color:var(--codePre)] transition-[background-color] duration-500;
 		> span.filename {
-			@apply self-end max-w-fit top-4 right-4 p-1 px-2 mr-2 md:mr-0 rounded-sm bg-gray-700 text-white;
+			@apply self-end max-w-[calc(100%-1rem)] md:max-w-fit overflow-hidden top-4 right-4 p-1 px-2 mx-2 md:mx-0 rounded-sm;
+			@apply bg-[color:var(--codeFile)] transition-[background-color] duration-500;
 		}
 		:global(code) {
-			@apply flex-1 bg-gray-900 p-4 overflow-x-auto rounded-md text-white;
+			@apply flex-1 bg-[color:var(--code)] p-4 overflow-x-auto rounded-md transition-[background-color] duration-500;
 			tab-size: 0 !important;
 			:global(*) {
 				font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',

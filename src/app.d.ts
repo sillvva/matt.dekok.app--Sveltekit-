@@ -11,6 +11,7 @@ declare namespace App {
 	// interface Platform {}
 	interface Session {
 		theme: Theme;
+		auth: any;
 	}
 	// interface Stuff {}
 }
