@@ -43,8 +43,10 @@
 	});
 
 	$: paths = [
-		{ name: 'Blog', path: '/admin', value: `${$admin.posts} posts` },
-		{ name: 'Skills', path: '/admin/skills', value: `${0} skills` }
+		{ name: 'Blog', path: '/admin', value: `${$admin.numposts} posts` },
+		{ name: 'Experience', path: '/admin/experience', value: `${$admin.numexperience} items` },
+		{ name: 'Skills', path: '/admin/skills', value: `${$admin.numskills} skills` },
+		{ name: 'Projects', path: '/admin/projects', value: `${$admin.numprojects} projects` }
 	];
 </script>
 

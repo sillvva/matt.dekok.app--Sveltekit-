@@ -13,9 +13,18 @@ export type PageProps = {
 export const pageProps = writable<PageProps>({});
 export const drawer = writable(false);
 type Admin = {
-	posts?: number;
-	postdata?: PostData[];
+	numposts?: number;
+	posts?: PostData[];
+	numexperience?: number;
+	experience?: any[];
+	numskills?: number;
+	skills?: any[];
+	numprojects?: number;
+	projects?: any[];
 }
 export const admin = writable<Admin>({
-	postdata: []
+	posts: [],
+	experience: [],
+	skills: [],
+	projects: []
 });

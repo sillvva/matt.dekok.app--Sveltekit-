@@ -58,30 +58,48 @@ export const del: RequestHandler<any> = async ({ request, url }) => {
 };
 
 const getResult = async (select: string | null) => {
-  const { data: postdata, count: posts } = await supabase
+	const { data: posts, count: numposts } = await supabase
 		.from('blog')
 		.select('*', { count: 'exact', head: select === 'posts' ? false : true });
+
+	const { data: experience, count: numexperience } = await supabase
+		.from('experience')
+		.select('*', { count: 'exact', head: select === 'experience' ? false : true });
+
+	const { data: skills, count: numskills } = await supabase
+		.from('skills')
+		.select('*', { count: 'exact', head: select === 'skills' ? false : true });
+
+	const { data: projects, count: numprojects } = await supabase
+		.from('projects')
+		.select('*', { count: 'exact', head: select === 'projects' ? false : true });
 
 	return {
 		status: 200,
 		body: {
+			numposts,
 			posts,
-			postdata
+			numexperience,
+			experience,
+			numskills,
+			skills,
+			numprojects,
+			projects
 		},
 		headers: {
 			'Cache-Control': 'no-cache'
 		}
 	};
-}
+};
 
 const getError = async (error: Error | string, code = 500) => {
-  return {
-    status: code,
-    body: {
-      error: error.toString()
-    },
-    headers: {
-      'Cache-Control': 'no-cache'
-    }
-  };
-}
+	return {
+		status: code,
+		body: {
+			error: error.toString()
+		},
+		headers: {
+			'Cache-Control': 'no-cache'
+		}
+	};
+};

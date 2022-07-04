@@ -9,7 +9,7 @@
 
 	let search: string = '';
 
-  let numLoaders = $admin.posts || 6;
+  let numLoaders = $admin.numposts || 6;
 	let loaders = numLoaders;
 
 	const checkError = async (error: any) => {
@@ -83,7 +83,7 @@
 		admin.set({ ...admin, ...data });
 	};
 
-	$: filteredPosts = ($admin.postdata || [])
+	$: filteredPosts = ($admin.posts || [])
 		.filter((post) => {
 			return (
 				post.title.toLowerCase().includes(search.toLowerCase()) ||
