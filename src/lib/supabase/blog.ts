@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import matter from 'gray-matter';
 import { writeFileSync } from 'fs';
-import { supabase, getContentDir } from './connection';
+import { supabase } from './connection';
+import { getContentDir } from './func';
 import type { PostData } from '../types/blog';
 
 export async function fetchPosts(
@@ -41,7 +42,7 @@ export async function fetchPosts(
 		const fsIndex = posts.findIndex((p) => p.slug == slug);
 		const fsItem = posts[fsIndex];
 		if (!fsItem) added++;
-		if (!fsItem || !fsItem.created_at || file.created_at > fsItem.updated_at) {
+		if (!fsItem || !fsItem.created_at || file.updated_at > fsItem.updated_at) {
 			console.log(`Upserting: ${slug}`);
 			upserted.push(slug);
 			changes++;
@@ -53,11 +54,11 @@ export async function fetchPosts(
 
 		const parsedData = matter(result);
 		const postData = {
-			id: fsItem.id,
+			id: fsItem?.id,
 			name: file.name,
 			slug: slug,
 			created_at: file.created_at,
-			updated_at: file.created_at,
+			updated_at: file.updated_at,
 			...{
 				title: parsedData.data.title,
 				description: parsedData.data.description,

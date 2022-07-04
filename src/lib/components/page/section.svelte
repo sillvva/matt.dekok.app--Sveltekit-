@@ -3,7 +3,7 @@
 	export { className as class };
 </script>
 
-<section class={className}>
+<section on:click class={className}>
   <slot />
 </section>
 

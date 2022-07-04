@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { page as p } from '$app/stores';
 	import { browser } from '$app/env';
 	import { blogPostsPerPage } from '$lib/constants';

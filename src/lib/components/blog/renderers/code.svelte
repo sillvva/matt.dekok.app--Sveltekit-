@@ -2,7 +2,6 @@
 	import { session } from '$app/stores';
 	import { isJSON } from '$lib/utils';
 	import { onMount } from 'svelte';
-	import Highlight, { HighlightSvelte } from 'svelte-highlight';
 	import stylesDark from 'svelte-highlight/styles/atom-one-dark';
 	import stylesLight from 'svelte-highlight/styles/atom-one-light';
 
@@ -15,6 +14,7 @@
 
 	let CustomEmbed: any;
 	let highlight: any;
+	let SyntaxHighlighter: any;
 
 	onMount(async () => {
 		if (language == 'codepen')
@@ -41,6 +41,10 @@
 			highlight = await import('svelte-highlight/languages/markdown').then((c) => c.default);
 		else if (language == 'bash')
 			highlight = await import('svelte-highlight/languages/bash').then((c) => c.default);
+		else if (language == 'svelte' || language == 'html' || language == 'env')
+			SyntaxHighlighter = await import('svelte-highlight').then((c) => c.HighlightSvelte);
+		if (highlight && !SyntaxHighlighter)
+			SyntaxHighlighter = await import('svelte-highlight').then((c) => c.default);
 	});
 </script>
 
@@ -54,15 +58,10 @@
 
 {#if CustomEmbed}
 	<svelte:component this={CustomEmbed} {...props} />
-{:else if language == 'svelte' || language == 'html' || language == 'env'}
+{:else if SyntaxHighlighter}
 	<div class="code">
 		{#if filename}<span class="filename">{filename}</span>{/if}
-		<HighlightSvelte code={text} />
-	</div>
-{:else if highlight}
-	<div class="code">
-		{#if filename}<span class="filename">{filename}</span>{/if}
-		<Highlight language={highlight} code={text} />
+		<svelte:component this={SyntaxHighlighter} language={highlight} code={text} />
 	</div>
 {:else}
 	<pre class={language}>

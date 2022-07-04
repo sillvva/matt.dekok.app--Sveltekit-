@@ -9,6 +9,7 @@ export const handle: Handle = ({ event, resolve }) => {
 
 export const getSession: GetSession = (request) => {
 	return {
-		theme: request.locals.theme
+		theme: request.locals.theme,
+		auth: {}
 	};
 };

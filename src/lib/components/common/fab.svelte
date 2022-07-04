@@ -2,16 +2,17 @@
 	let className = '';
 	export { className as class };
 	export let href: string | undefined = '';
-	export let ariaLabel: string = "";
+	export let ariaLabel: string = '';
+	export let active: boolean = false;
 </script>
 
-<a role="button" href={href || null} class={className} on:click aria-label={ariaLabel}>
+<a role="button" href={href || null} class={className} class:active on:click aria-label={ariaLabel}>
 	<slot />
 </a>
 
 <style lang="scss">
 	a {
-		@apply flex justify-center items-center w-10 h-10 xs:w-14 xs:h-14 rounded-full text-2xl cursor-pointer;
+		@apply flex justify-center items-center w-12 h-12 rounded-full text-2xl cursor-pointer;
 		@apply transition-[background] duration-500 ease-linear bg-transparent text-[color:var(--text)];
 		&.menu-fab {
 			@apply lg:hidden;
@@ -22,7 +23,8 @@
 		&.drawer-fab {
 			@apply hidden;
 		}
-		&:hover {
+		&:hover,
+		&.active {
 			@apply bg-[color:var(--link)] text-[color:var(--menuText)];
 		}
 	}

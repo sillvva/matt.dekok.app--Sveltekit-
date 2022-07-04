@@ -17,8 +17,9 @@ specifiers:
   gray-matter: ^4.0.3
   highlight.js: ^11.5.1
   postcss: ^8.4.14
-  prettier: ^2.6.2
+  prettier: ^2.7.1
   prettier-plugin-svelte: ^2.7.0
+  prettier-plugin-tailwindcss: ^0.1.11
   sass: ^1.53.0
   svelte: ^3.44.0
   svelte-check: ^2.7.1
@@ -52,6 +53,7 @@ devDependencies:
   postcss: 8.4.14
   prettier: 2.7.1
   prettier-plugin-svelte: 2.7.0_nakrehnrzdf7fdea5k3a4dfy4m
+  prettier-plugin-tailwindcss: 0.1.11_prettier@2.7.1
   sass: 1.53.0
   svelte: 3.48.0
   svelte-check: 2.7.2_s4vji4hbm6754nioyrbgjz6o3e
@@ -2934,6 +2936,15 @@ packages:
     dependencies:
       prettier: 2.7.1
       svelte: 3.48.0
+    dev: true
+
+  /prettier-plugin-tailwindcss/0.1.11_prettier@2.7.1:
+    resolution: {integrity: sha512-a28+1jvpIZQdZ/W97wOXb6VqI762MKE/TxMMuibMEHhyYsSxQA8Ek30KObd5kJI2HF1ldtSYprFayXJXi3pz8Q==}
+    engines: {node: '>=12.17.0'}
+    peerDependencies:
+      prettier: '>=2.2.0'
+    dependencies:
+      prettier: 2.7.1
     dev: true
 
   /prettier/2.7.1:
