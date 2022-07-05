@@ -1,4 +1,4 @@
-<!-- <script lang="ts" context="module">
+<script lang="ts" context="module">
 	import type { Load } from './__types/__layout';
 	export const load: Load = async ({ url }) => {
 		return {
@@ -7,12 +7,13 @@
 			}
 		};
 	};
-</script> -->
+</script>
+
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import type { User } from '@supabase/supabase-js';
-	import { session, page } from '$app/stores';
+	import { session } from '$app/stores';
 	import { browser } from '$app/env';
 	import { transitionDuration } from '$lib/constants';
 	import { supabase } from '$lib/supabase/connection';
@@ -26,6 +27,7 @@
 		bodyClass: 'page-body admin-body'
 	};
 
+	export let path: string;
 	let user: User | null;
 	let width = 0;
 	let expanded = false;
@@ -41,7 +43,6 @@
 			});
 	});
 
-	$: path = `${$page.url.pathname}${$page.url.search}`;
 	$: paths = [
 		{ name: 'Blog', path: '/admin', value: $admin.numposts, label: 'posts' },
 		{ name: 'Experience', path: '/admin/experience', value: $admin.numexperience, label: 'items' },
@@ -86,15 +87,13 @@
 				{/each}
 			</Article>
 		</div>
-		{#key path}
-			<div
-				class="flex-1"
-				in:fade={{ delay: transitionDuration / 2, duration: transitionDuration / 2 }}
-				out:fade={{ duration: transitionDuration / 2 }}
-			>
-				<slot />
-			</div>
-		{/key}
+		<div
+			class="flex-1"
+			in:fade={{ delay: transitionDuration / 2, duration: transitionDuration / 2 }}
+			out:fade={{ duration: transitionDuration / 2 }}
+		>
+			<slot />
+		</div>
 	</div>
 {:else}
 	<PageMessage>Authenticating...</PageMessage>
