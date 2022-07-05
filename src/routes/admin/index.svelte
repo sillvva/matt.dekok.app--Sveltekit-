@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { mdiUpload, mdiTrashCan } from '@mdi/js';
+	import { mdiUpload, mdiTrashCan, mdiRefresh } from '@mdi/js';
 	import { useQuery, useMutation, useQueryClient } from '@sveltestack/svelte-query';
 	import { session } from '$app/stores';
 	import { goto } from '$app/navigation';
@@ -9,8 +9,6 @@
 	import type { AdminMutation } from './data';
 	import Icon from '$lib/components/common/icon.svelte';
 
-	const queryClient = useQueryClient();
-
 	let search: string = '';
 	let loading = true;
 
@@ -18,19 +16,7 @@
 		authorization: `Bearer ${$session.auth.access_token}`
 	};
 
-	const checkError = async (error: any) => {
-		if (error === 'Unauthorized') {
-			alert('Unauthorized user');
-			await supabase.auth.signOut();
-			session.set({ ...$session, auth: null });
-			await goto('/', { replaceState: true });
-			return true;
-		} else if (error) {
-			alert(error);
-			return true;
-		}
-		return false;
-	};
+	const queryClient = useQueryClient();
 
 	const getResult = useQuery(
 		'posts',
@@ -74,7 +60,7 @@
 	const deleteMutation = useMutation(
 		async (slug: string) => {
 			if (!slug && (await checkError('Slug not defined'))) return { success: false };
-      
+
 			const response = await fetch(`/admin/data?select=posts&slug=${slug}`, {
 				method: 'DELETE',
 				headers
@@ -94,6 +80,11 @@
 			}
 		}
 	);
+
+  const refresh = async () => {
+    loading = true;
+    await queryClient.invalidateQueries('posts');
+  }
 
 	const upload = () => {
 		const input = document.createElement('input');
@@ -116,22 +107,40 @@
 		$deleteMutation.mutate(slug);
 	};
 
+	const checkError = async (error: any) => {
+		if (error === 'Unauthorized') {
+			alert('Unauthorized user');
+			await supabase.auth.signOut();
+			session.set({ ...$session, auth: null });
+			await goto('/', { replaceState: true });
+			return true;
+		} else if (error) {
+			alert(error);
+			return true;
+		}
+		return false;
+	};
+
 	$: {
-		if ($getResult.data) {
+		if ($getResult.data && !$getResult.isFetching) {
 			admin.set($getResult.data);
+			loading = false;
 		}
 	}
 	$: numloaders = $admin.numposts || 6;
 	$: loaders = $getResult.data && !loading ? 0 : numloaders;
-	$: filteredPosts = ($admin.posts || [])
-		.filter((post) => {
-			return (
-				post.title.toLowerCase().includes(search.toLowerCase()) ||
-				(post.description || '').toLowerCase().includes(search.toLowerCase()) ||
-				(post.tags || []).find((tag) => tag.toLowerCase() == search.toLowerCase())
-			);
-		})
-		.sort((a, b) => (a.updated_at > b.updated_at ? -1 : 1));
+	$: filteredPosts =
+		search.length > 2
+			? ($admin.posts || [])
+					.filter((post) => {
+						return (
+							post.title.toLowerCase().includes(search.toLowerCase()) ||
+							(post.description || '').toLowerCase().includes(search.toLowerCase()) ||
+							(post.tags || []).find((tag) => tag.toLowerCase() == search.toLowerCase())
+						);
+					})
+					.sort((a, b) => (a.updated_at > b.updated_at ? -1 : 1))
+			: ($admin.posts || []).sort((a, b) => (a.updated_at > b.updated_at ? -1 : 1));
 </script>
 
 <div class="flex gap-4 mb-4">
@@ -139,6 +148,9 @@
 		<input type="text" bind:value={search} placeholder="Search" class="p-2 rounded-md w-full" />
 	</div>
 	<div class="md:flex-1 flex justify-end gap-4">
+		<button on:click={refresh}>
+			<Icon path={mdiRefresh} />
+		</button>
 		<button on:click={upload}>
 			<Icon path={mdiUpload} />
 		</button>
