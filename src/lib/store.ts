@@ -11,7 +11,9 @@ export type PageProps = {
 	image?: string;
 };
 export const pageProps = writable<PageProps>({});
+
 export const drawer = writable(false);
+
 type Admin = {
 	numposts?: number;
 	posts?: PostData[];

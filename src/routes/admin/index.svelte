@@ -9,7 +9,7 @@
 
 	let search: string = '';
 
-  let numLoaders = $admin.numposts || 6;
+	let numLoaders = $admin.numposts || 6;
 	let loaders = numLoaders;
 
 	const checkError = async (error: any) => {
@@ -35,7 +35,7 @@
 		const data = await response.json();
 		if (await checkError(data.error)) return;
 
-    loaders = 0;
+		loaders = 0;
 		admin.set({ ...admin, ...data });
 	});
 
@@ -50,7 +50,7 @@
 			const formData = new FormData();
 			formData.append('file', file);
 			formData.append('filename', file.name);
-      loaders = numLoaders + 1;
+			loaders = numLoaders + 1;
 			const response = await fetch('/admin/data?select=posts', {
 				method: 'POST',
 				headers: {
@@ -61,7 +61,7 @@
 			const data = await response.json();
 			if (await checkError(data.error)) return;
 
-      loaders = 0;
+			loaders = 0;
 			admin.set({ ...admin, ...data });
 		};
 		input.click();
@@ -69,7 +69,7 @@
 
 	const remove = async (slug: string) => {
 		if (!confirm('Are you sure you want to delete this post?')) return;
-    loaders = Math.max(1, numLoaders - 1);
+		loaders = Math.max(1, numLoaders - 1);
 		const response = await fetch(`/admin/data?select=posts&slug=${slug}`, {
 			method: 'DELETE',
 			headers: {
@@ -79,7 +79,7 @@
 		const data = await response.json();
 		if (await checkError(data.error)) return;
 
-    loaders = 0;
+		loaders = 0;
 		admin.set({ ...admin, ...data });
 	};
 
@@ -107,18 +107,22 @@
 <div class="flex flex-col gap-2">
 	{#if loaders == 0}
 		{#each filteredPosts as post}
-			<div class="flex items-center md:items-start bg-[color:var(--article)] p-2 md:p-4 gap-4 rounded-md">
+			<div
+				class="flex items-center md:items-start bg-[color:var(--article)] p-2 md:p-4 gap-4 rounded-md shadow-md"
+				style:--tw-shadow-color="#0006"
+				style:--tw-shadow="var(--tw-shadow-colored)"
+			>
 				<div class="flex flex-1 flex-col">
 					<div class="flex-1 font-medium pr-4">
 						<a href={`/blog/${post.slug}`} target="_blank">{post.title}</a>
 					</div>
-          <div class="hidden sm:block">
-            {post.description}
-          </div>
+					<div class="hidden sm:block">
+						{post.description}
+					</div>
 				</div>
-        <button on:click={() => remove(post.slug)}>
-          <Icon path={mdiTrashCan} />
-        </button>
+				<button on:click={() => remove(post.slug)}>
+					<Icon path={mdiTrashCan} />
+				</button>
 			</div>
 		{/each}
 	{:else}
