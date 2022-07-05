@@ -2,8 +2,9 @@ import type { RequestHandler } from './__types/data';
 import { env } from '$lib/constants';
 import { supabase } from '$lib/supabase/connection';
 import { fetchPosts } from '$lib/supabase/blog';
+import type { Admin } from '$lib/store';
 
-export const get: RequestHandler<any> = async ({ request, url }) => {
+export const get: RequestHandler<Admin> = async ({ request, url }) => {
 	const token = request.headers.get('authorization')?.replace('Bearer ', '');
 	const { user } = await supabase.auth.api.getUser(token || '');
 	if (user?.id !== env.AUTH_UID) return getError('Unauthorized', 401);
@@ -12,7 +13,12 @@ export const get: RequestHandler<any> = async ({ request, url }) => {
 	return getResult(select);
 };
 
-export const post: RequestHandler<any> = async ({ request, url }) => {
+export type AdminMutation = {
+  success: boolean;
+  error?: string;
+}
+
+export const post: RequestHandler<AdminMutation> = async ({ request, url }) => {
 	const token = request.headers.get('authorization')?.replace('Bearer ', '');
 	const { user } = await supabase.auth.api.getUser(token || '');
 	if (user?.id !== env.AUTH_UID) return getError('Unauthorized', 401);
@@ -34,10 +40,15 @@ export const post: RequestHandler<any> = async ({ request, url }) => {
 		}
 	}
 
-	return getResult(select);
+	return {
+    status: 200,
+    body: {
+      success: true
+    }
+  };
 };
 
-export const del: RequestHandler<any> = async ({ request, url }) => {
+export const del: RequestHandler<AdminMutation> = async ({ request, url }) => {
 	const token = request.headers.get('authorization')?.replace('Bearer ', '');
 	const { user } = await supabase.auth.api.getUser(token || '');
 	if (user?.id !== env.AUTH_UID) return getError('Unauthorized', 401);
@@ -54,7 +65,12 @@ export const del: RequestHandler<any> = async ({ request, url }) => {
 		}
 	}
 
-	return getResult(select);
+	return {
+    status: 200,
+    body: {
+      success: true
+    }
+  };
 };
 
 const getResult = async (select: string | null) => {
@@ -77,14 +93,15 @@ const getResult = async (select: string | null) => {
 	return {
 		status: 200,
 		body: {
-			numposts,
-			posts,
-			numexperience,
-			experience,
-			numskills,
-			skills,
-			numprojects,
-			projects
+      success: true,
+			numposts: numposts || 0,
+			posts: posts || [],
+			numexperience: numexperience || 0,
+			experience: experience || [],
+			numskills: numskills || 0,
+			skills: skills || [],
+			numprojects: numprojects || 0,
+			projects: projects || []
 		},
 		headers: {
 			'Cache-Control': 'no-cache'
@@ -96,6 +113,7 @@ const getError = async (error: Error | string, code = 500) => {
 	return {
 		status: code,
 		body: {
+      success: false,
 			error: error.toString()
 		},
 		headers: {

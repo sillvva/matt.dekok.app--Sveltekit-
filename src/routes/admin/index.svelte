@@ -1,16 +1,22 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { mdiUpload, mdiTrashCan } from '@mdi/js';
+	import { useQuery, useMutation, useQueryClient } from '@sveltestack/svelte-query';
 	import { session } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import { supabase } from '$lib/supabase/connection';
 	import { admin } from '$lib/store';
+	import type { Admin } from '$lib/store';
+	import type { AdminMutation } from './data';
 	import Icon from '$lib/components/common/icon.svelte';
 
-	let search: string = '';
+	const queryClient = useQueryClient();
 
-	let numLoaders = $admin.numposts || 6;
-	let loaders = numLoaders;
+	let search: string = '';
+	let loading = true;
+
+	const headers = {
+		authorization: `Bearer ${$session.auth.access_token}`
+	};
 
 	const checkError = async (error: any) => {
 		if (error === 'Unauthorized') {
@@ -26,18 +32,68 @@
 		return false;
 	};
 
-	onMount(async () => {
-		const response = await fetch('/admin/data?select=posts', {
-			headers: {
-				authorization: `Bearer ${$session.auth.access_token}`
-			}
-		});
-		const data = await response.json();
-		if (await checkError(data.error)) return;
+	const getResult = useQuery(
+		'posts',
+		async () => {
+			const response = await fetch('/admin/data?select=posts', { headers });
+			const data: Admin = await response.json();
 
-		loaders = 0;
-		admin.set({ ...admin, ...data });
-	});
+			if (await checkError(data.error)) return { success: false };
+			return data;
+		},
+		{
+			refetchOnWindowFocus: false,
+			onSuccess() {
+				loading = false;
+			}
+		}
+	);
+
+	const uploadMutation = useMutation(
+		async (formData: FormData) => {
+			const response = await fetch('/admin/data?select=posts', {
+				method: 'POST',
+				headers,
+				body: formData
+			});
+			const data: AdminMutation = await response.json();
+			if (await checkError(data.error)) return { success: false };
+			return data;
+		},
+		{
+			onMutate() {
+				loading = true;
+				$admin.numposts = numloaders + 1;
+			},
+			onSuccess() {
+				queryClient.invalidateQueries('posts');
+			}
+		}
+	);
+
+	const deleteMutation = useMutation(
+		async (slug: string) => {
+			if (!slug && (await checkError('Slug not defined'))) return { success: false };
+      
+			const response = await fetch(`/admin/data?select=posts&slug=${slug}`, {
+				method: 'DELETE',
+				headers
+			});
+			const data: AdminMutation = await response.json();
+
+			if (await checkError(data.error)) return { success: false };
+			return data;
+		},
+		{
+			onMutate() {
+				loading = true;
+				$admin.numposts = Math.max(1, numloaders - 1);
+			},
+			onSuccess() {
+				queryClient.invalidateQueries('posts');
+			}
+		}
+	);
 
 	const upload = () => {
 		const input = document.createElement('input');
@@ -50,39 +106,23 @@
 			const formData = new FormData();
 			formData.append('file', file);
 			formData.append('filename', file.name);
-			loaders = numLoaders + 1;
-			const response = await fetch('/admin/data?select=posts', {
-				method: 'POST',
-				headers: {
-					authorization: `Bearer ${$session.auth.access_token}`
-				},
-				body: formData
-			});
-			const data = await response.json();
-			if (await checkError(data.error)) return;
-
-			loaders = 0;
-			admin.set({ ...admin, ...data });
+			$uploadMutation.mutate(formData);
 		};
 		input.click();
 	};
 
 	const remove = async (slug: string) => {
 		if (!confirm('Are you sure you want to delete this post?')) return;
-		loaders = Math.max(1, numLoaders - 1);
-		const response = await fetch(`/admin/data?select=posts&slug=${slug}`, {
-			method: 'DELETE',
-			headers: {
-				authorization: `Bearer ${$session.auth.access_token}`
-			}
-		});
-		const data = await response.json();
-		if (await checkError(data.error)) return;
-
-		loaders = 0;
-		admin.set({ ...admin, ...data });
+		$deleteMutation.mutate(slug);
 	};
 
+	$: {
+		if ($getResult.data) {
+			admin.set($getResult.data);
+		}
+	}
+	$: numloaders = $admin.numposts || 6;
+	$: loaders = $getResult.data && !loading ? 0 : numloaders;
 	$: filteredPosts = ($admin.posts || [])
 		.filter((post) => {
 			return (
