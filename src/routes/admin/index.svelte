@@ -127,7 +127,7 @@
 			loading = false;
 		}
 	}
-	$: numloaders = $admin.numposts || 6;
+	$: numloaders = $admin.numposts ?? 6;
 	$: loaders = $getResult.data && !loading ? 0 : numloaders;
 	$: filteredPosts =
 		search.length > 2

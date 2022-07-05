@@ -18,7 +18,7 @@
 	import { mdiBrightness6, mdiMenu, mdiChevronLeft } from '@mdi/js';
 	import { QueryClient, QueryClientProvider } from '@sveltestack/svelte-query';
 	import type { Item } from '$lib/types/hex-menu';
-	import { pageProps, drawer } from '$lib/store';
+	import { pageProps, drawer, lastPage } from '$lib/store';
 	import { themes, metaTags } from '$lib/utils';
 	import { transitionDuration } from '$lib/constants';
 	import PageBody from '$lib/components/page/body.svelte';
@@ -34,12 +34,15 @@
 
 	const queryClient = new QueryClient();
 
+	export let path: string;
+	let scroll = 0;
+	let delay = 0;
+
 	if (browser) $session.auth = supabase.auth.session();
 	supabase.auth.onAuthStateChange((event) => {
-		if (event === 'SIGNED_IN' && $page.url.hash) goto('/admin');
+		if (event === 'SIGNED_IN' && $lastPage) goto($lastPage);
 	});
 
-	export let path: string;
 
 	let theme = $session.theme;
 	const toggleTheme = (newtheme?: typeof theme) => {
@@ -51,10 +54,7 @@
 	if (browser) mm = matchMedia('(prefers-color-scheme: dark)');
 	const listener = () => mm && toggleTheme(mm.matches ? 'dark' : 'light');
 
-	let loaded = false;
-	let delay = 0;
-	onMount(() => {
-		loaded = true;
+	onMount(async () => {
 		if (mm) mm.addEventListener('change', listener);
 
 		setTimeout(() => {
@@ -65,8 +65,6 @@
 	onDestroy(() => {
 		if (mm) mm.removeEventListener('change', listener);
 	});
-
-	let scroll = 0;
 
 	const signout = async () => {
 		await supabase.auth.signOut();
@@ -84,6 +82,7 @@
 
 	$: metaProps = metaTags($pageProps, $page.url.origin, theme);
 	$: smallTitle = ($pageProps.title || '').length > 12 ? 'small-title' : '';
+	$: loaded = browser && (!$session.auth || !$lastPage);
 </script>
 
 <svelte:window bind:scrollY={scroll} />

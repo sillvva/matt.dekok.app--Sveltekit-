@@ -13,11 +13,11 @@
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import type { User } from '@supabase/supabase-js';
-	import { session } from '$app/stores';
+	import { session, page } from '$app/stores';
 	import { browser } from '$app/env';
 	import { transitionDuration } from '$lib/constants';
 	import { supabase } from '$lib/supabase/connection';
-	import { pageProps, admin } from '$lib/store';
+	import { pageProps, admin, lastPage } from '$lib/store';
 	import { conClasses } from '$lib/utils';
 	import Article from '$lib/components/page/article.svelte';
 	import Section from '$lib/components/page/section.svelte';
@@ -36,11 +36,14 @@
 
 	onMount(async () => {
 		if ($session.auth) user = $session.auth.user;
+		lastPage.set(null);
 
-		if (!user)
+		if (!user) {
+			lastPage.set($page.url.pathname);
 			return await supabase.auth.signIn({
 				provider: 'github'
 			});
+		}
 	});
 
 	$: paths = [
@@ -86,6 +89,36 @@
 					</a>
 				{/each}
 			</Article>
+			<Article class="hidden md:block">
+				<a
+					href="https://vercel.com/"
+					target="_blank"
+					rel="noreferrer noopener"
+					class="menu-item block"
+				>
+					<Section>
+						<div class="flex">
+							<div class="flex-1">
+								<span class="text-[color:var(--link)]">Vercel</span>
+							</div>
+						</div>
+					</Section>
+				</a>
+				<a
+					href="https://app.supabase.com/"
+					target="_blank"
+					rel="noreferrer noopener"
+					class="menu-item block"
+				>
+					<Section>
+						<div class="flex">
+							<div class="flex-1">
+								<span class="text-[color:var(--link)]">Supabase</span>
+							</div>
+						</div>
+					</Section>
+				</a>
+			</Article>
 		</div>
 		<div
 			class="flex-1"
@@ -104,7 +137,7 @@
 
 	@layer utilities {
 		.bg-active {
-			@apply bg-[color:rgba(255,255,255,0.1)];
+			@apply bg-[color:rgba(var(--bgInvert),0.1)];
 		}
 	}
 	.menu-item {
