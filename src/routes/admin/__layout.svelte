@@ -43,10 +43,10 @@
 	});
 
 	$: paths = [
-		{ name: 'Blog', path: '/admin', value: `${$admin.numposts} posts` },
-		{ name: 'Experience', path: '/admin/experience', value: `${$admin.numexperience} items` },
-		{ name: 'Skills', path: '/admin/skills', value: `${$admin.numskills} skills` },
-		{ name: 'Projects', path: '/admin/projects', value: `${$admin.numprojects} projects` }
+		{ name: 'Blog', path: '/admin', value: $admin.numposts, label: 'posts' },
+		{ name: 'Experience', path: '/admin/experience', value: $admin.numexperience, label: 'items' },
+		{ name: 'Skills', path: '/admin/skills', value: $admin.numskills, label: 'skills' },
+		{ name: 'Projects', path: '/admin/projects', value: $admin.numprojects, label: 'projects' }
 	];
 </script>
 
@@ -69,8 +69,8 @@
 										<span class="text-[color:var(--link)]">{p.name}</span>
 									</div>
 									<div class="flex-1 min-w-fit text-right">
-										{#if typeof $admin.posts !== 'undefined'}
-											{p.value}
+										{#if typeof p.value !== 'undefined'}
+											{p.value} {p.label}
 										{:else}
 											<div class="loading-line text">
 												<span />
