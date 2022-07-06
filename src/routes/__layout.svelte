@@ -41,7 +41,9 @@
 
 	if (browser) $session.auth = supabase.auth.session();
 	supabase.auth.onAuthStateChange((event) => {
-		if (event === 'SIGNED_IN' && $lastPage) goto($lastPage);
+		if (event === 'SIGNED_IN' && $lastPage) goto($lastPage, {
+			replaceState: true
+		});
 	});
 
 
@@ -54,7 +56,7 @@
 	let mm: MediaQueryList;
 	if (browser) mm = matchMedia('(prefers-color-scheme: dark)');
 	const listener = () => mm && toggleTheme(mm.matches ? 'dark' : 'light');
-
+	
 	onMount(async () => {
 		if (mm) mm.addEventListener('change', listener);
 		loading = false;
@@ -114,7 +116,7 @@
 			{#if $session.auth?.user && $page.url.pathname.startsWith('/admin')}
 				<div
 					class="navbar"
-					in:fade={{ delay: loaded ? transitionDuration / 2 : 0, duration: transitionDuration / 2 }}
+					in:fade={{ delay: delay, duration: transitionDuration / 2 }}
 					out:fade={{ duration: transitionDuration / 2 }}
 				>
 					<Fab ariaLabel="Open Drawer" on:click={() => ($drawer = !$drawer)}>
@@ -148,7 +150,7 @@
 			{:else}
 				<div
 					class="navbar"
-					in:fade={{ delay: loaded ? transitionDuration / 2 : 0, duration: transitionDuration / 2 }}
+					in:fade={{ delay: delay, duration: transitionDuration / 2 }}
 					out:fade={{ duration: transitionDuration / 2 }}
 				>
 					{#if $pageProps.backTo === true}
@@ -196,9 +198,16 @@
 				</div>
 			{/if}
 		</header>
-		<PageBody key={path} class={$pageProps.bodyClass} {loaded}>
-			<slot />
-		</PageBody>
+		{#key path + (loaded ? 1 : 0)}
+			<main
+				class={$pageProps.bodyClass}
+				class:loaded
+				in:fade={{ delay, duration: transitionDuration / 2 }}
+				out:fade={{ duration: transitionDuration / 2 }}
+			>
+				<slot />
+			</main>
+		{/key}
 		{#if $drawer}
 			<Drawer {menuItems} />
 		{/if}
@@ -231,6 +240,21 @@
 					}
 				}
 			}
+		}
+	}
+	
+	main {
+		@apply hidden flex-col justify-center items-center;
+		@apply px-2 md:px-4 pb-4;
+		@apply relative z-[2];
+		&.page-body {
+			@apply mt-24 lg:mt-36;
+			&.admin-body {
+				@apply mt-20;
+			}
+		}
+		&.loaded {
+			@apply flex;
 		}
 	}
 </style>
