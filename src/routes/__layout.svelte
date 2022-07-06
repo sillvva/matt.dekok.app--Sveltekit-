@@ -38,7 +38,7 @@
 	let scroll = 0;
 	let delay = 0;
 
-	if (browser) $session.auth = supabase.auth.session();
+	if (browser && !$session.auth.user) $session.auth = supabase.auth.session();
 
 	let theme = $session.theme;
 	const toggleTheme = (newtheme?: typeof theme) => {
@@ -66,6 +66,7 @@
 	const signout = async () => {
 		await supabase.auth.signOut();
 		session.set({ ...$session, auth: null });
+		goto('/');
 	};
 
 	const menuItems: Item[] = [

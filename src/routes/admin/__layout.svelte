@@ -15,7 +15,6 @@
 	import type { User } from '@supabase/supabase-js';
 	import { session, page } from '$app/stores';
 	import { browser } from '$app/env';
-	import { goto } from '$app/navigation';
 	import { transitionDuration } from '$lib/constants';
 	import { supabase } from '$lib/supabase/connection';
 	import { pageProps, admin } from '$lib/store';
@@ -33,12 +32,10 @@
 	let width = 0;
 	let expanded = false;
 
-	if (browser) $session.auth = supabase.auth.session();
+	if (browser && !$session.auth.user) $session.auth = supabase.auth.session();
 
 	onMount(async () => {
 		if ($session.auth) user = $session.auth.user;
-		
-		if (!user && $page.url.hash.length > 1) document.location.replace($page.url.pathname);
 
 		if (!user && !$page.url.hash) {
 			return await supabase.auth.signIn(
@@ -46,7 +43,7 @@
 					provider: 'github'
 				},
 				{
-					redirectTo: $page.url.href.replace('#', '')
+					redirectTo: `${$page.url.origin}/redirect?to=${encodeURIComponent($page.url.pathname)}`
 				}
 			);
 		}
