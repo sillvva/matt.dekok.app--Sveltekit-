@@ -1,7 +1,7 @@
 import { writable } from 'svelte/store';
 import type { PostData } from './types/blog';
 import type { Rating } from './types/rating';
-import { browser } from '$app/env';
+import type { Session } from '@supabase/supabase-js';
 
 export type PageProps = {
 	title?: string;
@@ -35,3 +35,5 @@ export const admin = writable<Admin>({
 	skills: [],
 	projects: []
 });
+
+export const auth = writable<Session | null>(null);

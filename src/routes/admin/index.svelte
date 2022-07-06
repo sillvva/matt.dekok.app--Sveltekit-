@@ -1,10 +1,9 @@
 <script lang="ts">
 	import { mdiUpload, mdiTrashCan, mdiRefresh } from '@mdi/js';
 	import { useQuery, useMutation, useQueryClient } from '@sveltestack/svelte-query';
-	import { session } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import { supabase } from '$lib/supabase/connection';
-	import { admin } from '$lib/store';
+	import { admin, auth } from '$lib/store';
 	import type { Admin } from '$lib/store';
 	import type { AdminMutation } from './data';
 	import Icon from '$lib/components/common/icon.svelte';
@@ -13,7 +12,7 @@
 	let loading = true;
 
 	const headers = {
-		authorization: `Bearer ${$session.auth.access_token}`
+		authorization: `Bearer ${$auth?.access_token}`
 	};
 
 	const queryClient = useQueryClient();
@@ -113,7 +112,7 @@
 		if (error === 'Unauthorized') {
 			alert('Unauthorized user');
 			await supabase.auth.signOut();
-			session.set({ ...$session, auth: null });
+			$auth = null;
 			await goto('/', { replaceState: true });
 			return true;
 		} else if (error) {

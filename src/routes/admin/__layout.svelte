@@ -13,11 +13,11 @@
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import type { User } from '@supabase/supabase-js';
-	import { session, page } from '$app/stores';
+	import { page } from '$app/stores';
 	import { browser } from '$app/env';
 	import { transitionDuration } from '$lib/constants';
 	import { supabase } from '$lib/supabase/connection';
-	import { pageProps, admin } from '$lib/store';
+	import { pageProps, admin, auth } from '$lib/store';
 	import { conClasses } from '$lib/utils';
 	import Article from '$lib/components/page/article.svelte';
 	import Section from '$lib/components/page/section.svelte';
@@ -32,10 +32,10 @@
 	let width = 0;
 	let expanded = false;
 
-	if (browser && !$session.auth.user) $session.auth = supabase.auth.session();
+	if (browser && !$auth?.user) $auth = supabase.auth.session();
 
 	onMount(async () => {
-		if ($session.auth) user = $session.auth.user;
+		if ($auth) user = $auth?.user;
 
 		if (!user && !$page.url.hash) {
 			return await supabase.auth.signIn(

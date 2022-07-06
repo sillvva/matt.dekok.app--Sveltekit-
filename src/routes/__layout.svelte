@@ -12,13 +12,13 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
 	import { fade } from 'svelte/transition';
-	import { session, page } from '$app/stores';
+	import { page, session } from '$app/stores';
 	import { browser } from '$app/env';
 	import { goto } from '$app/navigation';
 	import { mdiBrightness6, mdiMenu, mdiChevronLeft } from '@mdi/js';
 	import { QueryClient, QueryClientProvider } from '@sveltestack/svelte-query';
 	import type { Item } from '$lib/types/hex-menu';
-	import { pageProps, drawer } from '$lib/store';
+	import { pageProps, drawer, auth } from '$lib/store';
 	import { themes, metaTags } from '$lib/utils';
 	import { transitionDuration } from '$lib/constants';
 	import { supabase } from '$lib/supabase/connection';
@@ -38,7 +38,7 @@
 	let scroll = 0;
 	let delay = 0;
 
-	if (browser && !$session.auth.user) $session.auth = supabase.auth.session();
+	if (browser && !$auth) $auth = supabase.auth.session();
 
 	let theme = $session.theme;
 	const toggleTheme = (newtheme?: typeof theme) => {
@@ -49,7 +49,7 @@
 	let mm: MediaQueryList;
 	if (browser) mm = matchMedia('(prefers-color-scheme: dark)');
 	const listener = () => mm && toggleTheme(mm.matches ? 'dark' : 'light');
-	
+
 	onMount(async () => {
 		if (mm) mm.addEventListener('change', listener);
 		loaded = true;
@@ -65,7 +65,7 @@
 
 	const signout = async () => {
 		await supabase.auth.signOut();
-		session.set({ ...$session, auth: null });
+		$auth = null;
 		goto('/');
 	};
 
@@ -106,7 +106,7 @@
 			/>
 		{/key}
 		<header>
-			{#if $session.auth?.user && $page.url.pathname.startsWith('/admin')}
+			{#if $auth?.user && $page.url.pathname.startsWith('/admin')}
 				<div
 					class="navbar"
 					in:fade={{ delay: delay, duration: transitionDuration / 2 }}
@@ -119,16 +119,16 @@
 						<a href="/" on:click={signout}>Sign Out</a>
 						<span class="hidden xs:inline">|</span>
 						<a
-							href={`https://github.com/${$session.auth?.user.user_metadata.user_name}`}
+							href={`https://github.com/${$auth?.user.user_metadata.user_name}`}
 							target="_blank"
 							rel="noreferrer noopener"
 							class="flex gap-4 items-center"
 						>
 							<span class="hidden xs:inline">
-								{$session.auth?.user.user_metadata.user_name}
+								{$auth?.user.user_metadata.user_name}
 							</span>
 							<img
-								src={$session.auth?.user.user_metadata.avatar_url}
+								src={$auth?.user.user_metadata.avatar_url}
 								alt=""
 								class="w-12 h-12 rounded-full"
 							/>
@@ -235,7 +235,7 @@
 			}
 		}
 	}
-	
+
 	main {
 		@apply hidden flex-col justify-center items-center;
 		@apply px-2 md:px-4 pb-4;
