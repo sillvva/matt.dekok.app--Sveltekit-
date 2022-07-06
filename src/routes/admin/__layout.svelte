@@ -17,7 +17,7 @@
 	import { browser } from '$app/env';
 	import { transitionDuration } from '$lib/constants';
 	import { supabase } from '$lib/supabase/connection';
-	import { pageProps, admin, lastPage } from '$lib/store';
+	import { pageProps, admin } from '$lib/store';
 	import { conClasses } from '$lib/utils';
 	import Article from '$lib/components/page/article.svelte';
 	import Section from '$lib/components/page/section.svelte';
@@ -36,13 +36,16 @@
 
 	onMount(async () => {
 		if ($session.auth) user = $session.auth.user;
-		lastPage.set(null);
 
 		if (!user) {
-			lastPage.set($page.url.pathname);
-			return await supabase.auth.signIn({
-				provider: 'github'
-			});
+			return await supabase.auth.signIn(
+				{
+					provider: 'github'
+				},
+				{
+					redirectTo: $page.url.href
+				}
+			);
 		}
 	});
 

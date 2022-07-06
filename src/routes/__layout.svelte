@@ -18,10 +18,10 @@
 	import { mdiBrightness6, mdiMenu, mdiChevronLeft } from '@mdi/js';
 	import { QueryClient, QueryClientProvider } from '@sveltestack/svelte-query';
 	import type { Item } from '$lib/types/hex-menu';
-	import { pageProps, drawer, lastPage } from '$lib/store';
+	import { pageProps, drawer } from '$lib/store';
 	import { themes, metaTags } from '$lib/utils';
 	import { transitionDuration } from '$lib/constants';
-	import PageBody from '$lib/components/page/body.svelte';
+	import { supabase } from '$lib/supabase/connection';
 	import Menu from '$lib/components/page/menu.svelte';
 	import Title from '$lib/components/page/title.svelte';
 	import Drawer from '$lib/components/page/drawer.svelte';
@@ -30,22 +30,15 @@
 	import '../app.scss';
 	import '../misc.scss';
 	import '../anim.scss';
-	import { supabase } from '$lib/supabase/connection';
 
 	const queryClient = new QueryClient();
 
 	export let path: string;
-	let loading = true;
+	let loaded = false;
 	let scroll = 0;
 	let delay = 0;
 
 	if (browser) $session.auth = supabase.auth.session();
-	supabase.auth.onAuthStateChange((event) => {
-		if (event === 'SIGNED_IN' && $lastPage) goto($lastPage, {
-			replaceState: true
-		});
-	});
-
 
 	let theme = $session.theme;
 	const toggleTheme = (newtheme?: typeof theme) => {
@@ -59,7 +52,7 @@
 	
 	onMount(async () => {
 		if (mm) mm.addEventListener('change', listener);
-		loading = false;
+		loaded = true;
 
 		setTimeout(() => {
 			delay = transitionDuration / 2;
@@ -86,7 +79,6 @@
 
 	$: metaProps = metaTags($pageProps, $page.url.origin, theme);
 	$: smallTitle = ($pageProps.title || '').length > 12 ? 'small-title' : '';
-	$: loaded = browser && !loading && (!$session.auth || !$lastPage);
 </script>
 
 <svelte:window bind:scrollY={scroll} />
@@ -198,7 +190,7 @@
 				</div>
 			{/if}
 		</header>
-		{#key path + (loaded ? 1 : 0)}
+		{#key path}
 			<main
 				class={$pageProps.bodyClass}
 				class:loaded

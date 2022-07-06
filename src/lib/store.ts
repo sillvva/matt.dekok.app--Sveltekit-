@@ -35,10 +35,3 @@ export const admin = writable<Admin>({
 	skills: [],
 	projects: []
 });
-
-export const lastPage = writable<string | null>(browser && localStorage.getItem('lastPage') || null);
-lastPage.subscribe((page?) => {
-	if (!browser) return;
-	if (!page) localStorage.removeItem('lastPage');
-	else localStorage.setItem('lastPage', page);
-});
