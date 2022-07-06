@@ -36,8 +36,9 @@
 
 	onMount(async () => {
 		if ($session.auth) user = $session.auth.user;
+		console.log($session.auth, user, $page.url.hash)
 
-		if (!user) {
+		if (!user && !$page.url.hash) {
 			return await supabase.auth.signIn(
 				{
 					provider: 'github'
