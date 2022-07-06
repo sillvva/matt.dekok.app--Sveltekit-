@@ -37,6 +37,7 @@
 
 	onMount(async () => {
 		if ($session.auth) user = $session.auth.user;
+		console.log(!user && $page.url.hash.length > 1, $page.url.pathname);
 		if (!user && $page.url.hash.length > 1) goto($page.url.pathname, { replaceState: true });
 
 		if (!user && !$page.url.hash) {
@@ -57,12 +58,6 @@
 		{ name: 'Skills', path: '/admin/skills', value: $admin.numskills, label: 'skills' },
 		{ name: 'Projects', path: '/admin/projects', value: $admin.numprojects, label: 'projects' }
 	];
-	$: {
-		console.log($session.auth);
-		console.log(user);
-		console.log($page.url.hash);
-		console.log(JSON.parse(localStorage.getItem('supabase.auth.token') || "{}"));
-	}
 </script>
 
 <svelte:window bind:innerWidth={width} />
