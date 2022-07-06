@@ -1,21 +1,35 @@
 import type { RequestHandler } from './__types/data';
 import { env } from '$lib/constants';
 import { supabase } from '$lib/supabase/connection';
+import { service } from '$lib/supabase/service';
 import { fetchPosts } from '$lib/supabase/blog';
+import type { Admin } from '$lib/store';
+import type { User } from '@supabase/supabase-js';
 
-export const get: RequestHandler<any> = async ({ request, url }) => {
-	const token = request.headers.get('authorization')?.replace('Bearer ', '');
-	const { user } = await supabase.auth.api.getUser(token || '');
-	if (user?.id !== env.AUTH_UID) return getError('Unauthorized', 401);
+export const get: RequestHandler<Admin> = async ({ request, url }) => {
+	const token = request.headers.get('authorization')?.replace('Bearer ', '') ?? '';
+	const { user } = await supabase.auth.api.getUser(token);
+	if (user?.id !== env.AUTH_UID) {
+    if (user) await deleteUser(user);
+    return getError('Unauthorized', 401);
+  }
 
 	const select = url.searchParams.get('select');
 	return getResult(select);
 };
 
-export const post: RequestHandler<any> = async ({ request, url }) => {
-	const token = request.headers.get('authorization')?.replace('Bearer ', '');
-	const { user } = await supabase.auth.api.getUser(token || '');
-	if (user?.id !== env.AUTH_UID) return getError('Unauthorized', 401);
+export type AdminMutation = {
+	success: boolean;
+	error?: string;
+};
+
+export const post: RequestHandler<AdminMutation> = async ({ request, url }) => {
+	const token = request.headers.get('authorization')?.replace('Bearer ', '') ?? '';
+	const { user } = await supabase.auth.api.getUser(token);
+	if (user?.id !== env.AUTH_UID) {
+    if (user) await deleteUser(user);
+    return getError('Unauthorized', 401);
+  }
 
 	const select = url.searchParams.get('select');
 
@@ -34,13 +48,21 @@ export const post: RequestHandler<any> = async ({ request, url }) => {
 		}
 	}
 
-	return getResult(select);
+	return {
+		status: 200,
+		body: {
+			success: true
+		}
+	};
 };
 
-export const del: RequestHandler<any> = async ({ request, url }) => {
-	const token = request.headers.get('authorization')?.replace('Bearer ', '');
-	const { user } = await supabase.auth.api.getUser(token || '');
-	if (user?.id !== env.AUTH_UID) return getError('Unauthorized', 401);
+export const del: RequestHandler<AdminMutation> = async ({ request, url }) => {
+	const token = request.headers.get('authorization')?.replace('Bearer ', '') ?? '';
+	const { user } = await supabase.auth.api.getUser(token);
+	if (user?.id !== env.AUTH_UID) {
+    if (user) await deleteUser(user);
+    return getError('Unauthorized', 401);
+  }
 
 	const select = url.searchParams.get('select');
 
@@ -48,13 +70,21 @@ export const del: RequestHandler<any> = async ({ request, url }) => {
 		const slug = url.searchParams.get('slug');
 
 		if (slug) {
-			const { error } = await supabase.storage.from('blog').remove([`${slug}.md`]);
+			const blog = supabase.storage.from('blog');
+			const { data } = await blog.list('archive', { search: slug });
+			const suffix = data && data.length ? ` (${data.length + 1})` : '';
+			const { error } = await blog.move(`${slug}.md`, `archive/${slug}${suffix}.md`);
 			if (error) return getError(error);
 			else await fetchPosts();
 		}
 	}
 
-	return getResult(select);
+	return {
+		status: 200,
+		body: {
+			success: true
+		}
+	};
 };
 
 const getResult = async (select: string | null) => {
@@ -77,14 +107,15 @@ const getResult = async (select: string | null) => {
 	return {
 		status: 200,
 		body: {
-			numposts,
-			posts,
-			numexperience,
-			experience,
-			numskills,
-			skills,
-			numprojects,
-			projects
+			success: true,
+			numposts: numposts || 0,
+			posts: posts || [],
+			numexperience: numexperience || 0,
+			experience: experience || [],
+			numskills: numskills || 0,
+			skills: skills || [],
+			numprojects: numprojects || 0,
+			projects: projects || []
 		},
 		headers: {
 			'Cache-Control': 'no-cache'
@@ -96,6 +127,7 @@ const getError = async (error: Error | string, code = 500) => {
 	return {
 		status: code,
 		body: {
+			success: false,
 			error: error.toString()
 		},
 		headers: {
@@ -103,3 +135,9 @@ const getError = async (error: Error | string, code = 500) => {
 		}
 	};
 };
+
+const deleteUser = async (user: User) => {
+  if (user.id === env.AUTH_UID) return;
+  const { error } = await service.auth.api.deleteUser(user.id);
+  return !error;
+}
