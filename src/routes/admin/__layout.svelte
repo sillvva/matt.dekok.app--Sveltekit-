@@ -37,8 +37,8 @@
 
 	onMount(async () => {
 		if ($session.auth) user = $session.auth.user;
-		console.log(!user && $page.url.hash.length > 1, $page.url.pathname);
-		if (!user && $page.url.hash.length > 1) goto($page.url.pathname, { replaceState: true });
+		
+		if (!user && $page.url.hash.length > 1) document.location.replace($page.url.pathname);
 
 		if (!user && !$page.url.hash) {
 			return await supabase.auth.signIn(
