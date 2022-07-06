@@ -65,7 +65,7 @@
 	--headers: rgb(189, 250, 225);
 	--text: rgb(245, 245, 245);
 	--altText: rgb(42, 42, 42);
-	--article: rgb(47, 47, 47);
+	--article: rgb(59, 59, 59);
 	--GitHub: rgb(255, 255, 255);
 	--LinkedIn: rgb(255, 255, 255);
 	--ratingOn: rgb(255, 200, 0);
@@ -127,7 +127,7 @@
 * {
 	box-sizing: border-box;
 	-webkit-tap-highlight-color: transparent;
-  font-family: 'Montserrat', 'Roboto Flex', sans-serif;
+  font-family: 'Montserrat', sans-serif;
 }
 
 #app {
@@ -177,7 +177,9 @@ html {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Roboto Flex', sans-serif;
+  &, * {
+		font-family: 'Roboto Flex', sans-serif;
+	}
 }
 
 p {

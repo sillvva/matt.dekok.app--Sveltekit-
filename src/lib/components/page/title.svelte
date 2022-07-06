@@ -41,7 +41,7 @@
 			@apply block lg:hidden flex-1 p-2;
 			@apply absolute inset-0;
 			&.small-title {
-				@apply text-sm sm:text-lg md:text-2xl;
+				@apply text-sm sm:text-lg md:text-2xl flex justify-center items-center;
 			}
 		}
 	}

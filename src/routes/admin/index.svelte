@@ -165,9 +165,9 @@
 				style:--tw-shadow="var(--tw-shadow-colored)"
 			>
 				<div class="flex flex-1 flex-col">
-					<div class="flex-1 font-medium pr-4">
+					<h4 class="flex-1 font-semibold pr-4">
 						<a href={`/blog/${post.slug}`} target="_blank">{post.title}</a>
-					</div>
+					</h4>
 					<div class="hidden sm:block">
 						{post.description}
 					</div>
