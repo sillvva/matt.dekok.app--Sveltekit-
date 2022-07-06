@@ -35,6 +35,7 @@
 	const queryClient = new QueryClient();
 
 	export let path: string;
+	let loading = true;
 	let scroll = 0;
 	let delay = 0;
 
@@ -56,6 +57,7 @@
 
 	onMount(async () => {
 		if (mm) mm.addEventListener('change', listener);
+		loading = false;
 
 		setTimeout(() => {
 			delay = transitionDuration / 2;
@@ -82,7 +84,7 @@
 
 	$: metaProps = metaTags($pageProps, $page.url.origin, theme);
 	$: smallTitle = ($pageProps.title || '').length > 12 ? 'small-title' : '';
-	$: loaded = browser && (!$session.auth || !$lastPage);
+	$: loaded = browser && !loading && (!$session.auth || !$lastPage);
 </script>
 
 <svelte:window bind:scrollY={scroll} />
@@ -150,7 +152,7 @@
 					out:fade={{ duration: transitionDuration / 2 }}
 				>
 					{#if $pageProps.backTo === true}
-						<Fab href="/">
+						<Fab href="/" ariaLabel="Home">
 							<Icon path={mdiChevronLeft} />
 						</Fab>
 					{:else if $pageProps.backTo}

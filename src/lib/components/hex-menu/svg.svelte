@@ -59,8 +59,30 @@
 						style:--hover-color={hoverColor}
 						style:--active-color={activeColor}
 						style:--text-color={textColor}
+						aria-hidden={!item.label}
 					>
-						<a href={item.link} sveltekit:prefetch>
+						{#if item.link}
+							<a href={item.link} sveltekit:prefetch>
+								{#if rotated}
+									<g transform="matrix(-6.92 0 0 -6.92 400.24 400.24)">
+										<polygon
+											class={conClasses(['h-hex', 'hex', ...hexagonClasses])}
+											points="-19.9,34.5 -39.8,0 -19.9,-34.5 19.9,-34.5 39.8,0 19.9,34.5 "
+										/>
+									</g>
+								{:else}
+									<g transform="matrix(0 6.92 -6.92 0 400.17 400.33)">
+										<polygon
+											class={conClasses(['h-hex', 'hex', ...hexagonClasses])}
+											points="-19.9,34.5 -39.8,0 -19.9,-34.5 19.9,-34.5 39.8,0 19.9,34.5 "
+										/>
+									</g>
+								{/if}
+								<foreignObject class="hex-fo" x="0" y="0" width="100%" height="100%">
+									<span class={conClasses(['label', ...labelClasses])}>{item.label}</span>
+								</foreignObject>
+							</a>
+						{:else}
 							{#if rotated}
 								<g transform="matrix(-6.92 0 0 -6.92 400.24 400.24)">
 									<polygon
@@ -79,7 +101,7 @@
 							<foreignObject class="hex-fo" x="0" y="0" width="100%" height="100%">
 								<span class={conClasses(['label', ...labelClasses])}>{item.label}</span>
 							</foreignObject>
-						</a>
+						{/if}
 					</svg>
 				</div>
 			{/each}

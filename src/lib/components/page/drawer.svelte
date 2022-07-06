@@ -6,7 +6,7 @@
 	import HexMenu from '$lib/components/hex-menu/svg.svelte';
 
 	export let menuItems: Item[];
-	const duration = 500;
+	const duration = 300;
 
 	$: menuItems = menuItems.map((item) => {
 		return {
@@ -39,7 +39,7 @@
 
 <style lang="scss">
 	.backdrop {
-		@apply fixed inset-0 z-10 bg-black/60;
+		@apply fixed inset-0 z-10 bg-black/70;
 		@apply flex justify-center items-center;
 	}
 </style>

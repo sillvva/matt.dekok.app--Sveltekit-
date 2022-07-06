@@ -49,7 +49,7 @@
 	<div class="intro">
 		<div class="intro-subject">
 			<h2 class="intro-name">Matt DeKok</h2>
-			<h4 class="intro-title">Full&nbsp;Stack Web&nbsp;Developer</h4>
+			<h3 class="intro-title">Full&nbsp;Stack Web&nbsp;Developer</h3>
 		</div>
 		<div class="menu-container">
 			<HexMenu
