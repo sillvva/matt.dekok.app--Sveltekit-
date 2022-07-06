@@ -29,6 +29,8 @@
 		},
 		{
 			refetchOnWindowFocus: false,
+      cacheTime: 30 * 60 * 1000,
+      staleTime: 15 * 60 * 1000,
 			onSuccess() {
 				loading = false;
 			}
