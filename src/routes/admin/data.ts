@@ -1,13 +1,18 @@
 import type { RequestHandler } from './__types/data';
 import { env } from '$lib/constants';
 import { supabase } from '$lib/supabase/connection';
+import { service } from '$lib/supabase/service';
 import { fetchPosts } from '$lib/supabase/blog';
 import type { Admin } from '$lib/store';
+import type { User } from '@supabase/supabase-js';
 
 export const get: RequestHandler<Admin> = async ({ request, url }) => {
 	const token = request.headers.get('authorization')?.replace('Bearer ', '') ?? '';
 	const { user } = await supabase.auth.api.getUser(token);
-	if (user?.id !== env.AUTH_UID) return getError('Unauthorized', 401);
+	if (user?.id !== env.AUTH_UID) {
+    if (user) await deleteUser(user);
+    return getError('Unauthorized', 401);
+  }
 
 	const select = url.searchParams.get('select');
 	return getResult(select);
@@ -21,7 +26,10 @@ export type AdminMutation = {
 export const post: RequestHandler<AdminMutation> = async ({ request, url }) => {
 	const token = request.headers.get('authorization')?.replace('Bearer ', '') ?? '';
 	const { user } = await supabase.auth.api.getUser(token);
-	if (user?.id !== env.AUTH_UID) return getError('Unauthorized', 401);
+	if (user?.id !== env.AUTH_UID) {
+    if (user) await deleteUser(user);
+    return getError('Unauthorized', 401);
+  }
 
 	const select = url.searchParams.get('select');
 
@@ -51,7 +59,10 @@ export const post: RequestHandler<AdminMutation> = async ({ request, url }) => {
 export const del: RequestHandler<AdminMutation> = async ({ request, url }) => {
 	const token = request.headers.get('authorization')?.replace('Bearer ', '') ?? '';
 	const { user } = await supabase.auth.api.getUser(token);
-	if (user?.id !== env.AUTH_UID) return getError('Unauthorized', 401);
+	if (user?.id !== env.AUTH_UID) {
+    if (user) await deleteUser(user);
+    return getError('Unauthorized', 401);
+  }
 
 	const select = url.searchParams.get('select');
 
@@ -59,11 +70,10 @@ export const del: RequestHandler<AdminMutation> = async ({ request, url }) => {
 		const slug = url.searchParams.get('slug');
 
 		if (slug) {
-			const { data } = await supabase.storage.from('blog').list('archive', { search: slug });
+			const blog = supabase.storage.from('blog');
+			const { data } = await blog.list('archive', { search: slug });
 			const suffix = data && data.length ? ` (${data.length + 1})` : '';
-			const { error } = await supabase.storage
-				.from('blog')
-				.move(`${slug}.md`, `archive/${slug}${suffix}.md`);
+			const { error } = await blog.move(`${slug}.md`, `archive/${slug}${suffix}.md`);
 			if (error) return getError(error);
 			else await fetchPosts();
 		}
@@ -125,3 +135,9 @@ const getError = async (error: Error | string, code = 500) => {
 		}
 	};
 };
+
+const deleteUser = async (user: User) => {
+  if (user.id === env.AUTH_UID) return;
+  const { error } = await service.auth.api.deleteUser(user.id);
+  return !error;
+}
