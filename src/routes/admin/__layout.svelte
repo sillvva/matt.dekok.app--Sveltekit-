@@ -36,7 +36,7 @@
 
 	onMount(async () => {
 		if ($session.auth) user = $session.auth.user;
-		console.log($session.auth, user, $page.url.hash)
+		console.log($session.auth, user, $page.url.hash, localStorage.getItem('supabase.auth.token'))
 
 		if (!user && !$page.url.hash) {
 			return await supabase.auth.signIn(
@@ -44,7 +44,7 @@
 					provider: 'github'
 				},
 				{
-					redirectTo: $page.url.href
+					redirectTo: $page.url.href.replace('#', '')
 				}
 			);
 		}
@@ -60,6 +60,7 @@
 		console.log($session.auth);
 		console.log(user);
 		console.log($page.url.hash);
+		console.log(JSON.parse(localStorage.getItem('supabase.auth.token') || "{}"));
 	}
 </script>
 
