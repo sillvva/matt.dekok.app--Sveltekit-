@@ -56,6 +56,11 @@
 		{ name: 'Skills', path: '/admin/skills', value: $admin.numskills, label: 'skills' },
 		{ name: 'Projects', path: '/admin/projects', value: $admin.numprojects, label: 'projects' }
 	];
+	$: {
+		console.log($session.auth);
+		console.log(user);
+		console.log($page.url.hash);
+	}
 </script>
 
 <svelte:window bind:innerWidth={width} />
