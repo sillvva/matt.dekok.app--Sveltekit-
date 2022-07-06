@@ -15,6 +15,7 @@
 	import type { User } from '@supabase/supabase-js';
 	import { session, page } from '$app/stores';
 	import { browser } from '$app/env';
+	import { goto } from '$app/navigation';
 	import { transitionDuration } from '$lib/constants';
 	import { supabase } from '$lib/supabase/connection';
 	import { pageProps, admin } from '$lib/store';
@@ -36,7 +37,7 @@
 
 	onMount(async () => {
 		if ($session.auth) user = $session.auth.user;
-		console.log($session.auth, user, $page.url.hash, localStorage.getItem('supabase.auth.token'))
+		if (!user && $page.url.hash.length > 1) goto($page.url.pathname, { replaceState: true });
 
 		if (!user && !$page.url.hash) {
 			return await supabase.auth.signIn(
