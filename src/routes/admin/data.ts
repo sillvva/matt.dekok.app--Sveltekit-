@@ -5,7 +5,7 @@ import { fetchPosts } from '$lib/supabase/blog';
 import type { Admin } from '$lib/store';
 
 export const get: RequestHandler<Admin> = async ({ request, url }) => {
-	const token = request.headers.get('authorization')?.replace('Bearer ', '') ?? "";
+	const token = request.headers.get('authorization')?.replace('Bearer ', '') ?? '';
 	const { user } = await supabase.auth.api.getUser(token);
 	if (user?.id !== env.AUTH_UID) return getError('Unauthorized', 401);
 
@@ -14,12 +14,12 @@ export const get: RequestHandler<Admin> = async ({ request, url }) => {
 };
 
 export type AdminMutation = {
-  success: boolean;
-  error?: string;
-}
+	success: boolean;
+	error?: string;
+};
 
 export const post: RequestHandler<AdminMutation> = async ({ request, url }) => {
-	const token = request.headers.get('authorization')?.replace('Bearer ', '') ?? "";
+	const token = request.headers.get('authorization')?.replace('Bearer ', '') ?? '';
 	const { user } = await supabase.auth.api.getUser(token);
 	if (user?.id !== env.AUTH_UID) return getError('Unauthorized', 401);
 
@@ -41,15 +41,15 @@ export const post: RequestHandler<AdminMutation> = async ({ request, url }) => {
 	}
 
 	return {
-    status: 200,
-    body: {
-      success: true
-    }
-  };
+		status: 200,
+		body: {
+			success: true
+		}
+	};
 };
 
 export const del: RequestHandler<AdminMutation> = async ({ request, url }) => {
-	const token = request.headers.get('authorization')?.replace('Bearer ', '') ?? "";
+	const token = request.headers.get('authorization')?.replace('Bearer ', '') ?? '';
 	const { user } = await supabase.auth.api.getUser(token);
 	if (user?.id !== env.AUTH_UID) return getError('Unauthorized', 401);
 
@@ -59,18 +59,22 @@ export const del: RequestHandler<AdminMutation> = async ({ request, url }) => {
 		const slug = url.searchParams.get('slug');
 
 		if (slug) {
-			const { error } = await supabase.storage.from('blog').remove([`${slug}.md`]);
+			const { data } = await supabase.storage.from('blog').list('archive', { search: slug });
+			const suffix = data && data.length ? ` (${data.length + 1})` : '';
+			const { error } = await supabase.storage
+				.from('blog')
+				.move(`${slug}.md`, `archive/${slug}${suffix}.md`);
 			if (error) return getError(error);
 			else await fetchPosts();
 		}
 	}
 
 	return {
-    status: 200,
-    body: {
-      success: true
-    }
-  };
+		status: 200,
+		body: {
+			success: true
+		}
+	};
 };
 
 const getResult = async (select: string | null) => {
@@ -93,7 +97,7 @@ const getResult = async (select: string | null) => {
 	return {
 		status: 200,
 		body: {
-      success: true,
+			success: true,
 			numposts: numposts || 0,
 			posts: posts || [],
 			numexperience: numexperience || 0,
@@ -113,7 +117,7 @@ const getError = async (error: Error | string, code = 500) => {
 	return {
 		status: code,
 		body: {
-      success: false,
+			success: false,
 			error: error.toString()
 		},
 		headers: {
