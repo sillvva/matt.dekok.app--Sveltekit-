@@ -78,7 +78,7 @@
 			<p class="mt-4 mb-2">Tags:</p>
 			<div class="flex flex-wrap gap-2">
 				{#each data.tags as tag}
-					<span class="rounded-full text-white py-1 px-3 bg-theme-body">
+					<span class="rounded-full text-theme-base py-1 px-3 bg-theme-body">
 						{tag}
 					</span>
 				{/each}

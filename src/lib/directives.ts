@@ -1,7 +1,7 @@
 import { getCursorPosition, wait } from '$lib/utils';
 
 type RippleParams = { enabled?: boolean; duration?: number; easing?: string; color?: string };
-const defaultRippleParams = { enabled: true, duration: 800, easing: 'linear', color: 'var(--ripple)' };
+const defaultRippleParams = { enabled: true, duration: 800, easing: 'linear', color: 'rgba(var(--color-bg-hover), 0.25)' };
 
 export function ripple(el: HTMLElement, params?: RippleParams) {
 	const ripples: HTMLElement[] = [];

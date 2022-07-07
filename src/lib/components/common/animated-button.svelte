@@ -6,9 +6,11 @@
 	export let active = false;
 	export let itemClasses: string[] = ['button-5'];
 	export let color = 'var(--color-text-link)';
-	export let hoverColor = 'var(--color-bg-body)';
-	export let activeColor = 'var(--color-bg-body)';
+	export let hoverColor = 'rgb(var(--color-bg-body))';
+	export let activeColor = 'rgb(var(--color-bg-body))';
 	export let textColor = 'var(--color-text-link)';
+	export let shadowColor = 'var(--color-text-link)';
+	export let textShadowColor = 'var(--color-text-inverted)';
 	export let link = '';
 
 	$: className = conClasses(['button', ...itemClasses]);
@@ -27,6 +29,8 @@
 		style:--hover-color={hoverColor}
 		style:--active-color={activeColor}
 		style:--text-color={textColor}
+		style:--shadow-color={shadowColor}
+		style:--text-shadow-color={textShadowColor}
 		use:ripple={{ enabled: !active }}
 	>
 		<slot />
@@ -41,6 +45,7 @@
 		style:--hover-color={hoverColor}
 		style:--active-color={activeColor}
 		style:--text-color={textColor}
+		style:--text-shadow-color={textShadowColor}
 		use:ripple={{ enabled: !active }}
 	>
 		<slot />
@@ -56,12 +61,12 @@
 	.button {
 		@apply relative py-4 px-6 no-underline uppercase duration-200 ease-linear select-none;
 		color: var(--text-color);
-		text-shadow: 1px 1px 1px rgb(var(--color-bg-body));
+		text-shadow: 1px 1px 1px var(--text-shadow-color);
 	}
 
 	.button-1 {
 		border-radius: 0.5rem;
-		box-shadow: 0 0 0 #0ca;
+		box-shadow: 0 0 0 var(--shadow-color);
 		overflow: hidden;
 		&::after {
 			content: '';
@@ -78,7 +83,7 @@
 		}
 		&:hover {
 			background: var(--hover-color);
-			box-shadow: 0 0 10px var(--item-color);
+			box-shadow: 0 0 10px var(--shadow-color);
 		}
 		&:hover,
 		&.active,
@@ -91,7 +96,7 @@
 
 	.button-2 {
 		border-radius: 0.5rem;
-		box-shadow: 0 0 0 var(--item-color);
+		box-shadow: 0 0 0 var(--shadow-color);
 		overflow: hidden;
 		&::after {
 			content: '';
@@ -108,7 +113,7 @@
 		}
 		&:hover {
 			background: var(--hover-color);
-			box-shadow: 0 0 10px var(--item-color);
+			box-shadow: 0 0 10px var(--shadow-color);
 		}
 		&:hover,
 		&.active,
@@ -148,7 +153,7 @@
 		}
 		&:hover {
 			background: var(--hover-color);
-			box-shadow: 0 0 10px var(--item-color);
+			box-shadow: 0 0 10px var(--shadow-color);
 		}
 		&:hover,
 		&.active,
@@ -190,7 +195,7 @@
 		}
 		&:hover {
 			background: var(--hover-color);
-			box-shadow: 0 0 10px var(--item-color);
+			box-shadow: 0 0 10px var(--shadow-color);
 		}
 		&:hover,
 		&.active,
@@ -222,7 +227,7 @@
 		}
 		&:hover:not(.active) {
 			background: var(--hover-color);
-			// box-shadow: 0 0 10px var(--item-color);
+			// box-shadow: 0 0 10px var(--shadow-color);
 		}
 		&:hover,
 		&:focus,
@@ -265,7 +270,7 @@
 			&::before,
 			&::after {
 				opacity: 1;
-				box-shadow: 0 0 10px var(--item-color);
+				box-shadow: 0 0 10px var(--shadow-color);
 			}
 			&::before {
 				transform: translate(-3px, -3px);

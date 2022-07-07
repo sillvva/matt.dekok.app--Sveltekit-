@@ -140,8 +140,8 @@
 							(post.tags || []).find((tag) => tag.toLowerCase() == search.toLowerCase())
 						);
 					})
-					.sort((a, b) => (a.updated_at > b.updated_at ? -1 : 1))
-			: ($admin.posts || []).sort((a, b) => (a.updated_at > b.updated_at ? -1 : 1));
+					.sort((a, b) => (a.date > b.date ? -1 : 1))
+			: ($admin.posts || []).sort((a, b) => (a.date > b.date ? -1 : 1));
 </script>
 
 <div class="flex gap-4 mb-4">

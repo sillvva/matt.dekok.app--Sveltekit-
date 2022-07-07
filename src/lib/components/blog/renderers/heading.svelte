@@ -27,7 +27,7 @@
 	h2,
 	h3,
 	h4 {
-		@apply font-semibold mb-2 mt-4 relative scroll-m-40;
+		@apply font-semibold mb-2 mt-4 relative scroll-m-40 text-theme-heading;
 	}
 	h1 {
 		@apply text-4xl;

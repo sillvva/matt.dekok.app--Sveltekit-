@@ -92,6 +92,5 @@
 <style lang="scss">
 	svg {
 		@apply align-middle transition-all duration-500;
-		text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 	}
 </style>

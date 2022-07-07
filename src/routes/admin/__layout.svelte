@@ -19,6 +19,7 @@
 	import { transitionDuration } from '$lib/constants';
 	import { pageProps, admin, auth } from '$lib/store';
 	import { conClasses } from '$lib/utils';
+	import { ripple } from '$lib/directives';
 	import Article from '$lib/components/page/article.svelte';
 	import Section from '$lib/components/page/section.svelte';
 	import PageMessage from '$lib/components/page/message.svelte';
@@ -37,7 +38,7 @@
 	onMount(async () => {
 		if ($auth) user = $auth?.user;
 
-		if (!user && !$page.url.hash) {
+		if (!user) {
 			return await supabase.auth.signIn(
 				{
 					provider: 'github'
@@ -67,11 +68,12 @@
 					<a
 						href={p.path}
 						class={conClasses([
-							'menu-item md:block md:bg-transparent',
+							'menu-item',
 							path == p.path || expanded ? 'block' : 'hidden',
 							path == p.path && expanded && paths.length > 1 ? 'bg-active' : ''
 						])}
 						on:click={() => (expanded = !expanded)}
+						use:ripple
 					>
 						<Section>
 							<div class="flex">
@@ -98,6 +100,7 @@
 					target="_blank"
 					rel="noreferrer noopener"
 					class="menu-item block"
+					use:ripple
 				>
 					<Section>
 						<div class="flex">
@@ -112,6 +115,7 @@
 					target="_blank"
 					rel="noreferrer noopener"
 					class="menu-item block"
+					use:ripple
 				>
 					<Section>
 						<div class="flex">
@@ -137,7 +141,7 @@
 
 <style lang="scss">
 	.menu-item {
-		@apply border-solid border-b-black/25 border-b-[1px] transition-[background] duration-500;
+		@apply md:block md:bg-transparent border-solid border-b-black/25 border-b-[1px] transition-[background] duration-500 relative;
 		&:last-child {
 			@apply border-b-0;
 		}

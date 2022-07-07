@@ -32,11 +32,7 @@
 <style lang="scss">
 	h1 {
 		font-family: 'Montserrat', sans-serif;
-		@apply text-3xl text-center lg:mt-4 lg:mb-4 font-medium text-[color:var(--headers)];
-		text-shadow: 1px 1px 0 rgba(var(--color-bg-body), var(--headerOpacity)),
-			-1px -1px 0 rgba(var(--color-bg-body), var(--headerOpacity)),
-			1px -1px 0 rgba(var(--color-bg-body), var(--headerOpacity)),
-			-1px 1px 0 rgba(var(--color-bg-body), var(--headerOpacity));
+		@apply text-3xl text-center lg:mt-4 lg:mb-4 font-medium text-theme-heading drop-shadow-theme-text-outline;
 		&.nav-title {
 			@apply block lg:hidden flex-1 p-2;
 			@apply absolute inset-0;

@@ -12,7 +12,7 @@
 	export let color: string = 'var(--color-bg-link)';
 	export let hoverColor: string = 'var(--color-bg-link-hover)';
 	export let activeColor: string = 'var(--color-bg-link-hover)';
-	export let textColor: string = 'var(--color-text-menu)';
+	export let textColor: string = 'var(--color-text-button)';
 	export let itemClasses: string[] = [];
 	export let hexagonClasses: string[] = [];
 	export let labelClasses: string[] = [];
@@ -111,7 +111,7 @@
 
 <style lang="scss">
 	.hex-wrapper {
-		@apply inline-block;
+		display: inline-block;
 		.hex-row {
 			height: calc(108px * var(--scale));
 			position: relative;
@@ -176,7 +176,7 @@
 				white-space: nowrap;
 				font-size: 4.5em;
 				font-weight: 600;
-				text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+				text-shadow: 1px 1px 2px var(--text-shadow-color);
 				color: var(--text-color);
 				letter-spacing: 1px;
 				position: absolute;

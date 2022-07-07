@@ -81,9 +81,9 @@
 	}
 
 	.intro-subject {
-		@apply flex flex-col mt-0 md:fixed bottom-12 left-0 right-0 z-10 text-center md:relative md:text-right md:bottom-0;
+		@apply flex flex-col mt-0 bottom-12 left-0 right-0 z-10 text-center md:relative md:text-right md:bottom-0 drop-shadow-theme-text;
 		font-family: 'Montserrat', sans-serif;
-		text-shadow: 2px 2px rgb(var(--color-bg-body)), 1px 1px 5px rgb(var(--color-bg-body));
+		text-shadow: 1px 1px 3px rgb(var(--color-bg-body)), 1px 1px 5px rgb(var(--color-bg-body));
 	}
 
 	.intro-name {

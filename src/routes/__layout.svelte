@@ -217,7 +217,7 @@
 		}
 	}
 	.bg {
-		@apply fixed inset-0 scale-x-[var(--bgScaleX)] z-0;
+		@apply fixed inset-0 scale-x-[var(--bg-scale-x)] z-0;
 		@apply bg-fixed bg-cover bg-no-repeat bg-theme-body bg-[image:var(--bg-img)];
 	}
 
@@ -225,7 +225,7 @@
 		@apply flex flex-col items-center transition-all duration-500;
 		@apply fixed top-0 left-0 right-0 z-[3];
 		#app[data-scroll]:not([data-scroll='0']) & {
-			@apply backdrop-blur-lg bg-theme-body bg-opacity-70;
+			@apply backdrop-blur-lg bg-theme-body bg-opacity-50;
 		}
 		.navbar {
 			@apply flex w-full py-4 px-2 2xs:px-3 items-center text-center max-h-[80px];

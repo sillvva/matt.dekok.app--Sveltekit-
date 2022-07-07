@@ -34,7 +34,7 @@
 		background: -ms-linear-gradient(top, rgba(255, 255, 255, 0.01) 40%, black 100%);
 		background: linear-gradient(to bottom, rgba(255, 255, 255, 0.01) 40%, black 100%);
 		* {
-			@apply text-theme-menu;
+			@apply text-theme-button;
 			filter: drop-shadow(1px 1px 1px black);
 		}
 		h3 {

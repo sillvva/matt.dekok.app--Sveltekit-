@@ -53,8 +53,7 @@
 			@apply inline-flex w-8 h-8 justify-center items-center rounded-sm font-bold drop-shadow-sm bg-theme-article;
 			&:hover,
 			&.active {
-				@apply text-theme-menu bg-theme-link;
-				text-shadow: 1px 1px 2px rgb(0 0 0 / 50%);
+				@apply text-theme-button bg-theme-link drop-shadow-theme-text;
 			}
 		}
 		.separator {

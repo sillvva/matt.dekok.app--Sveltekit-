@@ -25,7 +25,7 @@
 		}
 		&:hover,
 		&.active {
-			@apply bg-theme-link text-theme-menu;
+			@apply bg-theme-link text-theme-button;
 		}
 	}
 </style>

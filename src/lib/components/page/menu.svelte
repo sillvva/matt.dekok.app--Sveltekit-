@@ -13,8 +13,8 @@
 
 	export let items: Item[];
 	export let color: string = 'var(--color-text-link)';
-	export let hoverColor: string = 'var(--color-bg-body)';
-	export let activeColor: string = 'var(--color-bg-body)';
+	export let hoverColor: string = 'rgb(var(--color-bg-body))';
+	export let activeColor: string = 'rgb(var(--color-bg-body))';
 	export let textColor: string = 'var(--color-text-link)';
 	export let itemClasses: string[] = ['button-5'];
 </script>
