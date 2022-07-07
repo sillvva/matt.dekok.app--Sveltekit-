@@ -96,6 +96,21 @@
 			</Article>
 			<Article class="hidden md:block">
 				<a
+					href="https://github.com/sillvva/sveltekit.dekok.app"
+					target="_blank"
+					rel="noreferrer noopener"
+					class="menu-item block"
+					use:ripple
+				>
+					<Section>
+						<div class="flex">
+							<div class="flex-1">
+								<span class="text-theme-link font-semibold">Github</span>
+							</div>
+						</div>
+					</Section>
+				</a>
+				<a
 					href="https://vercel.com/"
 					target="_blank"
 					rel="noreferrer noopener"
