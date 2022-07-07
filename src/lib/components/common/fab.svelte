@@ -13,7 +13,7 @@
 <style lang="scss">
 	a {
 		@apply flex justify-center items-center w-12 h-12 rounded-full text-2xl cursor-pointer;
-		@apply transition-[background] duration-500 ease-linear bg-transparent text-[color:var(--text)];
+		@apply transition-[background] duration-500 ease-linear bg-transparent text-theme-base;
 		&.menu-fab {
 			@apply lg:hidden;
 		}
@@ -25,7 +25,7 @@
 		}
 		&:hover,
 		&.active {
-			@apply bg-[color:var(--link)] text-[color:var(--menuText)];
+			@apply bg-theme-link text-theme-menu;
 		}
 	}
 </style>

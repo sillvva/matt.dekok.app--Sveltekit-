@@ -170,7 +170,7 @@
 		}
 		.backface {
 			transition: all;
-			box-shadow: 0 0 3px rgb(var(--background)), 0 0 8px rgb(var(--background));
+			box-shadow: 0 0 3px rgb(var(--color-bg-body)), 0 0 8px rgb(var(--color-bg-body));
 		}
 		.face1 {
 			transform: rotate(60deg);
@@ -201,7 +201,7 @@
 
 	.bounce:hover:not(.active):not(.empty) {
 		animation: bounce 500ms ease-in-out forwards;
-		stroke: rgb(var(--background));
+		stroke: rgb(var(--color-bg-body));
 		stroke-width: 0;
 		.backface {
 			box-shadow: none;

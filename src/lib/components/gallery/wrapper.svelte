@@ -15,8 +15,7 @@
 <style lang="scss">
 	a,
 	div {
-		@apply w-full h-full aspect-video relative block shadow-lg rounded-md overflow-hidden transition-all duration-500 p-2;
-		background-color: var(--article);
+		@apply w-full h-full aspect-video relative block bg-theme-article shadow-lg rounded-md overflow-hidden transition-all duration-500 p-2;
 		--tw-shadow-color: var(--shadowColor);
 		--tw-shadow: var(--tw-shadow-colored);
 	}
@@ -24,6 +23,5 @@
 		@apply shadow-xl;
 		--tw-shadow-color: var(--shadowHover);
 		--tw-shadow: var(--tw-shadow-colored);
-		// @apply outline outline-1;
 	}
 </style>

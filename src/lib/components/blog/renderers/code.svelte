@@ -76,13 +76,13 @@
 	pre,
 	.code {
 		@apply flex flex-col gap-2 text-sm mb-4 pt-2 md:p-2 pb-0 rounded-lg;
-		@apply bg-[color:var(--codePre)] transition-[background-color] duration-500;
+		@apply bg-theme-pre transition-[background-color] duration-500;
 		> span.filename {
 			@apply self-end max-w-[calc(100%-1rem)] md:max-w-fit overflow-hidden top-4 right-4 p-1 px-2 mx-2 md:mx-0 rounded-sm;
-			@apply bg-[color:var(--codeFile)] transition-[background-color] duration-500;
+			@apply bg-theme-file transition-[background-color] duration-500;
 		}
 		:global(code) {
-			@apply flex-1 bg-[color:var(--code)] p-4 overflow-x-auto rounded-md transition-[background-color] duration-500;
+			@apply flex-1 bg-theme-code p-4 overflow-x-auto rounded-md transition-[background-color] duration-500;
 			tab-size: 0 !important;
 			:global(*) {
 				font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',

@@ -50,12 +50,10 @@
 	.pagination {
 		@apply flex justify-center gap-2 my-4;
 		.page {
-			@apply inline-flex w-8 h-8 justify-center items-center rounded-sm font-bold drop-shadow-sm;
-			background-color: var(--article);
+			@apply inline-flex w-8 h-8 justify-center items-center rounded-sm font-bold drop-shadow-sm bg-theme-article;
 			&:hover,
 			&.active {
-				@apply text-white;
-				background-color: var(--link);
+				@apply text-theme-menu bg-theme-link;
 				text-shadow: 1px 1px 2px rgb(0 0 0 / 50%);
 			}
 		}

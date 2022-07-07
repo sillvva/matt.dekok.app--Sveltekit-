@@ -11,12 +11,12 @@
 
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
+	import { mdiBrightness6, mdiMenu, mdiChevronLeft } from '@mdi/js';
+	import { QueryClient, QueryClientProvider } from '@sveltestack/svelte-query';
 	import { fade } from 'svelte/transition';
 	import { page, session } from '$app/stores';
 	import { browser } from '$app/env';
 	import { goto } from '$app/navigation';
-	import { mdiBrightness6, mdiMenu, mdiChevronLeft } from '@mdi/js';
-	import { QueryClient, QueryClientProvider } from '@sveltestack/svelte-query';
 	import type { Item } from '$lib/types/hex-menu';
 	import { pageProps, drawer, auth } from '$lib/store';
 	import { themes, metaTags } from '$lib/utils';
@@ -210,17 +210,22 @@
 <style lang="scss">
 	#app {
 		@apply min-h-screen min-w-full max-w-[100vw];
+		@apply absolute text-theme-base;
+		color-scheme: var(--scheme);
+		:global(a:not([role='button'])) {
+			@apply text-theme-link no-underline;
+		}
 	}
 	.bg {
 		@apply fixed inset-0 scale-x-[var(--bgScaleX)] z-0;
-		@apply bg-fixed bg-cover bg-no-repeat bg-[color:rgb(var(--background))] bg-[image:var(--bgImg)];
+		@apply bg-fixed bg-cover bg-no-repeat bg-theme-body bg-[image:var(--bg-img)];
 	}
 
 	header {
 		@apply flex flex-col items-center transition-all duration-500;
 		@apply fixed top-0 left-0 right-0 z-[3];
 		#app[data-scroll]:not([data-scroll='0']) & {
-			@apply backdrop-blur-lg bg-[color:rgba(var(--background),var(--headerOpacity))];
+			@apply backdrop-blur-lg bg-theme-body bg-opacity-70;
 		}
 		.navbar {
 			@apply flex w-full py-4 px-2 2xs:px-3 items-center text-center max-h-[80px];

@@ -41,7 +41,7 @@
 			&::after {
 				content: '';
 				@apply fixed z-0 left-0 right-0 bottom-0 h-[80vh] lg:hidden;
-				background-image: linear-gradient(transparent, rgba(var(--background), 1));
+				background-image: linear-gradient(transparent, rgba(var(--color-bg-body), 1));
 			}
 			img {
 				@apply object-left lg:object-center;

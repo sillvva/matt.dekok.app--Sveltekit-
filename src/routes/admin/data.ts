@@ -1,10 +1,10 @@
 import type { RequestHandler } from './__types/data';
+import type { User } from '@supabase/supabase-js';
+import type { Admin } from '$lib/store';
 import { env } from '$lib/constants';
 import { supabase } from '$lib/supabase/connection';
 import { service } from '$lib/supabase/service';
 import { fetchPosts } from '$lib/supabase/blog';
-import type { Admin } from '$lib/store';
-import type { User } from '@supabase/supabase-js';
 
 export const get: RequestHandler<Admin> = async ({ request, url }) => {
 	const token = request.headers.get('authorization')?.replace('Bearer ', '') ?? '';

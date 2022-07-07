@@ -161,12 +161,12 @@
 	{#if loaders == 0}
 		{#each filteredPosts as post}
 			<div
-				class="flex items-center md:items-start bg-[color:var(--article)] p-2 md:p-4 gap-4 rounded-md shadow-md"
+				class="flex items-center bg-theme-article p-2 md:p-4 gap-4 rounded-md shadow-md"
 				style:--tw-shadow-color="#0006"
 				style:--tw-shadow="var(--tw-shadow-colored)"
 			>
 				<div class="flex flex-1 flex-col">
-					<h4 class="flex-1 font-semibold pr-4">
+					<h4 class="flex-1 font-semibold">
 						<a href={`/blog/${post.slug}`} target="_blank">{post.title}</a>
 					</h4>
 					<div class="hidden sm:block">
@@ -180,7 +180,7 @@
 		{/each}
 	{:else}
 		{#each new Array(loaders).fill(1) as i}
-			<div class="flex flex-col gap-2 bg-[color:var(--article)] p-2 md:p-4 rounded-md">
+			<div class="flex flex-col gap-2 bg-theme-article p-2 md:p-4 rounded-md">
 				<div class="loading-line title max-w-xs">
 					<span />
 				</div>

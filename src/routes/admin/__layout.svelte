@@ -15,8 +15,8 @@
 	import type { User } from '@supabase/supabase-js';
 	import { page } from '$app/stores';
 	import { browser } from '$app/env';
-	import { transitionDuration } from '$lib/constants';
 	import { supabase } from '$lib/supabase/connection';
+	import { transitionDuration } from '$lib/constants';
 	import { pageProps, admin, auth } from '$lib/store';
 	import { conClasses } from '$lib/utils';
 	import Article from '$lib/components/page/article.svelte';
@@ -76,7 +76,7 @@
 						<Section>
 							<div class="flex">
 								<div class="flex-1">
-									<span class="text-[color:var(--link)]">{p.name}</span>
+									<span class="text-theme-link font-semibold">{p.name}</span>
 								</div>
 								<div class="flex-1 min-w-fit text-right">
 									{#if typeof p.value !== 'undefined'}
@@ -102,7 +102,7 @@
 					<Section>
 						<div class="flex">
 							<div class="flex-1">
-								<span class="text-[color:var(--link)]">Vercel</span>
+								<span class="text-theme-link font-semibold">Vercel</span>
 							</div>
 						</div>
 					</Section>
@@ -116,7 +116,7 @@
 					<Section>
 						<div class="flex">
 							<div class="flex-1">
-								<span class="text-[color:var(--link)]">Supabase</span>
+								<span class="text-theme-link font-semibold">Supabase</span>
 							</div>
 						</div>
 					</Section>
@@ -136,13 +136,6 @@
 {/if}
 
 <style lang="scss">
-	@tailwind utilities;
-
-	@layer utilities {
-		.bg-active {
-			@apply bg-[color:rgba(var(--bgInvert),0.1)];
-		}
-	}
 	.menu-item {
 		@apply border-solid border-b-black/25 border-b-[1px] transition-[background] duration-500;
 		&:last-child {
@@ -150,7 +143,7 @@
 		}
 		&.active,
 		&:hover {
-			@apply bg-active;
+			@apply bg-theme-hover bg-opacity-15;
 		}
 	}
 </style>

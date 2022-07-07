@@ -56,7 +56,7 @@
 			@apply grid-cols-1;
 		}
 		.section-item {
-			@apply text-[color:var(--text)] min-h-[60px] overflow-hidden;
+			@apply text-theme-base min-h-[60px] overflow-hidden;
 			@media (max-width: 991px) {
 				@apply pb-5;
 				border-bottom: 1px solid rgba(0, 0, 0, 0.15);

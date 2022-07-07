@@ -12,10 +12,10 @@
 	};
 
 	export let items: Item[];
-	export let color: string = 'var(--link)';
-	export let hoverColor: string = 'var(--linkHover)';
-	export let activeColor: string = 'var(--linkHover)';
-	export let textColor: string = 'var(--linkText)';
+	export let color: string = 'var(--color-text-link)';
+	export let hoverColor: string = 'var(--color-bg-body)';
+	export let activeColor: string = 'var(--color-bg-body)';
+	export let textColor: string = 'var(--color-text-link)';
 	export let itemClasses: string[] = ['button-5'];
 </script>
 

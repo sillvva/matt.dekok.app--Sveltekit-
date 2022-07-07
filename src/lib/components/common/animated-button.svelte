@@ -5,12 +5,11 @@
 	export let type: 'a' | 'button' = 'a';
 	export let active = false;
 	export let itemClasses: string[] = ['button-5'];
-	export let color = 'var(--link)';
-	export let hoverColor = 'var(--linkHover)';
-	export let activeColor = 'var(--linkHover)';
-	export let textColor = 'var(--linkText)';
+	export let color = 'var(--color-text-link)';
+	export let hoverColor = 'var(--color-bg-body)';
+	export let activeColor = 'var(--color-bg-body)';
+	export let textColor = 'var(--color-text-link)';
 	export let link = '';
-	// export let clickRipple = false;
 
 	$: className = conClasses(['button', ...itemClasses]);
 </script>
@@ -57,7 +56,7 @@
 	.button {
 		@apply relative py-4 px-6 no-underline uppercase duration-200 ease-linear select-none;
 		color: var(--text-color);
-		text-shadow: 1px 1px 1px rgb(var(--background));
+		text-shadow: 1px 1px 1px rgb(var(--color-bg-body));
 	}
 
 	.button-1 {

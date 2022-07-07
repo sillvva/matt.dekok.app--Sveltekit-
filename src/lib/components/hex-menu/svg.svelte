@@ -9,10 +9,10 @@
 	export let maxLength: number;
 	export let classes: string[] = [];
 	export let rotated: boolean;
-	export let color: string = 'var(--menu)';
-	export let hoverColor: string = 'var(--menuActive)';
-	export let activeColor: string = 'var(--menuActive)';
-	export let textColor: string = 'var(--menuText)';
+	export let color: string = 'var(--color-bg-link)';
+	export let hoverColor: string = 'var(--color-bg-link-hover)';
+	export let activeColor: string = 'var(--color-bg-link-hover)';
+	export let textColor: string = 'var(--color-text-menu)';
 	export let itemClasses: string[] = [];
 	export let hexagonClasses: string[] = [];
 	export let labelClasses: string[] = [];
@@ -199,7 +199,7 @@
 
 	.bounce:hover:not(.active):not(.empty) {
 		animation: bounce 500ms ease-in-out forwards;
-		stroke: rgb(var(--background));
+		stroke: rgb(var(--color-bg-body));
 		stroke-width: 0;
 		.backface {
 			box-shadow: none;
