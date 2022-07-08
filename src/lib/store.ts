@@ -1,39 +1,39 @@
-import { writable } from 'svelte/store';
-import type { PostData } from './types/blog';
-import type { Rating } from './types/rating';
-import type { Session } from '@supabase/supabase-js';
+import { writable } from "svelte/store";
+import type { PostData } from "./types/blog";
+import type { Rating } from "./types/rating";
+import type { Session } from "@supabase/supabase-js";
 
 export type PageProps = {
-	title?: string;
-	description?: string;
-	bodyClass?: string;
-	backTo?: boolean | string;
-	menu?: boolean;
-	articleMeta?: object;
-	image?: string;
+  title?: string;
+  description?: string;
+  bodyClass?: string;
+  backTo?: boolean | string;
+  menu?: boolean;
+  articleMeta?: object;
+  image?: string;
 };
 export const pageProps = writable<PageProps>({});
 
 export const drawer = writable(false);
 
 export type Admin = {
-	success: boolean;
-	error?: string;
-	numposts?: number;
-	posts?: PostData[];
-	numexperience?: number;
-	experience?: any[];
-	numskills?: number;
-	skills?: Rating[];
-	numprojects?: number;
-	projects?: any[];
+  success: boolean;
+  error?: string;
+  numposts?: number;
+  posts?: PostData[];
+  numexperience?: number;
+  experience?: any[];
+  numskills?: number;
+  skills?: Rating[];
+  numprojects?: number;
+  projects?: any[];
 };
 export const admin = writable<Admin>({
-	success: false,
-	posts: [],
-	experience: [],
-	skills: [],
-	projects: []
+  success: false,
+  posts: [],
+  experience: [],
+  skills: [],
+  projects: []
 });
 
 export const auth = writable<Session | null>(null);

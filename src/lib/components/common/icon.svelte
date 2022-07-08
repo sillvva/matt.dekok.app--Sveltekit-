@@ -1,96 +1,92 @@
 <script lang="ts">
-	export let path: string;
-	export let size: number | string = 1;
-	export let color: string | null = null;
-	export let flip: boolean | string | null = null;
-	export let rotate = 0;
-	export let spin: number | boolean = false;
-	export let title = '';
-	export let styles = "";
-	
-	let className = '';
-	export { className as class };
+import { conClasses } from "$lib/utils";
 
-	// SPIN properties
-	$: inverse = typeof spin !== 'boolean' && spin < 0 ? true : false;
-	$: spintime = Math.abs(spin === true ? 2 : spin || 0);
-	$: spinfunc = inverse ? 'spin-inverse' : 'spin';
+export let path: string;
+export let size: number | string = 1;
+export let color: string | null = null;
+export let flip: boolean | string | null = null;
+export let rotate = 0;
+export let spin: number | boolean = false;
+export let title = "";
+export let styles = "";
 
-	// size
-	if (Number(size)) size = Number(size);
+let className = "";
+export { className as class };
 
-	const getStyles = (
-		asize: typeof size,
-		acolor: typeof color = null,
-		aflip: typeof flip = null,
-		arotate: typeof rotate = 0
-	) => {
-		const transform = [];
-		const styles = [];
+// SPIN properties
+$: inverse = typeof spin !== "boolean" && spin < 0 ? true : false;
+$: spintime = Math.abs(spin === true ? 2 : spin || 0);
+$: spinfunc = inverse ? "spin-inverse" : "spin";
 
-		if (asize !== null) {
-			const width = typeof asize === 'string' ? asize : `${asize * 1.5}rem`;
-			styles.push(['width', width]);
-			styles.push(['height', width]);
-		}
+// size
+if (Number(size)) size = Number(size);
 
-		styles.push(['fill', acolor !== null ? acolor : 'currentColor']);
+const getStyles = (
+  asize: typeof size,
+  acolor: typeof color = null,
+  aflip: typeof flip = null,
+  arotate: typeof rotate = 0
+) => {
+  const transform = [];
+  const styles = [];
 
-		if (aflip === true || aflip === 'h') {
-			transform.push('scaleX(-1)');
-		}
+  if (asize !== null) {
+    const width = typeof asize === "string" ? asize : `${asize * 1.5}rem`;
+    styles.push(["width", width]);
+    styles.push(["height", width]);
+  }
 
-		if (aflip === true || aflip === 'v') {
-			transform.push('scaleY(-1)');
-		}
+  styles.push(["fill", acolor !== null ? acolor : "currentColor"]);
 
-		if (arotate != 0) {
-			transform.push(`rotate(${arotate}deg)`);
-		}
+  if (aflip === true || aflip === "h") {
+    transform.push("scaleX(-1)");
+  }
 
-		if (transform.length > 0) {
-			styles.push(['transform', transform.join(' ')]);
-			styles.push(['transform-origin', 'center']);
-		}
+  if (aflip === true || aflip === "v") {
+    transform.push("scaleY(-1)");
+  }
 
-		return styles.reduce((cur, item) => {
-			return `${cur} ${item[0]}:${item[1]};`;
-		}, '');
-	};
+  if (arotate != 0) {
+    transform.push(`rotate(${arotate}deg)`);
+  }
 
-	$: style = `${getStyles(size, color, flip, rotate)} ${styles}`;
+  if (transform.length > 0) {
+    styles.push(["transform", transform.join(" ")]);
+    styles.push(["transform-origin", "center"]);
+  }
+
+  return styles.reduce((cur, item) => {
+    return `${cur} ${item[0]}:${item[1]};`;
+  }, "");
+};
+
+$: style = `${getStyles(size, color, flip, rotate)} ${styles}`;
 </script>
 
-<svg viewBox="0 0 24 24" {style} class={className}>
-	{#if title}<title>{title}</title>{/if}
-	{#if spin !== false}
-		{#if inverse}
-			<style>
-				@keyframes spin-inverse {
-					to {
-						transform: rotate(-360deg);
-					}
-				}
-			</style>
-		{:else}
-			<style>
-				@keyframes spin {
-					to {
-						transform: rotate(360deg);
-					}
-				}
-			</style>
-		{/if}
-		<g style={`animation: ${spinfunc} linear ${spintime}s infinite; transform-origin: center`}>
-			<path d={path} />
-		</g>
-	{:else}
-		<path d={path} />
-	{/if}
+<svg viewBox="0 0 24 24" {style} class={conClasses(["align-middle transition-all duration-500", className])}>
+  {#if title}<title>{title}</title>{/if}
+  {#if spin !== false}
+    {#if inverse}
+      <style>
+      @keyframes spin-inverse {
+        to {
+          transform: rotate(-360deg);
+        }
+      }
+      </style>
+    {:else}
+      <style>
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      </style>
+    {/if}
+    <g style={`animation: ${spinfunc} linear ${spintime}s infinite; transform-origin: center`}>
+      <path d={path} />
+    </g>
+  {:else}
+    <path d={path} />
+  {/if}
 </svg>
-
-<style lang="scss">
-	svg {
-		@apply align-middle transition-all duration-500;
-	}
-</style>
