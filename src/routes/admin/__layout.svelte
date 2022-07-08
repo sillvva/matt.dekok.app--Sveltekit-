@@ -24,14 +24,14 @@
 	import Section from '$lib/components/page/section.svelte';
 	import PageMessage from '$lib/components/page/message.svelte';
 
-	$pageProps = {
-		bodyClass: 'page-body admin-body'
-	};
-
 	export let path: string;
 	let user: User | null;
 	let width = 0;
 	let expanded = false;
+
+	$pageProps = {
+		bodyClass: 'page-body admin-body'
+	};
 
 	if (browser && !$auth?.user) $auth = supabase.auth.session();
 
@@ -57,6 +57,10 @@
 		{ name: 'Projects', path: '/admin/projects', value: $admin.numprojects, label: 'projects' }
 	];
 </script>
+
+<svelte:head>
+	<title>Admin - Matt DeKok</title>
+</svelte:head>
 
 <svelte:window bind:innerWidth={width} />
 
