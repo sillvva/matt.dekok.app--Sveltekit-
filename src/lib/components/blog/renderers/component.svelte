@@ -14,20 +14,11 @@
 	});
 </script>
 
-<div class="component-container">
+<div class="grid text-sm mb-4 pt-2 pb-0 md:p-2 bg-theme-pre rounded-lg">
 	{#if description}
-		<p>{description}</p>
+		<p class="m-3 md:mb-0">{description}</p>
 	{/if}
 	{#if LoadedComponent}
 		<svelte:component this={LoadedComponent} {...props} on:click={(e) => e.preventDefault()} />
 	{/if}
 </div>
-
-<style lang="scss">
-	.component-container {
-		@apply grid text-sm mb-4 pt-2 pb-0 md:p-2 bg-theme-pre rounded-lg;
-		p {
-			@apply m-3 md:mb-0;
-		}
-	}
-</style>

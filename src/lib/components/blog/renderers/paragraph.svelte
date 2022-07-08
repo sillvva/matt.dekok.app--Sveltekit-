@@ -1,7 +1,1 @@
-<p><slot></slot></p>
-
-<style lang="scss">
-  p {
-    @apply mb-4;
-  }
-</style>
+<p class="mb-4"><slot></slot></p>

@@ -7,38 +7,13 @@
 </script>
 
 {#if depth === 1}
-	<h1 {id}><slot /></h1>
+	<h1 {id} class="font-semibold mb-2 mt-4 relative scroll-m-40 text-theme-heading text-4xl"><slot /></h1>
 {:else if depth === 2}
-	<h2 {id}><slot /></h2>
+	<h2 {id} class="font-semibold mb-2 mt-4 relative scroll-m-40 text-theme-heading text-2xl"><slot /></h2>
 {:else if depth === 3}
-	<h3 {id}><slot /></h3>
+	<h3 {id} class="font-semibold mb-2 mt-4 relative scroll-m-40 text-theme-heading text-lg"><slot /></h3>
 {:else if depth === 4}
-	<h4 {id}><slot /></h4>
-{:else if depth === 5}
-	<h5 {id}><slot /></h5>
-{:else if depth === 6}
-	<h6 {id}><slot /></h6>
+	<h4 {id} class="font-semibold mb-2 mt-4 relative scroll-m-40 text-theme-heading text-base"><slot /></h4>
 {:else}
 	{raw}
 {/if}
-
-<style lang="scss">
-	h1,
-	h2,
-	h3,
-	h4 {
-		@apply font-semibold mb-2 mt-4 relative scroll-m-40 text-theme-heading;
-	}
-	h1 {
-		@apply text-4xl;
-	}
-	h2 {
-		@apply text-2xl;
-	}
-	h3 {
-		@apply text-lg;
-	}
-	h4 {
-		@apply text-base;
-	}
-</style>

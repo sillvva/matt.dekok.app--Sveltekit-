@@ -72,7 +72,8 @@
 					<a
 						href={p.path}
 						class={conClasses([
-							'menu-item',
+							'relative section-border transition-[background] duration-500',
+							'md:block md:bg-transparent last:border-b-0 hover:bg-theme-hover hover:bg-opacity-15',
 							path == p.path || expanded ? 'block' : 'hidden',
 							path == p.path && expanded && paths.length > 1 ? 'bg-active' : ''
 						])}
@@ -103,7 +104,10 @@
 					href="https://github.com/sillvva/sveltekit.dekok.app"
 					target="_blank"
 					rel="noreferrer noopener"
-					class="menu-item block"
+					class={conClasses([
+						'relative border-solid border-b-black/25 border-b-[1px] transition-[background] duration-500',
+						'md:block md:bg-transparent last:border-b-0 hover:bg-theme-hover hover:bg-opacity-15'
+					])}
 					use:ripple
 				>
 					<Section>
@@ -118,7 +122,10 @@
 					href="https://vercel.com/"
 					target="_blank"
 					rel="noreferrer noopener"
-					class="menu-item block"
+					class={conClasses([
+						'relative border-solid border-b-black/25 border-b-[1px] transition-[background] duration-500',
+						'md:block md:bg-transparent last:border-b-0 hover:bg-theme-hover hover:bg-opacity-15'
+					])}
 					use:ripple
 				>
 					<Section>
@@ -133,7 +140,10 @@
 					href="https://app.supabase.com/"
 					target="_blank"
 					rel="noreferrer noopener"
-					class="menu-item block"
+					class={conClasses([
+						'relative border-solid border-b-black/25 border-b-[1px] transition-[background] duration-500',
+						'md:block md:bg-transparent last:border-b-0 hover:bg-theme-hover hover:bg-opacity-15'
+					])}
 					use:ripple
 				>
 					<Section>
@@ -157,16 +167,3 @@
 {:else}
 	<PageMessage>Authenticating...</PageMessage>
 {/if}
-
-<style lang="scss">
-	.menu-item {
-		@apply md:block md:bg-transparent border-solid border-b-black/25 border-b-[1px] transition-[background] duration-500 relative;
-		&:last-child {
-			@apply border-b-0;
-		}
-		&.active,
-		&:hover {
-			@apply bg-theme-hover bg-opacity-15;
-		}
-	}
-</style>

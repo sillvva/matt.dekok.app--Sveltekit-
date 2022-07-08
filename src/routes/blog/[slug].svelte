@@ -71,7 +71,7 @@
 			{data.date}
 			{#if data.updated}(Updated: {data.updated}){/if}
 		</p>
-		<div class="blog-content">
+		<div class="mb-4">
 			<SvelteMarkdown source={content} {renderers} />
 		</div>
 		{#if !!(data.tags || []).length}
@@ -86,9 +86,3 @@
 		{/if}
 	</Section>
 </Article>
-
-<style lang="scss">
-	.blog-content {
-		@apply mb-4;
-	}
-</style>

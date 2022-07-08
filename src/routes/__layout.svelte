@@ -19,7 +19,7 @@
 	import { goto } from '$app/navigation';
 	import type { Item } from '$lib/types/hex-menu';
 	import { pageProps, drawer, auth } from '$lib/store';
-	import { themes, metaTags } from '$lib/utils';
+	import { themes, metaTags, conClasses } from '$lib/utils';
 	import { transitionDuration } from '$lib/constants';
 	import { supabase } from '$lib/supabase/connection';
 	import Menu from '$lib/components/page/menu.svelte';
@@ -96,19 +96,32 @@
 </svelte:head>
 
 <QueryClientProvider client={queryClient}>
-	<div id="app" data-scroll={scroll} data-theme={theme}>
+	<div
+		id="app"
+		class={conClasses(['min-h-screen min-w-full max-w-[100vw] absolute text-theme-base'])}
+		data-theme={theme}
+	>
 		{#key theme}
 			<div
-				class="bg"
+				class={conClasses([
+					'fixed inset-0 scale-x-[var(--bg-scale-x)] z-0',
+					'bg-fixed bg-cover bg-no-repeat bg-theme-body bg-[image:var(--bg-img)]'
+				])}
 				data-theme={theme}
 				in:fade={{ duration: transitionDuration }}
 				out:fade={{ duration: transitionDuration }}
 			/>
 		{/key}
-		<header>
+		<header
+			class={conClasses([
+				'flex flex-col items-center transition-all duration-500',
+				'fixed top-0 left-0 right-0 z-[3]',
+				scroll > 0 && 'backdrop-blur-lg bg-theme-body bg-opacity-60'
+			])}
+		>
 			{#if $auth?.user && $page.url.pathname.startsWith('/admin')}
 				<div
-					class="navbar"
+					class="flex w-full py-4 px-2 2xs:px-3 items-center text-center max-h-[80px]"
 					in:fade={{ delay: delay, duration: transitionDuration / 2 }}
 					out:fade={{ duration: transitionDuration / 2 }}
 				>
@@ -142,7 +155,7 @@
 				</div>
 			{:else}
 				<div
-					class="navbar"
+					class="flex w-full py-4 px-2 2xs:px-3 items-center text-center max-h-[80px]"
 					in:fade={{ delay: delay, duration: transitionDuration / 2 }}
 					out:fade={{ duration: transitionDuration / 2 }}
 				>
@@ -163,11 +176,10 @@
 							<Icon path={mdiMenu} />
 						</Fab>
 					{/if}
-					<div class="menu-container">
+					<div class="flex-1 block lg:pl-12 relative h-14">
 						{#if $pageProps.menu}
 							<nav
-								class="page-menu"
-								class:loaded
+								class={conClasses(['hidden justify-center gap-3 px-3', loaded && 'lg:flex'])}
 								in:fade={{ delay, duration: transitionDuration / 2 }}
 								out:fade={{ duration: transitionDuration / 2 }}
 							>
@@ -193,8 +205,11 @@
 		</header>
 		{#key path}
 			<main
-				class={$pageProps.bodyClass}
-				class:loaded
+				class={conClasses([
+					loaded ? 'flex' : 'hidden',
+					'relative flex-col justify-center items-center z-[2] px-2 pb-4 md:px-4',
+					$page.url.pathname.startsWith('/admin') ? 'mt-20' : 'mt-24 lg:mt-36'
+				])}
 				in:fade={{ delay, duration: transitionDuration / 2 }}
 				out:fade={{ duration: transitionDuration / 2 }}
 			>
@@ -209,50 +224,9 @@
 
 <style lang="scss">
 	#app {
-		@apply min-h-screen min-w-full max-w-[100vw];
-		@apply absolute text-theme-base;
 		color-scheme: var(--scheme);
 		:global(a:not([role='button'])) {
 			@apply text-theme-link no-underline;
-		}
-	}
-	.bg {
-		@apply fixed inset-0 scale-x-[var(--bg-scale-x)] z-0;
-		@apply bg-fixed bg-cover bg-no-repeat bg-theme-body bg-[image:var(--bg-img)];
-	}
-
-	header {
-		@apply flex flex-col items-center transition-all duration-500;
-		@apply fixed top-0 left-0 right-0 z-[3];
-		#app[data-scroll]:not([data-scroll='0']) & {
-			@apply backdrop-blur-lg bg-theme-body bg-opacity-50;
-		}
-		.navbar {
-			@apply flex w-full py-4 px-2 2xs:px-3 items-center text-center max-h-[80px];
-			.menu-container {
-				@apply flex-1 block lg:pl-12 relative h-14;
-				.page-menu {
-					@apply hidden justify-center gap-3 px-3;
-					&.loaded {
-						@apply lg:flex;
-					}
-				}
-			}
-		}
-	}
-
-	main {
-		@apply hidden flex-col justify-center items-center;
-		@apply px-2 md:px-4 pb-4;
-		@apply relative z-[2];
-		&.page-body {
-			@apply mt-24 lg:mt-36;
-			&.admin-body {
-				@apply mt-20;
-			}
-		}
-		&.loaded {
-			@apply flex;
 		}
 	}
 </style>

@@ -14,7 +14,7 @@ module.exports = {
 					link: 'var(--color-text-link)',
 					'link-hover': 'var(--color-text-link-hover)',
 					button: 'var(--color-text-button)',
-					heading: 'var(--color-text-heading)',
+					heading: 'var(--color-text-heading)'
 				}
 			},
 			backgroundColor: {
@@ -42,7 +42,11 @@ module.exports = {
 			},
 			opacity: {
 				15: '0.15',
-				33: '0.33',
+				33: '0.33'
+			},
+			fontFamily: {
+				montserrat: ['Montserrat', 'sans-serif'],
+				'robo-flex': ['Robo-Flex', 'sans-serif']
 			}
 		},
 		screens: {

@@ -8,10 +8,4 @@
 	});
 </script>
 
-<code bind:this={codespan}><slot /></code>
-
-<style lang="scss">
-	code {
-		@apply px-1 mx-1 outline outline-1 rounded-sm bg-white/10;
-	}
-</style>
+<code bind:this={codespan} class="px-1 mx-1 outline outline-1 rounded-sm bg-white/10"><slot /></code>
