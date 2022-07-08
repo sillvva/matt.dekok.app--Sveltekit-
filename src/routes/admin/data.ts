@@ -106,6 +106,21 @@ export const del: RequestHandler<AdminMutation> = async ({ request, url }) => {
     }
   }
 
+  if (select === "images") {
+    const filename = url.searchParams.get("file");
+
+    if (filename) {
+      const blog = supabase.storage.from("images");
+      const { data } = await blog.list("archive", { search: filename });
+      const suffix = data && data.length ? ` (${data.length + 1})` : "";
+      const extname = path.extname(filename);
+      const basename = path.basename(filename, extname);
+      const { error } = await blog.move(`${filename}`, `archive/${basename}${suffix}${extname}`);
+      if (error) return getError(error);
+      else await fetchPosts();
+    }
+  }
+
   return {
     status: 200,
     body: {

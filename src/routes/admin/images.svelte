@@ -8,6 +8,7 @@ import type { Admin } from "$lib/store";
 import type { AdminMutation } from "./data";
 import Icon from "$lib/components/common/icon.svelte";
 import Image from "$lib/components/common/image.svelte";
+import Fab from "$lib/components/common/fab.svelte";
 
 let search: string = "";
 let loading = true;
@@ -60,33 +61,33 @@ const uploadMutation = useMutation(
   }
 );
 
-// const deleteMutation = useMutation(
-//   async (slug: string) => {
-//     if (!slug && (await checkError("Slug not defined"))) return { success: false };
+const deleteMutation = useMutation(
+  async (name: string) => {
+    if (!name && (await checkError("File name not defined"))) return { success: false };
 
-//     const response = await fetch(`/admin/data?select=posts&slug=${slug}`, {
-//       method: "DELETE",
-//       headers
-//     });
-//     const data: AdminMutation = await response.json();
+    const response = await fetch(`/admin/data?select=images&file=${name}`, {
+      method: "DELETE",
+      headers
+    });
+    const data: AdminMutation = await response.json();
 
-//     if (await checkError(data.error)) return { success: false };
-//     return data;
-//   },
-//   {
-//     onMutate() {
-//       loading = true;
-//       $admin.numposts = Math.max(1, numloaders - 1);
-//     },
-//     onSuccess() {
-//       queryClient.invalidateQueries("posts");
-//     }
-//   }
-// );
+    if (await checkError(data.error)) return { success: false };
+    return data;
+  },
+  {
+    onMutate() {
+      loading = true;
+      $admin.numposts = Math.max(1, numloaders - 1);
+    },
+    onSuccess() {
+      queryClient.invalidateQueries("images");
+    }
+  }
+);
 
 const refresh = async () => {
   loading = true;
-  await queryClient.invalidateQueries("posts");
+  await queryClient.invalidateQueries("images");
 };
 
 const upload = () => {
@@ -104,10 +105,10 @@ const upload = () => {
   input.click();
 };
 
-// const remove = async (slug: string) => {
-//   if (!confirm("Are you sure you want to delete this post?")) return;
-//   $deleteMutation.mutate(slug);
-// };
+const remove = async (name: string) => {
+  if (!confirm("Are you sure you want to delete this image?")) return;
+  $deleteMutation.mutate(name);
+};
 
 const checkError = async (error: any) => {
   if (error === "Unauthorized") {
@@ -139,9 +140,6 @@ $: filteredImages =
         })
         .sort((a, b) => (a.created_at > b.created_at ? -1 : 1))
     : ($admin.images || []).sort((a, b) => (a.created_at > b.created_at ? -1 : 1));
-$: {
-  console.log($admin.images);
-}
 </script>
 
 <div class="flex gap-4 mb-4">
@@ -159,29 +157,27 @@ $: {
 </div>
 <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2">
   {#if loaders == 0}
-    {#each filteredImages as image}
+    {#each filteredImages as image (image.name)}
       <div
-        class="flex flex-col bg-theme-article p-0 gap-2 rounded-md shadow-md relative overflow-hidden"
+        class="flex flex-col bg-theme-article p-0 rounded-md shadow-md relative overflow-hidden"
         style:--tw-shadow-color="#0006"
         style:--tw-shadow="var(--tw-shadow-colored)">
         <div class="aspect-video relative">
           <Image src={`${imagePath}/${image.name}`} lazy alt={image.name} class="bg-black" />
+          <Fab on:click={() => remove(image.name)} class="absolute top-2 right-2 w-9 h-9 bg-red-700 drop-shadow-theme-text">
+            <Icon path={mdiTrashCan} size={0.8} />
+          </Fab>
         </div>
-        <div class="flex flex-row">
-          <div class="flex-1 flex flex-col p-2">
-            <h4 class="font-semibold">
-              <a href={`${imagePath}/${image.name}`}>
-                {image.name}
-                <Icon path={mdiOpenInNew} />
-              </a>
-            </h4>
-            <div class="text-sm">
-              Created: {new Date(image.created_at).toLocaleString()}
-            </div>
+        <div class="flex-1 flex flex-col p-3">
+          <h4 class="font-semibold pb-1">
+            <a href={`${imagePath}/${image.name}`}>
+              {image.name}
+              <Icon path={mdiOpenInNew} size={0.8} class="ml-1" />
+            </a>
+          </h4>
+          <div class="text-sm">
+            Created: {new Date(image.created_at).toLocaleString()}
           </div>
-          <!-- <button on:click={() => remove(post.slug)}>
-            <Icon path={mdiTrashCan} />
-          </button> -->
         </div>
       </div>
     {/each}

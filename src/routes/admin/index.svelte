@@ -1,5 +1,5 @@
 <script lang="ts">
-import { mdiUpload, mdiTrashCan, mdiRefresh } from "@mdi/js";
+import { mdiUpload, mdiTrashCan, mdiRefresh, mdiOpenInNew } from "@mdi/js";
 import { useQuery, useMutation, useQueryClient } from "@sveltestack/svelte-query";
 import { goto } from "$app/navigation";
 import { supabase } from "$lib/supabase/connection";
@@ -7,6 +7,8 @@ import { admin, auth } from "$lib/store";
 import type { Admin } from "$lib/store";
 import type { AdminMutation } from "./data";
 import Icon from "$lib/components/common/icon.svelte";
+import Image from "$lib/components/common/image.svelte";
+import Fab from "$lib/components/common/fab.svelte";
 
 let search: string = "";
 let loading = true;
@@ -157,24 +159,39 @@ $: filteredPosts =
     </button>
   </div>
 </div>
-<div class="flex flex-col gap-2">
+<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2">
   {#if loaders == 0}
-    {#each filteredPosts as post}
+    {#each filteredPosts as post (post.slug)}
       <div
-        class="flex items-center bg-theme-article p-2 md:p-4 gap-4 rounded-md shadow-md"
+        class="flex flex-col bg-theme-article p-0 rounded-md shadow-md relative overflow-hidden"
         style:--tw-shadow-color="#0006"
         style:--tw-shadow="var(--tw-shadow-colored)">
-        <div class="flex flex-1 flex-col">
-          <h4 class="flex-1 font-semibold">
-            <a href={`/blog/${post.slug}`} target="_blank">{post.title}</a>
-          </h4>
-          <div class="hidden sm:block">
-            {post.description}
-          </div>
+        <div class="aspect-video relative hidden sm:block">
+          <Image src={post.image} lazy alt={post.title} class="bg-black" />
+          <Fab
+            on:click={() => remove(post.slug)}
+            class="absolute top-2 right-2 w-9 h-9 bg-red-700 drop-shadow-theme-text">
+            <Icon path={mdiTrashCan} size={0.8} />
+          </Fab>
         </div>
-        <button on:click={() => remove(post.slug)}>
-          <Icon path={mdiTrashCan} />
-        </button>
+        <div class="flex flex-row items-center gap-2 p-3">
+          <div class="flex-1 flex flex-col">
+            <h4 class="font-semibold pb-1">
+              <a href={`/blog/${post.slug}`} target="_blank">
+                {post.title}
+                <Icon path={mdiOpenInNew} size={0.8} class="ml-1" />
+              </a>
+            </h4>
+            <div class="text-sm">
+              Posted: {new Date(post.date).toLocaleDateString()}
+            </div>
+          </div>
+          <Fab
+            on:click={() => remove(post.slug)}
+            class="w-9 h-9 bg-red-700 drop-shadow-theme-text inline sm:hidden">
+            <Icon path={mdiTrashCan} size={0.8} />
+          </Fab>
+        </div>
       </div>
     {/each}
   {:else}
