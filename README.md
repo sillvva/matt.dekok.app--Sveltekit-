@@ -7,11 +7,10 @@ A demo can be viewed at https://sveltekit.dekok.app
 Create a `.env.local` file with the following constants:
 
 ```env
-VITE_FIREBASE_ADMIN_CREDENTIAL=
-VITE_FIREBASE_API_KEY=
-VITE_FIREBASE_STORAGE_BUCKET=
-
-VITE_API_SECRET_KEY=
+VITE_SUPABASE_URL=
+VITE_SUPABASE_KEY=
+VITE_SUPABASE_SERVICE_KEY=
+VITE_AUTH_UID=
 ```
 
 ## Developing

@@ -1,5 +1,5 @@
 import type { PageProps } from './store';
-import { vercelUrl, env } from '$lib/constants';
+import { env } from '$lib/constants';
 
 export const themes = ['dark', 'light', 'blue'] as const;
 export type Theme = typeof themes[number];
@@ -43,8 +43,8 @@ export const wait = (callback: TimerHandler, id: string | number, ms?: number, .
 
 export const checkOrigin = (origin: string) => {
 	return origin.match(/prerender/)
-		? vercelUrl
-			? `https://${vercelUrl}`
+		? env.VERCEL_URL
+			? `https://${env.VERCEL_URL}`
 			: process.env.NODE_ENV === 'development'
 			? 'http://localhost:3000'
 			: env.PROD_URL

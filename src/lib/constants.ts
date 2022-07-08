@@ -1,30 +1,32 @@
+import { z } from 'zod';
+
 export const blogPostsPerPage = 12;
 export const transitionDuration = 500;
-export const vercelUrl = process.env.VERCEL_URL;
 
-let envVars: {
-  SUPABASE_URL: string;
-  SUPABASE_KEY: string;
-  PROD_URL: string;
-  AUTH_UID: string;
-};
-if (process.env.VITE_FIREBASE_API_KEY) {
-  envVars = {
-    SUPABASE_URL: process.env.VITE_SUPABASE_URL || "",
-    SUPABASE_KEY: process.env.VITE_SUPABASE_KEY || "",
-    PROD_URL: process.env.PROD_URL || "",
-    AUTH_UID: process.env.VITE_AUTH_UID || "",
-  }
-}
-else {
-  envVars = {
-    SUPABASE_URL: import.meta.env.VITE_SUPABASE_URL || "",
-    SUPABASE_KEY: import.meta.env.VITE_SUPABASE_KEY || "",
-    PROD_URL: import.meta.env.VITE_PROD_URL || "",
-    AUTH_UID: import.meta.env.VITE_AUTH_UID || "",
-  }
+const envSchema = z.object({
+	SUPABASE_URL: z.string().url(),
+	SUPABASE_KEY: z.string(),
+	AUTH_UID: z.string(),
+	PROD_URL: process.env.PROD_URL ? z.string().url() : z.undefined(),
+	VERCEL_URL: process.env.VERCEL_URL ? z.string().url() : z.undefined()
+});
+
+const envCheck = envSchema.safeParse({
+	SUPABASE_URL: process.env.VITE_SUPABASE_URL ?? import.meta.env.VITE_SUPABASE_URL,
+	SUPABASE_KEY: process.env.VITE_SUPABASE_KEY ?? import.meta.env.VITE_SUPABASE_KEY,
+	AUTH_UID: process.env.VITE_AUTH_UID ?? import.meta.env.VITE_AUTH_UID,
+	PROD_URL: process.env.PROD_URL,
+	VERCEL_URL: process.env.VERCEL_URL
+});
+
+if (!envCheck.success) {
+	console.error(
+		'❌ Invalid environment variables:',
+		JSON.stringify(envCheck.error.format(), null, 4)
+	);
+	process.exit(1);
 }
 
 export const env = {
-  ...envVars
-}
+	...envCheck.data
+};
