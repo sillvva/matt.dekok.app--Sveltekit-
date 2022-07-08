@@ -21,6 +21,8 @@ export type Admin = {
   error?: string;
   numposts?: number;
   posts?: PostData[];
+  numimages?: number;
+  images?: any[];
   numexperience?: number;
   experience?: any[];
   numskills?: number;

@@ -4,8 +4,18 @@ import { writeFileSync } from "fs";
 import { supabase } from "./connection";
 import { getContentDir } from "./func";
 import type { PostData } from "../types/blog";
+import { blogPostsPerPage } from "$lib/constants";
 
-export async function fetchPosts(getPosts?: boolean, page?: number, perpage?: number, query?: string) {
+type FetchOptions = {
+  getPosts?: boolean;
+  page?: number;
+  perpage?: number;
+  query?: string;
+};
+
+export async function fetchPosts(options: FetchOptions = {}) {
+  const { getPosts = false, page = 1, perpage = blogPostsPerPage, query = "" } = options;
+
   let changes = 0;
   let added = 0;
   const upserted: string[] = [];
@@ -29,7 +39,8 @@ export async function fetchPosts(getPosts?: boolean, page?: number, perpage?: nu
 
   const posts = result.data || [];
 
-  if (query || (page && perpage)) return { changes, upserted, removed, errors, posts, num };
+  if (query || (page && perpage))
+    return { changes, upserted, removed, errors, posts, num };
 
   for (const file of contentList) {
     const slug = file.name.slice(0, file.name.length - 3);

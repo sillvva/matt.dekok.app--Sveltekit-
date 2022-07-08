@@ -1,5 +1,6 @@
 import type { RequestHandler } from "./__types/data";
 import type { User } from "@supabase/supabase-js";
+import path from "path";
 import type { Admin } from "$lib/store";
 import { env } from "$lib/constants";
 import { supabase } from "$lib/supabase/connection";
@@ -37,15 +38,41 @@ export const post: RequestHandler<AdminMutation> = async ({ request, url }) => {
     const formData = await request.formData();
     const file = formData.get("file");
     const filename = formData.get("filename")?.toString();
+    const extname = path.extname(filename || "");
 
-    if (file && filename) {
-      const { error } = await supabase.storage.from("blog").upload(filename, file, {
-        upsert: true
-      });
+    let bucket = "";
+    if (extname === ".md") bucket = "blog";
 
-      if (error) return getError(error);
-      else await fetchPosts();
-    }
+    if (!file || !filename) return getError("No file");
+    if (!extname || !bucket) return getError("Invalid file extension");
+
+    const { error } = await supabase.storage.from(bucket).upload(filename, file, {
+      upsert: true
+    });
+
+    if (error) return getError(error);
+    else if (bucket === "blog") await fetchPosts();
+  }
+
+  if (select === "images") {
+    const formData = await request.formData();
+    const file = formData.get("file");
+    const filename = formData.get("filename")?.toString();
+    const extname = path.extname(filename || "");
+
+    let bucket = "";
+    if (extname === ".png" || extname === ".jpg" || extname === ".jpeg" || extname === ".svg" || extname === ".webp")
+      bucket = "images";
+
+    if (!file || !filename) return getError("No file");
+    if (!extname || !bucket) return getError("Invalid file extension");
+
+    const { error } = await supabase.storage.from(bucket).upload(filename, file, {
+      upsert: true
+    });
+
+    if (error) return getError(error);
+    else if (bucket === "blog") await fetchPosts();
   }
 
   return {
@@ -104,12 +131,16 @@ const getResult = async (select: string | null) => {
     .from("projects")
     .select("*", { count: "exact", head: select === "projects" ? false : true });
 
+  const { data: images } = await supabase.storage.from("images").list();
+
   return {
     status: 200,
     body: {
       success: true,
       numposts: numposts || 0,
       posts: posts || [],
+      numimages: (images || []).length || 0,
+      images: images || [],
       numexperience: numexperience || 0,
       experience: experience || [],
       numskills: numskills || 0,

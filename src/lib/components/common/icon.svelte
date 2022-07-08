@@ -63,7 +63,7 @@ const getStyles = (
 $: style = `${getStyles(size, color, flip, rotate)} ${styles}`;
 </script>
 
-<svg viewBox="0 0 24 24" {style} class={conClasses(["align-middle transition-all duration-500", className])}>
+<svg viewBox="0 0 24 24" {style} class={conClasses(["align-middle transition-all duration-500 inline-block", className])}>
   {#if title}<title>{title}</title>{/if}
   {#if spin !== false}
     {#if inverse}
