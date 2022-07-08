@@ -11,12 +11,10 @@ export const load: Load = async ({ url }) => {
 
 <script lang="ts">
 import { onMount } from "svelte";
-import { fade } from "svelte/transition";
 import type { User } from "@supabase/supabase-js";
 import { page } from "$app/stores";
 import { browser } from "$app/env";
 import { supabase } from "$lib/supabase/connection";
-import { transitionDuration } from "$lib/constants";
 import { pageProps, admin, auth } from "$lib/store";
 import { conClasses } from "$lib/utils";
 import { ripple } from "$lib/directives";
@@ -155,10 +153,7 @@ $: paths = [
         </Article>
       </div>
     </div>
-    <div
-      class="flex-1"
-      in:fade={{ delay: transitionDuration / 2, duration: transitionDuration / 2 }}
-      out:fade={{ duration: transitionDuration / 2 }}>
+    <div class="flex-1">
       <slot />
     </div>
   </div>

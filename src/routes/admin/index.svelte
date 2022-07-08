@@ -9,8 +9,11 @@ import type { AdminMutation } from "./data";
 import Icon from "$lib/components/common/icon.svelte";
 import Image from "$lib/components/common/image.svelte";
 import Fab from "$lib/components/common/fab.svelte";
+import { onMount } from "svelte";
+import { transitionDuration } from "$lib/constants";
 
 let search: string = "";
+let mounted = false;
 let loading = true;
 
 const headers = {
@@ -18,6 +21,12 @@ const headers = {
 };
 
 const queryClient = useQueryClient();
+
+onMount(() => {
+  setTimeout(() => {
+    mounted = true;
+  }, transitionDuration / 2);
+});
 
 const getResult = useQuery(
   "posts",
@@ -146,64 +155,64 @@ $: filteredPosts =
     : ($admin.posts || []).sort((a, b) => (a.date > b.date ? -1 : 1));
 </script>
 
-<div class="flex gap-4 mb-4">
-  <div class="flex-1">
-    <input type="text" bind:value={search} placeholder="Search" class="p-2 rounded-md w-full" />
+{#if mounted}
+  <div class="flex gap-4 mb-4">
+    <div class="flex-1">
+      <input type="text" bind:value={search} placeholder="Search" class="p-2 rounded-md w-full" />
+    </div>
+    <div class="md:flex-1 flex justify-end gap-4">
+      <button on:click={refresh}>
+        <Icon path={mdiRefresh} />
+      </button>
+      <button on:click={upload}>
+        <Icon path={mdiUpload} />
+      </button>
+    </div>
   </div>
-  <div class="md:flex-1 flex justify-end gap-4">
-    <button on:click={refresh}>
-      <Icon path={mdiRefresh} />
-    </button>
-    <button on:click={upload}>
-      <Icon path={mdiUpload} />
-    </button>
-  </div>
-</div>
-<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2">
-  {#if loaders == 0}
-    {#each filteredPosts as post (post.slug)}
-      <div
-        class="flex flex-col bg-theme-article p-0 rounded-md shadow-md relative overflow-hidden"
-        style:--tw-shadow-color="#0006"
-        style:--tw-shadow="var(--tw-shadow-colored)">
-        <div class="aspect-video relative hidden sm:block">
-          <Image src={post.image} lazy alt={post.title} class="bg-black" />
-          <Fab
-            on:click={() => remove(post.slug)}
-            class="absolute top-2 right-2 w-9 h-9 bg-red-700 drop-shadow-theme-text">
-            <Icon path={mdiTrashCan} size={0.8} />
-          </Fab>
-        </div>
-        <div class="flex flex-row items-center gap-2 p-3">
-          <div class="flex-1 flex flex-col">
-            <h4 class="font-semibold pb-1">
-              <a href={`/blog/${post.slug}`} target="_blank">
-                {post.title}
-                <Icon path={mdiOpenInNew} size={0.8} class="ml-1" />
-              </a>
-            </h4>
-            <div class="text-sm">
-              Posted: {new Date(post.date).toLocaleDateString()}
-            </div>
+  <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2">
+    {#if loaders == 0}
+      {#each filteredPosts as post (post.slug)}
+        <div
+          class="flex flex-col bg-theme-article p-0 rounded-md shadow-md relative overflow-hidden"
+          style:--tw-shadow-color="#0006"
+          style:--tw-shadow="var(--tw-shadow-colored)">
+          <div class="aspect-video relative hidden sm:block">
+            <Image src={post.image} lazy alt={post.title} class="bg-black" />
+            <Fab
+              on:click={() => remove(post.slug)}
+              class="absolute top-2 right-2 w-9 h-9 bg-red-700 drop-shadow-theme-text">
+              <Icon path={mdiTrashCan} size={0.8} />
+            </Fab>
           </div>
-          <Fab
-            on:click={() => remove(post.slug)}
-            class="w-9 h-9 bg-red-700 drop-shadow-theme-text inline sm:hidden">
-            <Icon path={mdiTrashCan} size={0.8} />
-          </Fab>
+          <div class="flex flex-row items-center gap-2 p-3">
+            <div class="flex-1 flex flex-col">
+              <h4 class="font-semibold pb-1">
+                <a href={`/blog/${post.slug}`} target="_blank">
+                  {post.title}
+                  <Icon path={mdiOpenInNew} size={0.8} class="ml-1" />
+                </a>
+              </h4>
+              <div class="text-sm">
+                Posted: {new Date(post.date).toLocaleDateString()}
+              </div>
+            </div>
+            <Fab on:click={() => remove(post.slug)} class="w-9 h-9 bg-red-700 drop-shadow-theme-text inline sm:hidden">
+              <Icon path={mdiTrashCan} size={0.8} />
+            </Fab>
+          </div>
         </div>
-      </div>
-    {/each}
-  {:else}
-    {#each new Array(loaders).fill(1) as i}
-      <div class="flex flex-col gap-2 bg-theme-article p-2 md:p-4 rounded-md">
-        <div class="loading-line title max-w-xs">
-          <span />
+      {/each}
+    {:else}
+      {#each new Array(loaders).fill(1) as i}
+        <div class="flex flex-col gap-2 bg-theme-article p-2 md:p-4 rounded-md">
+          <div class="loading-line title max-w-xs">
+            <span />
+          </div>
+          <div class="loading-line text">
+            <span />
+          </div>
         </div>
-        <div class="loading-line text">
-          <span />
-        </div>
-      </div>
-    {/each}
-  {/if}
-</div>
+      {/each}
+    {/if}
+  </div>
+{/if}

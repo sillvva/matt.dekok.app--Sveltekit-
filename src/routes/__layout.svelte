@@ -194,7 +194,7 @@ $: smallTitle = ($pageProps.title || "").length > 12 ? "small-title" : "";
         </div>
       {/if}
     </header>
-    {#key path}
+    {#key path + loaded}
       <main
         class={conClasses([
           loaded ? "flex" : "hidden",
