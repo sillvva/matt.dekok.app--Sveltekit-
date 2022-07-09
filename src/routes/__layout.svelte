@@ -13,6 +13,7 @@ export const load: Load = async ({ url }) => {
 import { onMount, onDestroy } from "svelte";
 import { mdiBrightness6, mdiMenu, mdiChevronLeft } from "@mdi/js";
 import { QueryClient, QueryClientProvider } from "@sveltestack/svelte-query";
+import { parse } from "cookie";
 import { fade } from "svelte/transition";
 import { page, session } from "$app/stores";
 import { browser } from "$app/env";
@@ -44,7 +45,13 @@ let theme = $session.theme;
 const toggleTheme = (newtheme?: typeof theme) => {
   theme = newtheme || themes[(themes.indexOf(theme) + 1) % themes.length];
   document.cookie = `theme=${theme}`;
+  $session.theme = theme;
 };
+$: {
+  if (typeof document !== "undefined" && $session.theme != parse(document.cookie).theme) {
+    toggleTheme($session.theme);
+  }
+}
 
 let mm: MediaQueryList;
 if (browser) mm = matchMedia("(prefers-color-scheme: dark)");

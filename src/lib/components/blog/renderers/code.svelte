@@ -2,6 +2,7 @@
 import { session } from "$app/stores";
 import { isJSON } from "$lib/utils";
 import { onMount } from "svelte";
+import type { SvelteComponentTyped } from "svelte";
 import stylesDark from "svelte-highlight/styles/atom-one-dark";
 import stylesLight from "svelte-highlight/styles/atom-one-light";
 
@@ -12,9 +13,9 @@ $: language = lang.replace(/^ *([^ ]+).*/, "$1");
 $: filename = lang.replace(new RegExp(`^ *${language} ?`), "").replace(/^\[([^\]]+)\].*$/i, "$1");
 $: props = isJSON(text) ? JSON.parse(text) : {};
 
-let CustomEmbed: any;
+let CustomEmbed: Partial<SvelteComponentTyped>;
+let SyntaxHighlighter: Partial<SvelteComponentTyped>;
 let highlight: any;
-let SyntaxHighlighter: any;
 
 onMount(async () => {
   if (language == "codepen")
