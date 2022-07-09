@@ -11,8 +11,6 @@ const envSchema = z.object({
   VERCEL_URL: process.env.VERCEL_URL ? z.string() : z.undefined()
 });
 
-console.log(process.env.VERCEL_URL);
-
 const envCheck = envSchema.safeParse({
   SUPABASE_URL: process.env.VITE_SUPABASE_URL ?? import.meta.env.VITE_SUPABASE_URL,
   SUPABASE_KEY: process.env.VITE_SUPABASE_KEY ?? import.meta.env.VITE_SUPABASE_KEY,

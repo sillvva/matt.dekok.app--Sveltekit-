@@ -18,7 +18,7 @@ export const getPosts = async (options?: PostFetchOptions) => {
 
   // let posts: PostData[] = [];
   // let num = 0;
-  let { posts, num } = await fetchPosts(true, page, limit, query);
+  let { posts, num } = await fetchPosts({ getPosts: true, page, perpage: limit, query });
   // if (existsSync(jsonFile)) {
   // 	const metaJson = readFileSync(jsonFile, { encoding: 'utf-8' });
   // 	posts = JSON.parse(metaJson);
