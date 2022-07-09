@@ -83,7 +83,7 @@ $: style = `${getStyles(size, color, flip, rotate)} ${styles}`;
       }
       </style>
     {/if}
-    <g style={`animation: ${spinfunc} linear ${spintime}s infinite; transform-origin: center`}>
+    <g style="animation: {spinfunc} linear {spintime}s infinite; transform-origin: center">
       <path d={path} />
     </g>
   {:else}

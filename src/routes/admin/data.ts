@@ -1,7 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { RequestHandler } from "./__types/data";
 import type { User } from "@supabase/supabase-js";
 import path from "path";
-import mime from "mime-types";
 import type { Admin } from "$lib/store";
 import { env } from "$lib/constants";
 import { supabase } from "$lib/supabase/connection";

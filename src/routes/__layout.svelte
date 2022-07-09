@@ -86,7 +86,7 @@ $: smallTitle = ($pageProps.title || "").length > 12 ? "small-title" : "";
 
 <svelte:head>
   <link rel="icon" href="/favicon.png" />
-  <link rel="apple-touch-icon" href={`${metaProps.origin}/apple-touch-icon.png`} />
+  <link rel="apple-touch-icon" href="{metaProps.origin}/apple-touch-icon.png" />
   <link rel="manifest" href="/manifest.webmanifest" />
 
   <meta name="mobile-web-app-capable" content="yes" />
@@ -128,17 +128,14 @@ $: smallTitle = ($pageProps.title || "").length > 12 ? "small-title" : "";
             <a href="/" on:click={signout}>Sign Out</a>
             <span class="hidden xs:inline">|</span>
             <a
-              href={`https://github.com/${$auth?.user.user_metadata.user_name}`}
+              href="https://github.com/{$auth?.user.user_metadata.user_name}"
               target="_blank"
               rel="noreferrer noopener"
               class="flex gap-4 items-center">
               <span class="hidden xs:inline">
                 {$auth?.user.user_metadata.user_name}
               </span>
-              <img
-                src={$auth?.user.user_metadata.avatar_url}
-                alt=""
-                class="w-12 h-12 rounded-full" />
+              <img src={$auth?.user.user_metadata.avatar_url} alt="" class="w-12 h-12 rounded-full" />
             </a>
             <span class="hidden xs:inline">
               <Fab ariaLabel="Toggle Theme" active class="nav-fab" on:click={() => toggleTheme()}>
@@ -163,7 +160,7 @@ $: smallTitle = ($pageProps.title || "").length > 12 ? "small-title" : "";
           {:else}
             <Fab
               ariaLabel="Open Drawer"
-              class={`menu-fab ${$page.url.pathname == "/" ? "drawer-fab" : ""}`}
+              class={conClasses(["menu-fab", $page.url.pathname == "/" && "drawer-fab"])}
               on:click={() => ($drawer = !$drawer)}>
               <Icon path={mdiMenu} />
             </Fab>
@@ -177,7 +174,7 @@ $: smallTitle = ($pageProps.title || "").length > 12 ? "small-title" : "";
                 <Menu items={menuItems} />
               </nav>
             {/if}
-            <Title key={$pageProps.title} class={`nav-title ${smallTitle}`}>
+            <Title key={$pageProps.title} class="nav-title {smallTitle}">
               {$pageProps.title || ""}
             </Title>
           </div>

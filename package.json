@@ -47,7 +47,6 @@
 		"broadcast-channel": "^4.13.0",
 		"cookie": "^0.5.0",
 		"gray-matter": "^4.0.3",
-		"mime-types": "^2.1.35",
 		"svelte-preprocess": "^4.10.7",
 		"zod": "^3.17.3"
 	}

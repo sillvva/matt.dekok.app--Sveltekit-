@@ -41,10 +41,10 @@ $: metaProps = metaTags($pageProps, $p.url.origin, $p.url.pathname);
   <meta name="description" content={metaProps.description} />
 
   {#each Object.entries(metaProps.ogProperties) as t}
-    <meta name={`og:${t[0]}`} property={`og:${t[0]}`} content={t[1]} />
+    <meta name="og:{t[0]}" property="og:{t[0]}" content={t[1]} />
   {/each}
   {#each Object.entries(metaProps.twProperties) as t}
-    <meta name={`twitter:${t[0]}`} content={t[1]} />
+    <meta name="twitter:{t[0]}" content={t[1]} />
   {/each}
 </svelte:head>
 

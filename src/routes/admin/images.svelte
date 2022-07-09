@@ -180,7 +180,7 @@ $: filteredImages =
           style:--tw-shadow-color="#0006"
           style:--tw-shadow="var(--tw-shadow-colored)">
           <div class="aspect-video relative">
-            <Image src={`${imagePath}${image.name}`} lazy alt={image.name} class="bg-black" />
+            <Image src="{imagePath}{image.name}" lazy alt={image.name} class="bg-black" />
             <Fab
               on:click={() => remove(image.name)}
               class="absolute top-2 right-2 w-9 h-9 bg-red-700 drop-shadow-theme-text">
@@ -189,7 +189,7 @@ $: filteredImages =
           </div>
           <div class="flex-1 flex flex-col p-3">
             <h4 class="font-semibold pb-1">
-              <a href={`${imagePath}${image.name}`}>
+              <a href="{imagePath}{image.name}">
                 {image.name}
                 <Icon path={mdiOpenInNew} size={0.8} class="ml-1" />
               </a>

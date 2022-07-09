@@ -190,7 +190,7 @@ $: filteredPosts =
           <div class="flex flex-row items-center gap-2 p-3">
             <div class="flex-1 flex flex-col">
               <h4 class="font-semibold pb-1">
-                <a href={`/blog/${post.slug}`} target="_blank">
+                <a href="/blog/{post.slug}" target="_blank">
                   {post.title}
                   <Icon path={mdiOpenInNew} size={0.8} class="ml-1" />
                 </a>
