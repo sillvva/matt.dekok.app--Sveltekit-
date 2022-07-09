@@ -32,6 +32,18 @@ import "../app.scss";
 import "../misc.scss";
 import "../anim.scss";
 
+supabase.auth.onAuthStateChange((event, session) => {
+  if (event === "SIGNED_IN") {
+    if (!$auth) {
+      $auth = session;
+    }
+  }
+  if (event === "SIGNED_OUT") {
+    $auth = null;
+    goto("/");
+  }
+});
+
 const queryClient = new QueryClient();
 
 export let path: string;
@@ -48,7 +60,7 @@ const toggleTheme = (newtheme?: typeof theme) => {
   $session.theme = theme;
 };
 $: {
-  if (typeof document !== "undefined" && $session.theme != parse(document.cookie).theme) {
+  if (typeof document !== "undefined" && $session.theme !== parse(document.cookie).theme) {
     toggleTheme($session.theme);
   }
 }
@@ -69,12 +81,6 @@ onMount(async () => {
 onDestroy(() => {
   if (mm) mm.removeEventListener("change", listener);
 });
-
-const signout = async () => {
-  await supabase.auth.signOut();
-  $auth = null;
-  goto("/");
-};
 
 const menuItems: Item[] = [
   { link: "/", label: "Intro" },
@@ -132,7 +138,7 @@ $: smallTitle = ($pageProps.title || "").length > 12 ? "small-title" : "";
             <Icon path={mdiMenu} />
           </Fab>
           <div class="flex flex-1 justify-end items-center w-full gap-4">
-            <a href="/" on:click={signout}>Sign Out</a>
+            <button on:click={() => supabase.auth.signOut()} class="text-theme-link">Sign Out</button>
             <span class="hidden xs:inline">|</span>
             <a
               href="https://github.com/{$auth?.user.user_metadata.user_name}"

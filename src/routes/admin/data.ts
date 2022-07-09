@@ -71,7 +71,7 @@ export const post: RequestHandler<AdminMutation> = async ({ request, url }) => {
     if (!extname || !bucket) return getError("Invalid file extension");
 
     const { error } = await supabase.storage.from(bucket).upload(filename, buffer, {
-      upsert: true
+      upsert: false
     });
 
     if (error) return getError(error);

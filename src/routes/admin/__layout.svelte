@@ -13,7 +13,6 @@ export const load: Load = async ({ url }) => {
 import { onMount } from "svelte";
 import type { User } from "@supabase/supabase-js";
 import { page } from "$app/stores";
-import { browser } from "$app/env";
 import { supabase } from "$lib/supabase/connection";
 import { pageProps, admin, auth } from "$lib/store";
 import { conClasses } from "$lib/utils";
@@ -31,8 +30,6 @@ $pageProps = {
   bodyClass: "page-body admin-body"
 };
 
-if (browser && !$auth?.user) $auth = supabase.auth.session();
-
 onMount(async () => {
   if ($auth) user = $auth?.user;
 
@@ -42,7 +39,7 @@ onMount(async () => {
         provider: "github"
       },
       {
-        redirectTo: `${$page.url.origin}/redirect?to=${encodeURIComponent($page.url.pathname)}`
+        redirectTo: `${$page.url.origin}/redirect?to=${encodeURIComponent($page.url.pathname)}&auth=1`
       }
     );
   }

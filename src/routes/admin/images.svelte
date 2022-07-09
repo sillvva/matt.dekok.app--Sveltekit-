@@ -195,7 +195,7 @@ $: filteredImages =
               </a>
             </h4>
             <div class="text-sm pb-1">
-              Created: {new Date(image.created_at).toLocaleString()}
+              Uploaded: {new Date(image.created_at).toLocaleString()}
             </div>
             <div class="text-sm">
               <button
