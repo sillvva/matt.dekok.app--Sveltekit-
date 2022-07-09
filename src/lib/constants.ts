@@ -8,8 +8,10 @@ const envSchema = z.object({
   SUPABASE_KEY: z.string(),
   AUTH_UID: z.string(),
   PROD_URL: process.env.PROD_URL ? z.string().url() : z.undefined(),
-  VERCEL_URL: process.env.VERCEL_URL ? z.string().url() : z.undefined()
+  VERCEL_URL: process.env.VERCEL_URL ? z.string() : z.undefined()
 });
+
+console.log(process.env.VERCEL_URL);
 
 const envCheck = envSchema.safeParse({
   SUPABASE_URL: process.env.VITE_SUPABASE_URL ?? import.meta.env.VITE_SUPABASE_URL,
