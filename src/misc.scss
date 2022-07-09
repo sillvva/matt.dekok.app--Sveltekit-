@@ -3,7 +3,7 @@
   &.text {
     @apply flex items-center;
     span {
-      @apply animate-pulse block overflow-hidden w-full rounded-full bg-gray-500/40;
+      @apply animate-pulse block overflow-hidden w-full rounded-full bg-theme-hover bg-opacity-15;
     }
   }
   &.title {

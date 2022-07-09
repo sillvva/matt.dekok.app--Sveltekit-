@@ -1,29 +1,30 @@
 <script lang="ts">
-	export let link = '';
+import { conClasses } from "$lib/utils";
+
+export let link = "";
 </script>
 
 {#if link}
-	<a href={link} target="_blank" rel="noopener noreferrer">
-		<slot />
-	</a>
+  <a
+    href={link}
+    target="_blank"
+    rel="noopener noreferrer"
+    class={conClasses([
+      "relative block overflow-hidden w-full h-full aspect-video rounded-md p-2",
+      "bg-theme-article shadow-lg hover:shadow-xl transition-all duration-500"
+    ])}
+    style:--tw-shadow-color="var(--color-bg-shadow)"
+    style:--tw-shadow="var(--tw-shadow-colored)">
+    <slot />
+  </a>
 {:else}
-	<div>
-		<slot />
-	</div>
+  <div
+    class={conClasses([
+      "relative block overflow-hidden w-full h-full aspect-video rounded-md p-2",
+      "bg-theme-article shadow-lg hover:shadow-xl transition-all duration-500"
+    ])}
+    style:--tw-shadow-color="var(--color-bg-shadow)"
+    style:--tw-shadow="var(--tw-shadow-colored)">
+    <slot />
+  </div>
 {/if}
-
-<style lang="scss">
-	a,
-	div {
-		@apply w-full h-full aspect-video relative block shadow-lg rounded-md overflow-hidden transition-all duration-500 p-2;
-		background-color: var(--article);
-		--tw-shadow-color: var(--shadowColor);
-		--tw-shadow: var(--tw-shadow-colored);
-	}
-	a:hover {
-		@apply shadow-xl;
-		--tw-shadow-color: var(--shadowHover);
-		--tw-shadow: var(--tw-shadow-colored);
-		// @apply outline outline-1;
-	}
-</style>

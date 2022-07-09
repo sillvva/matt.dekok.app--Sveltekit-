@@ -1,33 +1,24 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+import { onMount } from "svelte";
 
-	export let component: string;
-	export let description: string;
-	export let props: any;
+export let component: string;
+export let description: string;
+export let props: any;
 
-	let LoadedComponent: any;
+let LoadedComponent: any;
 
-	onMount(async () => {
-		if (component == 'post') {
-			LoadedComponent = await import('$lib/components/blog/post.svelte').then((c) => c.default);
-		}
-	});
+onMount(async () => {
+  if (component == "post") {
+    LoadedComponent = await import("$lib/components/blog/post.svelte").then(c => c.default);
+  }
+});
 </script>
 
-<div class="component-container">
-	{#if description}
-		<p>{description}</p>
-	{/if}
-	{#if LoadedComponent}
-		<svelte:component this={LoadedComponent} {...props} on:click={(e) => e.preventDefault()} />
-	{/if}
+<div class="grid text-sm mb-4 pt-2 pb-0 md:p-2 bg-theme-pre rounded-lg">
+  {#if description}
+    <p class="m-3 md:mb-0">{description}</p>
+  {/if}
+  {#if LoadedComponent}
+    <svelte:component this={LoadedComponent} {...props} on:click={e => e.preventDefault()} />
+  {/if}
 </div>
-
-<style lang="scss">
-	.component-container {
-		@apply grid text-sm mb-4 pt-2 pb-0 md:p-2 bg-[color:var(--codePre)] rounded-lg;
-		p {
-			@apply m-3 md:mb-0;
-		}
-	}
-</style>

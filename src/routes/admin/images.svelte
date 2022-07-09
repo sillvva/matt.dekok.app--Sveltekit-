@@ -14,14 +14,15 @@ import { transitionDuration } from "$lib/constants";
 import { blobToBase64 } from "$lib/utils";
 
 let search: string = "";
-let mounted = false;
 let loading = true;
+let mounted = false;
 
 const headers = {
   authorization: `Bearer ${$auth?.access_token}`
 };
 
 const queryClient = useQueryClient();
+const imagePath = "https://slxazldgfeytirfrculz.supabase.co/storage/v1/object/public/images/";
 
 onMount(() => {
   setTimeout(() => {
@@ -30,9 +31,9 @@ onMount(() => {
 });
 
 const getResult = useQuery(
-  "posts",
+  "images",
   async () => {
-    const response = await fetch("/admin/data?select=posts", { headers });
+    const response = await fetch("/admin/data?select=images", { headers });
     const data: Admin = await response.json();
 
     if (await checkError(data.error)) return { success: false };
@@ -50,7 +51,7 @@ const getResult = useQuery(
 
 const uploadMutation = useMutation(
   async (formData: FormData) => {
-    const response = await fetch("/admin/data?select=posts", {
+    const response = await fetch("/admin/data?select=images", {
       method: "POST",
       headers,
       body: formData
@@ -65,16 +66,16 @@ const uploadMutation = useMutation(
       $admin.numposts = numloaders + 1;
     },
     onSuccess() {
-      queryClient.invalidateQueries("posts");
+      queryClient.invalidateQueries("images");
     }
   }
 );
 
 const deleteMutation = useMutation(
-  async (slug: string) => {
-    if (!slug && (await checkError("Slug not defined"))) return { success: false };
+  async (name: string) => {
+    if (!name && (await checkError("File name not defined"))) return { success: false };
 
-    const response = await fetch(`/admin/data?select=posts&slug=${slug}`, {
+    const response = await fetch(`/admin/data?select=images&file=${name}`, {
       method: "DELETE",
       headers
     });
@@ -89,24 +90,23 @@ const deleteMutation = useMutation(
       $admin.numposts = Math.max(1, numloaders - 1);
     },
     onSuccess() {
-      queryClient.invalidateQueries("posts");
+      queryClient.invalidateQueries("images");
     }
   }
 );
 
 const refresh = async () => {
   loading = true;
-  await queryClient.invalidateQueries("posts");
+  await queryClient.invalidateQueries("images");
 };
 
 const upload = () => {
   const input = document.createElement("input");
   input.type = "file";
-  input.accept = "*/*";
+  input.accept = "image/*";
   input.onchange = async () => {
     if (!input.files) return;
     const file = input.files[0];
-    if (!file.name.endsWith(".md")) return alert("Only markdown files are supported");
     const blob = new Blob([file], { type: file.type });
     const base64 = await blobToBase64(blob);
     const formData = new FormData();
@@ -117,9 +117,9 @@ const upload = () => {
   input.click();
 };
 
-const remove = async (slug: string) => {
-  if (!confirm("Are you sure you want to delete this post?")) return;
-  $deleteMutation.mutate(slug);
+const remove = async (name: string) => {
+  if (!confirm("Are you sure you want to delete this image?")) return;
+  $deleteMutation.mutate(name);
 };
 
 const checkError = async (error: any) => {
@@ -136,26 +136,26 @@ const checkError = async (error: any) => {
   return false;
 };
 
+const copy = async (value: string) => {
+  await navigator.clipboard.writeText(value);
+};
+
 $: {
   if ($getResult.data && !$getResult.isFetching) {
     admin.set($getResult.data);
     loading = false;
   }
 }
-$: numloaders = $admin.numposts ?? 6;
+$: numloaders = $admin.numimages ?? 12;
 $: loaders = $getResult.data && !loading ? 0 : numloaders;
-$: filteredPosts =
+$: filteredImages =
   search.length > 2
-    ? ($admin.posts || [])
-        .filter(post => {
-          return (
-            post.title.toLowerCase().includes(search.toLowerCase()) ||
-            (post.description || "").toLowerCase().includes(search.toLowerCase()) ||
-            (post.tags || []).find(tag => tag.toLowerCase() == search.toLowerCase())
-          );
+    ? ($admin.images || [])
+        .filter(image => {
+          return image.name.toLowerCase().includes(search.toLowerCase());
         })
-        .sort((a, b) => (a.date > b.date ? -1 : 1))
-    : ($admin.posts || []).sort((a, b) => (a.date > b.date ? -1 : 1));
+        .sort((a, b) => (a.created_at > b.created_at ? -1 : 1))
+    : ($admin.images || []).sort((a, b) => (a.created_at > b.created_at ? -1 : 1));
 </script>
 
 {#if mounted}
@@ -174,34 +174,43 @@ $: filteredPosts =
   </div>
   <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2">
     {#if loaders == 0}
-      {#each filteredPosts as post (post.slug)}
+      {#each filteredImages as image, i (image.name)}
         <div
           class="flex flex-col bg-theme-article p-0 rounded-md shadow-md relative overflow-hidden"
           style:--tw-shadow-color="#0006"
           style:--tw-shadow="var(--tw-shadow-colored)">
-          <div class="aspect-video relative hidden sm:block">
-            <Image src={post.image} lazy alt={post.title} class="bg-black" />
+          <div class="aspect-video relative">
+            <Image src={`${imagePath}${image.name}`} lazy alt={image.name} class="bg-black" />
             <Fab
-              on:click={() => remove(post.slug)}
+              on:click={() => remove(image.name)}
               class="absolute top-2 right-2 w-9 h-9 bg-red-700 drop-shadow-theme-text">
               <Icon path={mdiTrashCan} size={0.8} />
             </Fab>
           </div>
-          <div class="flex flex-row items-center gap-2 p-3">
-            <div class="flex-1 flex flex-col">
-              <h4 class="font-semibold pb-1">
-                <a href={`/blog/${post.slug}`} target="_blank">
-                  {post.title}
-                  <Icon path={mdiOpenInNew} size={0.8} class="ml-1" />
-                </a>
-              </h4>
-              <div class="text-sm">
-                Posted: {new Date(post.date).toLocaleDateString()}
-              </div>
+          <div class="flex-1 flex flex-col p-3">
+            <h4 class="font-semibold pb-1">
+              <a href={`${imagePath}${image.name}`}>
+                {image.name}
+                <Icon path={mdiOpenInNew} size={0.8} class="ml-1" />
+              </a>
+            </h4>
+            <div class="text-sm pb-1">
+              Created: {new Date(image.created_at).toLocaleString()}
             </div>
-            <Fab on:click={() => remove(post.slug)} class="w-9 h-9 bg-red-700 drop-shadow-theme-text inline sm:hidden">
-              <Icon path={mdiTrashCan} size={0.8} />
-            </Fab>
+            <div class="text-sm">
+              <button
+                on:click={() => {
+                  if (image.copied) return;
+                  copy(`${imagePath}${image.name}`);
+                  image.copied = true;
+                  setTimeout(() => {
+                    image.copied = false;
+                  }, 2000);
+                }}
+                class:text-theme-link={!image.copied}>
+                {image.copied ? "Copied" : "Copy Link"}
+              </button>
+            </div>
           </div>
         </div>
       {/each}
