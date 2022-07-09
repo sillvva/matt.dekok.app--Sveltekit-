@@ -33,7 +33,8 @@ onMount(() => {
 const getResult = useQuery(
   "posts",
   async () => {
-    const response = await fetch("/admin/data?select=posts", { headers });
+    loading = true;
+    const response = await fetch(`/admin/data?select=posts&images=${$admin.success ? 0 : 1}`, { headers });
     const data: Admin = await response.json();
 
     if (await checkError(data.error)) return { success: false };
@@ -43,7 +44,14 @@ const getResult = useQuery(
     refetchOnWindowFocus: false,
     cacheTime: 30 * 60 * 1000,
     staleTime: 15 * 60 * 1000,
-    onSuccess() {
+    onSuccess(result) {
+      if (!$admin.success) admin.set(result);
+      else
+        admin.update(data => {
+          data.numposts = result.numposts;
+          data.posts = result.posts;
+          return data;
+        });
       loading = false;
     }
   }
@@ -125,10 +133,18 @@ const remove = async (slug: string) => {
 
 const checkError = async (error: any) => {
   if (error === "Unauthorized") {
-    alert("Unauthorized user");
-    await supabase.auth.signOut();
-    $auth = null;
-    await goto("/", { replaceState: true });
+    console.log("Token expired, refreshing...");
+    const { session } = await supabase.auth.signIn({
+      refreshToken: $auth?.refresh_token
+    });
+    if (session) $auth = session;
+    else {
+      console.log("Refresh failed, redirecting to login...");
+      alert("Unauthorized user");
+      await supabase.auth.signOut();
+      $auth = null;
+      await goto("/", { replaceState: true });
+    }
     return true;
   } else if (error) {
     alert(error);
@@ -137,12 +153,7 @@ const checkError = async (error: any) => {
   return false;
 };
 
-$: {
-  if ($getResult.data && !$getResult.isFetching) {
-    admin.set($getResult.data);
-    loading = false;
-  }
-}
+$: loading = !($getResult.data && !$getResult.isFetching);
 $: numloaders = $admin.numposts ?? 6;
 $: loaders = $getResult.data && !loading ? 0 : numloaders;
 $: filteredPosts =
@@ -157,6 +168,12 @@ $: filteredPosts =
         })
         .sort((a, b) => (a.date > b.date ? -1 : 1))
     : ($admin.posts || []).sort((a, b) => (a.date > b.date ? -1 : 1));
+$: {
+  if (!$getResult.isFetching && loaders === 0 && filteredPosts.length === 0) {
+    console.log("No posts found, refreshing query...");
+    queryClient.invalidateQueries("posts");
+  }
+}
 </script>
 
 {#if mounted}

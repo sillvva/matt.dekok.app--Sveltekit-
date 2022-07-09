@@ -38,9 +38,12 @@ supabase.auth.onAuthStateChange((event, session) => {
       $auth = session;
     }
   }
-  if (event === "SIGNED_OUT") {
+  else if (event === "SIGNED_OUT") {
     $auth = null;
     goto("/");
+  }
+  else {
+    console.log(event)
   }
 });
 

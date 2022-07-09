@@ -17,7 +17,8 @@ export const get: RequestHandler<Admin> = async ({ request, url }) => {
   }
 
   const select = url.searchParams.get("select");
-  return getResult(select);
+  const images = url.searchParams.get("images");
+  return getResult(select, images);
 };
 
 export type AdminMutation = {
@@ -131,7 +132,7 @@ export const del: RequestHandler<AdminMutation> = async ({ request, url }) => {
   };
 };
 
-const getResult = async (select: string | null) => {
+const getResult = async (select: string | null, getImages: string | null) => {
   const { data: posts, count: numposts } = await supabase
     .from("blog")
     .select("*", { count: "exact", head: select === "posts" ? false : true });
@@ -148,15 +149,19 @@ const getResult = async (select: string | null) => {
     .from("projects")
     .select("*", { count: "exact", head: select === "projects" ? false : true });
 
-  const { data: images } = await supabase.storage.from("images").list();
-  const filteredImages = (images || []).filter(
-    image =>
-      image.name.endsWith(".png") ||
-      image.name.endsWith(".jpg") ||
-      image.name.endsWith(".jpeg") ||
-      image.name.endsWith(".svg") ||
-      image.name.endsWith(".webp")
-  );
+  let images: any[] = [];
+  if (select === "images" || getImages === "1") {
+    const { data: imageData } = await supabase.storage.from("images").list();
+    const filteredImages = (imageData || []).filter(
+      image =>
+        image.name.endsWith(".png") ||
+        image.name.endsWith(".jpg") ||
+        image.name.endsWith(".jpeg") ||
+        image.name.endsWith(".svg") ||
+        image.name.endsWith(".webp")
+    );
+    images = filteredImages;
+  }
 
   return {
     status: 200,
@@ -164,8 +169,8 @@ const getResult = async (select: string | null) => {
       success: true,
       numposts: numposts || 0,
       posts: posts || [],
-      numimages: filteredImages.length,
-      images: filteredImages,
+      numimages: images.length,
+      images: select === "images" ? images : [],
       numexperience: numexperience || 0,
       experience: experience || [],
       numskills: numskills || 0,

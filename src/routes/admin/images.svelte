@@ -34,6 +34,7 @@ onMount(() => {
 const getResult = useQuery(
   "images",
   async () => {
+    loading = true;
     const response = await fetch("/admin/data?select=images", { headers });
     const data: Admin = await response.json();
 
@@ -44,7 +45,14 @@ const getResult = useQuery(
     refetchOnWindowFocus: false,
     cacheTime: 30 * 60 * 1000,
     staleTime: 15 * 60 * 1000,
-    onSuccess() {
+    onSuccess(result) {
+      if (!$admin.success) admin.set(result);
+      else
+        admin.update(data => {
+          data.numimages = result.numimages;
+          data.images = result.images;
+          return data;
+        });
       loading = false;
     }
   }
@@ -141,12 +149,7 @@ const copy = async (value: string) => {
   await navigator.clipboard.writeText(value);
 };
 
-$: {
-  if ($getResult.data && !$getResult.isFetching) {
-    admin.set($getResult.data);
-    loading = false;
-  }
-}
+$: loading = !($getResult.data && !$getResult.isFetching);
 $: numloaders = $admin.numimages ?? 12;
 $: loaders = $getResult.data && !loading ? 0 : numloaders;
 $: filteredImages =
@@ -157,6 +160,12 @@ $: filteredImages =
         })
         .sort((a, b) => (a.created_at > b.created_at ? -1 : 1))
     : ($admin.images || []).sort((a, b) => (a.created_at > b.created_at ? -1 : 1));
+$: {
+  if (!$getResult.isFetching && loaders === 0 && filteredImages.length === 0) {
+    console.log("No images found, refreshing query...");
+    queryClient.invalidateQueries("images");
+  }
+}
 </script>
 
 {#if mounted}
