@@ -189,7 +189,7 @@ $: filteredImages =
           </div>
           <div class="flex-1 flex flex-col p-3">
             <h4 class="font-semibold pb-1">
-              <a href="{imagePath}{image.name}">
+              <a href="{imagePath}{image.name}" target="_blank">
                 {image.name}
                 <Icon path={mdiOpenInNew} size={0.8} class="ml-1" />
               </a>
@@ -216,12 +216,21 @@ $: filteredImages =
       {/each}
     {:else}
       {#each new Array(loaders).fill(1) as i}
-        <div class="flex flex-col gap-2 bg-theme-article p-2 md:p-4 rounded-md">
-          <div class="loading-line title max-w-xs">
-            <span />
-          </div>
-          <div class="loading-line text">
-            <span />
+        <div
+          class="flex flex-col bg-theme-article p-0 rounded-md shadow-md relative overflow-hidden"
+          style:--tw-shadow-color="#0006"
+          style:--tw-shadow="var(--tw-shadow-colored)">
+          <div class="aspect-video animate-pulse bg-theme-hover bg-opacity-15" />
+          <div class="flex-1 flex flex-col p-3">
+            <div class="loading-line title max-w-xs">
+              <span />
+            </div>
+            <div class="loading-line text">
+              <span />
+            </div>
+            <div class="loading-line text">
+              <span />
+            </div>
           </div>
         </div>
       {/each}
