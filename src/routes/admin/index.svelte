@@ -12,6 +12,7 @@ import Fab from "$lib/components/common/fab.svelte";
 import { onMount } from "svelte";
 import { transitionDuration } from "$lib/constants";
 import { blobToBase64 } from "$lib/utils";
+import { ripple } from "$lib/directives";
 
 let search: string = "";
 let mounted = false;
@@ -180,7 +181,9 @@ $: filteredPosts =
           style:--tw-shadow-color="#0006"
           style:--tw-shadow="var(--tw-shadow-colored)">
           <div class="aspect-video relative hidden sm:block">
-            <Image src={post.image} lazy alt={post.title} class="bg-black" />
+            <a href="/blog/{post.slug}" target="_blank" class="relative block aspect-video" use:ripple>
+              <Image src={post.image} lazy alt={post.title} class="bg-black" />
+            </a>
             <Fab
               on:click={() => remove(post.slug)}
               class="absolute top-2 right-2 w-9 h-9 bg-red-700 drop-shadow-theme-text">

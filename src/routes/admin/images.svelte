@@ -12,6 +12,7 @@ import Fab from "$lib/components/common/fab.svelte";
 import { onMount } from "svelte";
 import { transitionDuration } from "$lib/constants";
 import { blobToBase64 } from "$lib/utils";
+import { ripple } from "$lib/directives";
 
 let search: string = "";
 let loading = true;
@@ -179,8 +180,10 @@ $: filteredImages =
           class="flex flex-col bg-theme-article p-0 rounded-md shadow-md relative overflow-hidden"
           style:--tw-shadow-color="#0006"
           style:--tw-shadow="var(--tw-shadow-colored)">
-          <div class="aspect-video relative">
-            <Image src="{imagePath}{image.name}" lazy alt={image.name} class="bg-black" />
+          <div class="relative">
+            <a href="{imagePath}{image.name}" target="_blank" class="relative block aspect-video" use:ripple>
+              <Image src="{imagePath}{image.name}" lazy alt={image.name} class="bg-black" />
+            </a>
             <Fab
               on:click={() => remove(image.name)}
               class="absolute top-2 right-2 w-9 h-9 bg-red-700 drop-shadow-theme-text">
