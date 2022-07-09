@@ -72,10 +72,13 @@ $: paths = [
                 "relative section-border transition-[background] duration-500",
                 "md:block md:bg-transparent last:border-b-0 hover:bg-theme-hover hover:bg-opacity-15",
                 path == p.path || expanded ? "block" : "hidden",
+                path == p.path &&
+                  (width >= 868 || (width < 768 && expanded)) &&
+                  "md:bg-theme-hover md:bg-opacity-15 cursor-default",
                 path == p.path && expanded && paths.length > 1 ? "bg-active" : ""
               ])}
               on:click={() => (expanded = !expanded)}
-              use:ripple>
+              use:ripple={{ enabled: path !== p.path }}>
               <Section>
                 <div class="flex">
                   <div class="flex-1">
