@@ -4,7 +4,6 @@ import { writeFileSync } from "fs";
 import { supabase } from "./connection";
 import { getContentDir } from "./func";
 import type { PostData } from "../types/blog";
-import { blogPostsPerPage } from "$lib/constants";
 
 type FetchOptions = {
   getPosts?: boolean;
@@ -14,7 +13,7 @@ type FetchOptions = {
 };
 
 export async function fetchPosts(options: FetchOptions = {}) {
-  const { getPosts = false, page = 1, perpage = blogPostsPerPage, query = "" } = options;
+  const { getPosts, page, perpage, query } = options;
 
   let changes = 0;
   let added = 0;

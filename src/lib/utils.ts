@@ -102,3 +102,18 @@ export const isJSON = (text: string) => {
     return false;
   }
 };
+
+export const blobToBase64 = async (blob: Blob) => {
+  return await new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = function () {
+      const dataUrl = String(reader.result);
+      const base64 = dataUrl.split(",")[1];
+      resolve(base64);
+    };
+    reader.onerror = () => {
+      reject(reader.error?.message || "Unknown file reader error");
+    };
+    reader.readAsDataURL(blob);
+  });
+};

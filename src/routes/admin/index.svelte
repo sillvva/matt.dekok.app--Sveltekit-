@@ -11,6 +11,7 @@ import Image from "$lib/components/common/image.svelte";
 import Fab from "$lib/components/common/fab.svelte";
 import { onMount } from "svelte";
 import { transitionDuration } from "$lib/constants";
+import { blobToBase64 } from "$lib/utils";
 
 let search: string = "";
 let mounted = false;
@@ -106,8 +107,10 @@ const upload = () => {
     if (!input.files) return;
     const file = input.files[0];
     if (!file.name.endsWith(".md")) return alert("Only markdown files are supported");
+    const blob = new Blob([file], { type: file.type });
+    const base64 = await blobToBase64(blob);
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append("file", base64);
     formData.append("filename", file.name);
     $uploadMutation.mutate(formData);
   };

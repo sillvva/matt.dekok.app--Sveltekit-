@@ -17,6 +17,7 @@
 		"@sveltejs/adapter-auto": "next",
 		"@sveltejs/kit": "next",
 		"@types/cookie": "^0.5.1",
+		"@types/mime-types": "^2.1.1",
 		"@typescript-eslint/eslint-plugin": "^5.27.0",
 		"@typescript-eslint/parser": "^5.27.0",
 		"autoprefixer": "^10.4.7",
@@ -46,6 +47,7 @@
 		"broadcast-channel": "^4.13.0",
 		"cookie": "^0.5.0",
 		"gray-matter": "^4.0.3",
+		"mime-types": "^2.1.35",
 		"svelte-preprocess": "^4.10.7",
 		"zod": "^3.17.3"
 	}

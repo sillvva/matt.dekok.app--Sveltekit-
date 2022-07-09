@@ -1,6 +1,7 @@
 import type { RequestHandler } from "./__types/data";
 import type { User } from "@supabase/supabase-js";
 import path from "path";
+import mime from "mime-types";
 import type { Admin } from "$lib/store";
 import { env } from "$lib/constants";
 import { supabase } from "$lib/supabase/connection";
@@ -36,7 +37,8 @@ export const post: RequestHandler<AdminMutation> = async ({ request, url }) => {
 
   if (select === "posts") {
     const formData = await request.formData();
-    const file = formData.get("file");
+    const file = formData.get("file")?.toString() || "";
+    const buffer = Buffer.from(file, "base64");
     const filename = formData.get("filename")?.toString();
     const extname = path.extname(filename || "");
 
@@ -46,7 +48,7 @@ export const post: RequestHandler<AdminMutation> = async ({ request, url }) => {
     if (!file || !filename) return getError("No file");
     if (!extname || !bucket) return getError("Invalid file extension");
 
-    const { error } = await supabase.storage.from(bucket).upload(filename, file, {
+    const { error } = await supabase.storage.from(bucket).upload(filename, buffer, {
       upsert: true
     });
 
@@ -56,7 +58,8 @@ export const post: RequestHandler<AdminMutation> = async ({ request, url }) => {
 
   if (select === "images") {
     const formData = await request.formData();
-    const file = formData.get("file");
+    const file = formData.get("file")?.toString() || "";
+    const buffer = Buffer.from(file, "base64");
     const filename = formData.get("filename")?.toString();
     const extname = path.extname(filename || "");
 
@@ -67,7 +70,7 @@ export const post: RequestHandler<AdminMutation> = async ({ request, url }) => {
     if (!file || !filename) return getError("No file");
     if (!extname || !bucket) return getError("Invalid file extension");
 
-    const { error } = await supabase.storage.from(bucket).upload(filename, file, {
+    const { error } = await supabase.storage.from(bucket).upload(filename, buffer, {
       upsert: true
     });
 
@@ -117,7 +120,6 @@ export const del: RequestHandler<AdminMutation> = async ({ request, url }) => {
       const basename = path.basename(filename, extname);
       const { error } = await blog.move(`${filename}`, `archive/${basename}${suffix}${extname}`);
       if (error) return getError(error);
-      else await fetchPosts();
     }
   }
 
@@ -147,6 +149,14 @@ const getResult = async (select: string | null) => {
     .select("*", { count: "exact", head: select === "projects" ? false : true });
 
   const { data: images } = await supabase.storage.from("images").list();
+  const filteredImages = (images || []).filter(
+    image =>
+      image.name.endsWith(".png") ||
+      image.name.endsWith(".jpg") ||
+      image.name.endsWith(".jpeg") ||
+      image.name.endsWith(".svg") ||
+      image.name.endsWith(".webp")
+  );
 
   return {
     status: 200,
@@ -154,8 +164,8 @@ const getResult = async (select: string | null) => {
       success: true,
       numposts: numposts || 0,
       posts: posts || [],
-      numimages: (images || []).length || 0,
-      images: images || [],
+      numimages: filteredImages.length,
+      images: filteredImages,
       numexperience: numexperience || 0,
       experience: experience || [],
       numskills: numskills || 0,
