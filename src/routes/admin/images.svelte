@@ -136,6 +136,10 @@ const checkError = async (error: any) => {
   return false;
 };
 
+const copy = async (value: string) => {
+  await navigator.clipboard.writeText(value);
+};
+
 $: {
   if ($getResult.data && !$getResult.isFetching) {
     admin.set($getResult.data);
@@ -170,13 +174,13 @@ $: filteredImages =
   </div>
   <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2">
     {#if loaders == 0}
-      {#each filteredImages as image (image.name)}
+      {#each filteredImages as image, i (image.name)}
         <div
           class="flex flex-col bg-theme-article p-0 rounded-md shadow-md relative overflow-hidden"
           style:--tw-shadow-color="#0006"
           style:--tw-shadow="var(--tw-shadow-colored)">
           <div class="aspect-video relative">
-            <Image src={`${imagePath}/${image.name}`} lazy alt={image.name} class="bg-black" />
+            <Image src={`${imagePath}${image.name}`} lazy alt={image.name} class="bg-black" />
             <Fab
               on:click={() => remove(image.name)}
               class="absolute top-2 right-2 w-9 h-9 bg-red-700 drop-shadow-theme-text">
@@ -185,13 +189,27 @@ $: filteredImages =
           </div>
           <div class="flex-1 flex flex-col p-3">
             <h4 class="font-semibold pb-1">
-              <a href={`${imagePath}/${image.name}`}>
+              <a href={`${imagePath}${image.name}`}>
                 {image.name}
                 <Icon path={mdiOpenInNew} size={0.8} class="ml-1" />
               </a>
             </h4>
-            <div class="text-sm">
+            <div class="text-sm pb-1">
               Created: {new Date(image.created_at).toLocaleString()}
+            </div>
+            <div class="text-sm">
+              <button
+                on:click={() => {
+                  if (image.copied) return;
+                  copy(`${imagePath}${image.name}`);
+                  image.copied = true;
+                  setTimeout(() => {
+                    image.copied = false;
+                  }, 2000);
+                }}
+                class:text-theme-link={!image.copied}>
+                {image.copied ? "Copied" : "Copy Link"}
+              </button>
             </div>
           </div>
         </div>
