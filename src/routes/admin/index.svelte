@@ -14,6 +14,7 @@ import { onMount } from "svelte";
 import { transitionDuration } from "$lib/constants";
 import { blobToBase64 } from "$lib/utils";
 import { ripple } from "$lib/directives";
+import type { Session } from "@supabase/supabase-js";
 
 let search: string = "";
 let mounted = false;
@@ -161,10 +162,15 @@ const remove = async (slug: string) => {
 const checkError = async (error?: string) => {
   if (error === "Unauthorized") {
     console.log("Token expired, refreshing...");
-    const { session } = await supabase.auth.signIn({
-      refreshToken: $auth?.refresh_token
-    });
-    if (session) $auth = session;
+    let newSession: Session | null = null;
+    if ($auth?.refresh_token) {
+      newSession = (
+        await supabase.auth.signIn({
+          refreshToken: $auth?.refresh_token
+        })
+      )?.session;
+    }
+    if (newSession) $auth = newSession;
     else {
       console.log("Refresh failed, redirecting to login...");
       alert("Unauthorized user");
@@ -216,7 +222,7 @@ $: {
       </button>
     </div>
   </div>
-  <Alert {successMsg} {errorMsg} on:close={(e) => e.detail === "success" ? successMsg = "" : errorMsg = ""} />
+  <Alert {successMsg} {errorMsg} on:close={e => (e.detail === "success" ? (successMsg = "") : (errorMsg = ""))} />
   <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2">
     {#if loaders == 0}
       {#each filteredPosts as post (post.slug)}
