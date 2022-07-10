@@ -184,8 +184,8 @@ const perPage = 12;
 let pageStore = writable(1);
 
 $: loading = !($getResult.data && !$getResult.isFetching);
-$: numloaders = $admin.numimages ?? 12;
-$: loaders = $getResult.data && !loading ? 0 : numloaders;
+$: numloaders = Math.min(perPage, $admin.numimages ?? perPage);
+$: loaders = loading ? numloaders : 0;
 $: filteredImages =
   search.length > 2
     ? ($admin.images || [])
@@ -195,7 +195,7 @@ $: filteredImages =
         .sort((a, b) => (a.created_at > b.created_at ? -1 : 1))
     : ($admin.images || []).sort((a, b) => (a.created_at > b.created_at ? -1 : 1));
 $: {
-  if (!$getResult.isFetching && loaders === 0 && filteredImages.length === 0) {
+  if (!$getResult.isFetching && !loading && filteredImages.length === 0) {
     console.log("No images found, refreshing query...");
     queryClient.invalidateQueries("images");
   }
