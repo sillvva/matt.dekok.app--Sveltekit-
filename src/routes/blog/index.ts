@@ -1,10 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { existsSync, readFileSync } from "fs";
 import type { RequestHandler } from "./__types/index";
-import type { PostData } from "$lib/types/blog";
 import { fetchPosts } from "$lib/supabase/blog";
 import { blogPostsPerPage } from "$lib/constants";
-import { getContentDir } from "$lib/supabase/func";
 
 type PostFetchOptions = {
   page?: number;
@@ -14,16 +11,8 @@ type PostFetchOptions = {
 
 export const getPosts = async (options?: PostFetchOptions) => {
   const { page = 1, query = "", limit = blogPostsPerPage } = options || {};
-  // const jsonFile = `${getContentDir()}/blog.json`;
 
-  // let posts: PostData[] = [];
-  // let num = 0;
   let { posts, num } = await fetchPosts({ getPosts: true, page, perpage: limit, query });
-  // if (existsSync(jsonFile)) {
-  // 	const metaJson = readFileSync(jsonFile, { encoding: 'utf-8' });
-  // 	posts = JSON.parse(metaJson);
-  // 	num = posts.length;
-  // }
 
   if (query) {
     posts = posts

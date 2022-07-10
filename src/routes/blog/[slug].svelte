@@ -49,14 +49,14 @@ $: metaProps = metaTags($pageProps, $page.url.origin, $page.url.pathname);
 
   {#if metaProps.articleMeta}
     {#each Object.entries(metaProps.articleMeta) as t}
-      <meta property={`article:${t[0]}`} content={t[1]} />
+      <meta property="article:{t[0]}" content={t[1]} />
     {/each}
   {/if}
   {#each Object.entries(metaProps.ogProperties) as t}
-    <meta name={`og:${t[0]}`} property={`og:${t[0]}`} content={t[1]} />
+    <meta name="og:{t[0]}" property="og:{t[0]}" content={t[1]} />
   {/each}
   {#each Object.entries(metaProps.twProperties) as t}
-    <meta name={`twitter:${t[0]}`} content={t[1]} />
+    <meta name="twitter:{t[0]}" content={t[1]} />
   {/each}
 </svelte:head>
 

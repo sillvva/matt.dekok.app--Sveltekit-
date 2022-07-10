@@ -14,11 +14,13 @@ onMount(async () => {
 });
 </script>
 
-<div class="grid text-sm mb-4 pt-2 pb-0 md:p-2 bg-theme-pre rounded-lg">
-  {#if description}
-    <p class="m-3 md:mb-0">{description}</p>
-  {/if}
-  {#if LoadedComponent}
-    <svelte:component this={LoadedComponent} {...props} on:click={e => e.preventDefault()} />
-  {/if}
+<div class="mockup-window border bg-theme-pre">
+  <div class="grid p-4 bg-theme-code text-sm">
+    {#if description}
+      <p class="m-3 md:mb-0">{description}</p>
+    {/if}
+    {#if LoadedComponent}
+      <svelte:component this={LoadedComponent} {...props} on:click={e => e.preventDefault()} />
+    {/if}
+  </div>
 </div>

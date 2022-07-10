@@ -18,7 +18,7 @@ export let active: boolean = false;
     className,
     active && "bg-theme-link text-theme-button"
   ])}
-  on:click
+  on:click|stopPropagation
   aria-label={ariaLabel}>
   <slot />
 </a>

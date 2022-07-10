@@ -37,5 +37,3 @@ export const admin = writable<Admin>({
   skills: [],
   projects: []
 });
-
-export const auth = writable<Session | null>(null);

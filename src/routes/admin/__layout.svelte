@@ -13,9 +13,8 @@ export const load: Load = async ({ url }) => {
 import { onMount } from "svelte";
 import type { User } from "@supabase/supabase-js";
 import { page } from "$app/stores";
-import { browser } from "$app/env";
-import { supabase } from "$lib/supabase/connection";
-import { pageProps, admin, auth } from "$lib/store";
+import { supabase, auth } from "$lib/supabase/connection";
+import { pageProps, admin } from "$lib/store";
 import { conClasses } from "$lib/utils";
 import { ripple } from "$lib/directives";
 import Article from "$lib/components/page/article.svelte";
@@ -31,8 +30,6 @@ $pageProps = {
   bodyClass: "page-body admin-body"
 };
 
-if (browser && !$auth?.user) $auth = supabase.auth.session();
-
 onMount(async () => {
   if ($auth) user = $auth?.user;
 
@@ -42,7 +39,7 @@ onMount(async () => {
         provider: "github"
       },
       {
-        redirectTo: `${$page.url.origin}/redirect?to=${encodeURIComponent($page.url.pathname)}`
+        redirectTo: `${$page.url.origin}/redirect?to=${encodeURIComponent($page.url.pathname)}&auth=1`
       }
     );
   }
@@ -73,12 +70,14 @@ $: paths = [
               href={p.path}
               class={conClasses([
                 "relative section-border transition-[background] duration-500",
-                "md:block md:bg-transparent last:border-b-0 hover:bg-theme-hover hover:bg-opacity-15",
+                "md:block last:border-b-0 md:hover:bg-theme-hover md:hover:bg-opacity-15",
                 path == p.path || expanded ? "block" : "hidden",
-                path == p.path && expanded && paths.length > 1 ? "bg-active" : ""
+                path == p.path &&
+                  (width >= 768 || (width < 768 && expanded)) &&
+                  "bg-theme-hover bg-opacity-15 cursor-default"
               ])}
               on:click={() => (expanded = !expanded)}
-              use:ripple>
+              use:ripple={{ enabled: path !== p.path }}>
               <Section>
                 <div class="flex">
                   <div class="flex-1">
@@ -86,7 +85,7 @@ $: paths = [
                   </div>
                   <div class="flex-1 min-w-fit text-right">
                     {#if typeof p.value !== "undefined"}
-                      {p.value} {p.label}
+                      <span class="badge badge-lg">{p.value} {p.label}</span>
                     {:else}
                       <div class="loading-line text">
                         <span />

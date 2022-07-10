@@ -13,15 +13,16 @@ export const load: Load = async ({ url }) => {
 import { onMount, onDestroy } from "svelte";
 import { mdiBrightness6, mdiMenu, mdiChevronLeft } from "@mdi/js";
 import { QueryClient, QueryClientProvider } from "@sveltestack/svelte-query";
+import { parse } from "cookie";
 import { fade } from "svelte/transition";
 import { page, session } from "$app/stores";
 import { browser } from "$app/env";
 import { goto } from "$app/navigation";
 import type { Item } from "$lib/types/hex-menu";
-import { pageProps, drawer, auth } from "$lib/store";
+import { pageProps, drawer } from "$lib/store";
 import { themes, metaTags, conClasses } from "$lib/utils";
 import { transitionDuration } from "$lib/constants";
-import { supabase } from "$lib/supabase/connection";
+import { supabase, auth } from "$lib/supabase/connection";
 import Menu from "$lib/components/page/menu.svelte";
 import Title from "$lib/components/page/title.svelte";
 import Drawer from "$lib/components/page/drawer.svelte";
@@ -30,6 +31,19 @@ import Icon from "$lib/components/common/icon.svelte";
 import "../app.scss";
 import "../misc.scss";
 import "../anim.scss";
+
+supabase.auth.onAuthStateChange((event, session) => {
+  if (event === "SIGNED_IN") {
+    if (!$auth) {
+      $auth = session;
+    }
+  } else if (event === "SIGNED_OUT") {
+    $auth = null;
+    goto("/");
+  } else {
+    console.log(event);
+  }
+});
 
 const queryClient = new QueryClient();
 
@@ -44,7 +58,13 @@ let theme = $session.theme;
 const toggleTheme = (newtheme?: typeof theme) => {
   theme = newtheme || themes[(themes.indexOf(theme) + 1) % themes.length];
   document.cookie = `theme=${theme}`;
+  $session.theme = theme;
 };
+$: {
+  if (typeof document !== "undefined" && $session.theme !== parse(document.cookie).theme) {
+    toggleTheme($session.theme);
+  }
+}
 
 let mm: MediaQueryList;
 if (browser) mm = matchMedia("(prefers-color-scheme: dark)");
@@ -63,12 +83,6 @@ onDestroy(() => {
   if (mm) mm.removeEventListener("change", listener);
 });
 
-const signout = async () => {
-  await supabase.auth.signOut();
-  $auth = null;
-  goto("/");
-};
-
 const menuItems: Item[] = [
   { link: "/", label: "Intro" },
   { link: "/about", label: "About Me" },
@@ -86,7 +100,7 @@ $: smallTitle = ($pageProps.title || "").length > 12 ? "small-title" : "";
 
 <svelte:head>
   <link rel="icon" href="/favicon.png" />
-  <link rel="apple-touch-icon" href={`${metaProps.origin}/apple-touch-icon.png`} />
+  <link rel="apple-touch-icon" href="{metaProps.origin}/apple-touch-icon.png" />
   <link rel="manifest" href="/manifest.webmanifest" />
 
   <meta name="mobile-web-app-capable" content="yes" />
@@ -125,20 +139,22 @@ $: smallTitle = ($pageProps.title || "").length > 12 ? "small-title" : "";
             <Icon path={mdiMenu} />
           </Fab>
           <div class="flex flex-1 justify-end items-center w-full gap-4">
-            <a href="/" on:click={signout}>Sign Out</a>
+            <button on:click={() => supabase.auth.signOut()} class="text-theme-link">Sign Out</button>
             <span class="hidden xs:inline">|</span>
             <a
-              href={`https://github.com/${$auth?.user.user_metadata.user_name}`}
+              href="https://github.com/{$auth?.user.user_metadata.user_name}"
               target="_blank"
               rel="noreferrer noopener"
               class="flex gap-4 items-center">
               <span class="hidden xs:inline">
                 {$auth?.user.user_metadata.user_name}
               </span>
-              <img
-                src={$auth?.user.user_metadata.avatar_url}
-                alt=""
-                class="w-12 h-12 rounded-full" />
+              <div class="avatar">
+                <div class="w-10 rounded-full ring ring-theme-link ring-offset-base-200 ring-offset-2">
+                  <img src={$auth?.user.user_metadata.avatar_url} alt="" />
+                </div>
+              </div>
+              <!-- <img src={$auth?.user.user_metadata.avatar_url} alt="" class="w-12 h-12 rounded-full" /> -->
             </a>
             <span class="hidden xs:inline">
               <Fab ariaLabel="Toggle Theme" active class="nav-fab" on:click={() => toggleTheme()}>
@@ -163,7 +179,7 @@ $: smallTitle = ($pageProps.title || "").length > 12 ? "small-title" : "";
           {:else}
             <Fab
               ariaLabel="Open Drawer"
-              class={`menu-fab ${$page.url.pathname == "/" ? "drawer-fab" : ""}`}
+              class={conClasses(["menu-fab", $page.url.pathname == "/" && "drawer-fab"])}
               on:click={() => ($drawer = !$drawer)}>
               <Icon path={mdiMenu} />
             </Fab>
@@ -177,7 +193,7 @@ $: smallTitle = ($pageProps.title || "").length > 12 ? "small-title" : "";
                 <Menu items={menuItems} />
               </nav>
             {/if}
-            <Title key={$pageProps.title} class={`nav-title ${smallTitle}`}>
+            <Title key={$pageProps.title} class="nav-title {smallTitle}">
               {$pageProps.title || ""}
             </Title>
           </div>

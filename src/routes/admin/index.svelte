@@ -1,21 +1,27 @@
 <script lang="ts">
+import { onMount } from "svelte";
+import { writable } from "svelte/store";
 import { mdiUpload, mdiTrashCan, mdiRefresh, mdiOpenInNew } from "@mdi/js";
 import { useQuery, useMutation, useQueryClient } from "@sveltestack/svelte-query";
-import { goto } from "$app/navigation";
-import { supabase } from "$lib/supabase/connection";
-import { admin, auth } from "$lib/store";
-import type { Admin } from "$lib/store";
 import type { AdminMutation } from "./data";
-import Icon from "$lib/components/common/icon.svelte";
-import Image from "$lib/components/common/image.svelte";
-import Fab from "$lib/components/common/fab.svelte";
-import { onMount } from "svelte";
+import { goto } from "$app/navigation";
+import { supabase, auth } from "$lib/supabase/connection";
+import { admin } from "$lib/store";
+import type { Admin } from "$lib/store";
 import { transitionDuration } from "$lib/constants";
 import { blobToBase64 } from "$lib/utils";
+import { ripple } from "$lib/directives";
+import Icon from "$lib/components/common/icon.svelte";
+import Alert from "$lib/components/common/alert.svelte";
+import Image from "$lib/components/common/image.svelte";
+import Fab from "$lib/components/common/fab.svelte";
+import Pagination from "$lib/components/common/pagination.svelte";
 
 let search: string = "";
 let mounted = false;
 let loading = true;
+let errorMsg = "";
+let successMsg = "";
 
 const headers = {
   authorization: `Bearer ${$auth?.access_token}`
@@ -32,17 +38,36 @@ onMount(() => {
 const getResult = useQuery(
   "posts",
   async () => {
-    const response = await fetch("/admin/data?select=posts", { headers });
+    loading = true;
+    errorMsg = "";
+    successMsg = "";
+
+    if (!$auth) throw new Error("Not logged in");
+
+    const response = await fetch(`/admin/data?select=posts&images=${$admin.success ? 0 : 1}`, { headers });
     const data: Admin = await response.json();
 
-    if (await checkError(data.error)) return { success: false };
+    const error = await checkError(data.error);
+    if (error) throw new Error(data.error);
+
     return data;
   },
   {
     refetchOnWindowFocus: false,
     cacheTime: 30 * 60 * 1000,
     staleTime: 15 * 60 * 1000,
-    onSuccess() {
+    onSuccess(result) {
+      if (!$admin.success) admin.set(result);
+      else
+        admin.update(data => {
+          data.numposts = result.numposts;
+          data.posts = result.posts;
+          return data;
+        });
+      loading = false;
+    },
+    onError(error: string) {
+      errorMsg = error;
       loading = false;
     }
   }
@@ -56,16 +81,25 @@ const uploadMutation = useMutation(
       body: formData
     });
     const data: AdminMutation = await response.json();
-    if (await checkError(data.error)) return { success: false };
+
+    const error = await checkError(data.error);
+    if (error) throw new Error(data.error);
+
     return data;
   },
   {
-    onMutate() {
+    onMutate(vars) {
+      const filename = vars.get("filename")?.toString() || "";
+      $admin.numposts = numloaders + ($admin.images?.find(image => image.filename === filename) ? 0 : 1);
       loading = true;
-      $admin.numposts = numloaders + 1;
     },
     onSuccess() {
-      queryClient.invalidateQueries("posts");
+      if ($auth) queryClient.invalidateQueries("posts");
+      successMsg = "Post uploaded successfully";
+    },
+    onError(error: string) {
+      if ($auth) queryClient.invalidateQueries("posts");
+      errorMsg = error;
     }
   }
 );
@@ -80,7 +114,9 @@ const deleteMutation = useMutation(
     });
     const data: AdminMutation = await response.json();
 
-    if (await checkError(data.error)) return { success: false };
+    const error = await checkError(data.error);
+    if (error) throw new Error(data.error);
+
     return data;
   },
   {
@@ -89,14 +125,19 @@ const deleteMutation = useMutation(
       $admin.numposts = Math.max(1, numloaders - 1);
     },
     onSuccess() {
-      queryClient.invalidateQueries("posts");
+      if ($auth) queryClient.invalidateQueries("posts");
+      successMsg = "Post deleted successfully";
+    },
+    onError(error: string) {
+      if ($auth) queryClient.invalidateQueries("posts");
+      errorMsg = error;
     }
   }
 );
 
 const refresh = async () => {
-  loading = true;
   await queryClient.invalidateQueries("posts");
+  loading = true;
 };
 
 const upload = () => {
@@ -122,26 +163,23 @@ const remove = async (slug: string) => {
   $deleteMutation.mutate(slug);
 };
 
-const checkError = async (error: any) => {
-  if (error === "Unauthorized") {
-    alert("Unauthorized user");
+const checkError = async (error?: string) => {
+  if (error?.startsWith("Unauthorized")) {
+    alert(error);
     await supabase.auth.signOut();
     $auth = null;
     await goto("/", { replaceState: true });
-    return true;
+    return "Unauthorized user";
   } else if (error) {
-    alert(error);
-    return true;
+    return error;
   }
-  return false;
+  return "";
 };
 
-$: {
-  if ($getResult.data && !$getResult.isFetching) {
-    admin.set($getResult.data);
-    loading = false;
-  }
-}
+const perPage = 12;
+let pageStore = writable(1);
+
+$: loading = !($getResult.data && !$getResult.isFetching);
 $: numloaders = $admin.numposts ?? 6;
 $: loaders = $getResult.data && !loading ? 0 : numloaders;
 $: filteredPosts =
@@ -156,6 +194,14 @@ $: filteredPosts =
         })
         .sort((a, b) => (a.date > b.date ? -1 : 1))
     : ($admin.posts || []).sort((a, b) => (a.date > b.date ? -1 : 1));
+$: {
+  if (!$getResult.isFetching && loaders === 0 && filteredPosts.length === 0) {
+    console.log("No posts found, refreshing query...");
+    queryClient.invalidateQueries("posts");
+  }
+}
+$: pages = Math.ceil(filteredPosts.length / perPage);
+$: paginatedPosts = filteredPosts.slice(($pageStore - 1) * perPage, $pageStore * perPage);
 </script>
 
 {#if mounted}
@@ -172,15 +218,18 @@ $: filteredPosts =
       </button>
     </div>
   </div>
+  <Alert {successMsg} {errorMsg} on:close={e => (e.detail === "success" ? (successMsg = "") : (errorMsg = ""))} />
   <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2">
     {#if loaders == 0}
-      {#each filteredPosts as post (post.slug)}
+      {#each paginatedPosts as post (post.slug)}
         <div
           class="flex flex-col bg-theme-article p-0 rounded-md shadow-md relative overflow-hidden"
           style:--tw-shadow-color="#0006"
           style:--tw-shadow="var(--tw-shadow-colored)">
           <div class="aspect-video relative hidden sm:block">
-            <Image src={post.image} lazy alt={post.title} class="bg-black" />
+            <a href="/blog/{post.slug}" target="_blank" class="relative block aspect-video" use:ripple>
+              <Image src={post.image} lazy alt={post.title} class="bg-black" />
+            </a>
             <Fab
               on:click={() => remove(post.slug)}
               class="absolute top-2 right-2 w-9 h-9 bg-red-700 drop-shadow-theme-text">
@@ -190,7 +239,7 @@ $: filteredPosts =
           <div class="flex flex-row items-center gap-2 p-3">
             <div class="flex-1 flex flex-col">
               <h4 class="font-semibold pb-1">
-                <a href={`/blog/${post.slug}`} target="_blank">
+                <a href="/blog/{post.slug}" target="_blank">
                   {post.title}
                   <Icon path={mdiOpenInNew} size={0.8} class="ml-1" />
                 </a>
@@ -207,15 +256,24 @@ $: filteredPosts =
       {/each}
     {:else}
       {#each new Array(loaders).fill(1) as i}
-        <div class="flex flex-col gap-2 bg-theme-article p-2 md:p-4 rounded-md">
-          <div class="loading-line title max-w-xs">
-            <span />
-          </div>
-          <div class="loading-line text">
-            <span />
+        <div
+          class="flex flex-col bg-theme-article p-0 rounded-md shadow-md relative overflow-hidden"
+          style:--tw-shadow-color="#0006"
+          style:--tw-shadow="var(--tw-shadow-colored)">
+          <div class="aspect-video animate-pulse bg-theme-hover bg-opacity-15 hidden sm:block" />
+          <div class="flex-1 flex flex-col p-3">
+            <div class="loading-line title max-w-xs">
+              <span />
+            </div>
+            <div class="loading-line text">
+              <span />
+            </div>
           </div>
         </div>
       {/each}
     {/if}
   </div>
+  {#if pages > 1}
+    <Pagination {pageStore} {pages} />
+  {/if}
 {/if}
