@@ -19,7 +19,7 @@ import { page, session } from "$app/stores";
 import { browser } from "$app/env";
 import { goto } from "$app/navigation";
 import type { Item } from "$lib/types/hex-menu";
-import { pageProps, drawer, auth } from "$lib/store";
+import { pageProps, drawer, auth, authExpiresAt } from "$lib/store";
 import { themes, metaTags, conClasses } from "$lib/utils";
 import { transitionDuration } from "$lib/constants";
 import { supabase } from "$lib/supabase/connection";
@@ -31,19 +31,42 @@ import Icon from "$lib/components/common/icon.svelte";
 import "../app.scss";
 import "../misc.scss";
 import "../anim.scss";
+import type { Session } from "@supabase/supabase-js";
 
 supabase.auth.onAuthStateChange((event, session) => {
   if (event === "SIGNED_IN") {
     if (!$auth) {
       $auth = session;
     }
-  }
-  else if (event === "SIGNED_OUT") {
+  } else if (event === "SIGNED_OUT") {
     $auth = null;
     goto("/");
+  } else {
+    console.log(event);
   }
-  else {
-    console.log(event)
+});
+
+let refreshTimer: NodeJS.Timeout | null = null;
+auth.subscribe((session) => {
+  if (session && session.expires_at && session.expires_at !== $authExpiresAt) {
+    $authExpiresAt = session.expires_at;
+    const now = new Date().getTime();
+    const timer = Math.max(1, $authExpiresAt - now / 1000 - 10 * 60) * 1000;
+    console.log("Refresh at", new Date(now + timer));
+    console.log("Expires at", new Date($authExpiresAt * 1000));
+    if (refreshTimer) clearTimeout(refreshTimer);
+    refreshTimer = setTimeout(async () => {
+      let newSession: Session | null = null;
+      if (session?.refresh_token) {
+        newSession = (
+          await supabase.auth.signIn({
+            refreshToken: session.refresh_token,
+            provider: "github"
+          })
+        )?.session;
+      }
+      if (newSession) auth.set(newSession);
+    }, timer);
   }
 });
 
@@ -153,7 +176,7 @@ $: smallTitle = ($pageProps.title || "").length > 12 ? "small-title" : "";
               </span>
               <div class="avatar">
                 <div class="w-10 rounded-full ring ring-theme-link ring-offset-base-200 ring-offset-2">
-                  <img src="{$auth?.user.user_metadata.avatar_url}" alt="" />
+                  <img src={$auth?.user.user_metadata.avatar_url} alt="" />
                 </div>
               </div>
               <!-- <img src={$auth?.user.user_metadata.avatar_url} alt="" class="w-12 h-12 rounded-full" /> -->

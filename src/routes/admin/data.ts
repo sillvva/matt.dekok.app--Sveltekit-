@@ -10,11 +10,8 @@ import { fetchPosts } from "$lib/supabase/blog";
 
 export const get: RequestHandler<Admin> = async ({ request, url }) => {
   const token = request.headers.get("authorization")?.replace("Bearer ", "") ?? "";
-  const { user } = await supabase.auth.api.getUser(token);
-  if (user?.id !== env.AUTH_UID) {
-    if (user) await deleteUser(user);
-    return getError("Unauthorized", 401);
-  }
+  const { user, error } = await supabase.auth.api.getUser(token);
+  if (!user) return getError(`Unauthorized: ${error}`, 401);
 
   const select = url.searchParams.get("select");
   const images = url.searchParams.get("images");
@@ -29,10 +26,7 @@ export type AdminMutation = {
 export const post: RequestHandler<AdminMutation> = async ({ request, url }) => {
   const token = request.headers.get("authorization")?.replace("Bearer ", "") ?? "";
   const { user } = await supabase.auth.api.getUser(token);
-  if (user?.id !== env.AUTH_UID) {
-    if (user) await deleteUser(user);
-    return getError("Unauthorized", 401);
-  }
+  if (!user) return getError("Unauthorized", 401);
 
   const select = url.searchParams.get("select");
 
@@ -90,10 +84,7 @@ export const post: RequestHandler<AdminMutation> = async ({ request, url }) => {
 export const del: RequestHandler<AdminMutation> = async ({ request, url }) => {
   const token = request.headers.get("authorization")?.replace("Bearer ", "") ?? "";
   const { user } = await supabase.auth.api.getUser(token);
-  if (user?.id !== env.AUTH_UID) {
-    if (user) await deleteUser(user);
-    return getError("Unauthorized", 401);
-  }
+  if (!user) return getError("Unauthorized", 401);
 
   const select = url.searchParams.get("select");
 

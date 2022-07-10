@@ -14,7 +14,6 @@ import { onMount } from "svelte";
 import { transitionDuration } from "$lib/constants";
 import { blobToBase64 } from "$lib/utils";
 import { ripple } from "$lib/directives";
-import type { Session } from "@supabase/supabase-js";
 
 let search: string = "";
 let loading = true;
@@ -42,6 +41,8 @@ const getResult = useQuery(
     errorMsg = "";
     successMsg = "";
 
+    if (!$auth) throw new Error("Not logged in");
+
     const response = await fetch("/admin/data?select=images", { headers });
     const data: Admin = await response.json();
 
@@ -63,6 +64,10 @@ const getResult = useQuery(
           return data;
         });
       loading = false;
+    },
+    onError(error: string) {
+      errorMsg = error;
+      loading = false;
     }
   }
 );
@@ -82,16 +87,17 @@ const uploadMutation = useMutation(
     return data;
   },
   {
-    onMutate() {
+    onMutate(vars) {
+      const filename = vars.get("filename")?.toString() || "";
+      $admin.numposts = numloaders + ($admin.posts?.find(post => post.name === filename) ? 0 : 1);
       loading = true;
-      $admin.numposts = numloaders + 1;
     },
     onSuccess() {
-      queryClient.invalidateQueries("images");
+      if ($auth) queryClient.invalidateQueries("images");
       successMsg = "Image uploaded successfully";
     },
     onError(error: string) {
-      queryClient.invalidateQueries("posts");
+      if ($auth) queryClient.invalidateQueries("images");
       errorMsg = error;
     }
   }
@@ -114,15 +120,15 @@ const deleteMutation = useMutation(
   },
   {
     onMutate() {
-      loading = true;
       $admin.numposts = Math.max(1, numloaders - 1);
+      loading = true;
     },
     onSuccess() {
-      queryClient.invalidateQueries("images");
+      if ($auth) queryClient.invalidateQueries("images");
       successMsg = "Image deleted successfully";
     },
     onError(error: string) {
-      queryClient.invalidateQueries("posts");
+      if ($auth) queryClient.invalidateQueries("images");
       errorMsg = error;
     }
   }
@@ -156,24 +162,11 @@ const remove = async (name: string) => {
 };
 
 const checkError = async (error?: string) => {
-  if (error === "Unauthorized") {
-    console.log("Token expired, refreshing...");
-    let newSession: Session | null = null;
-    if ($auth?.refresh_token) {
-      newSession = (
-        await supabase.auth.signIn({
-          refreshToken: $auth?.refresh_token
-        })
-      )?.session;
-    }
-    if (newSession) $auth = newSession;
-    else {
-      console.log("Refresh failed, redirecting to login...");
-      alert("Unauthorized user");
-      await supabase.auth.signOut();
-      $auth = null;
-      await goto("/", { replaceState: true });
-    }
+  if (error?.startsWith("Unauthorized")) {
+    alert(error);
+    await supabase.auth.signOut();
+    $auth = null;
+    await goto("/", { replaceState: true });
     return "Unauthorized user";
   } else if (error) {
     return error;
@@ -218,7 +211,7 @@ $: {
       </button>
     </div>
   </div>
-  <Alert {successMsg} {errorMsg} on:close={(e) => e.detail === "success" ? successMsg = "" : errorMsg = ""} />
+  <Alert {successMsg} {errorMsg} on:close={e => (e.detail === "success" ? (successMsg = "") : (errorMsg = ""))} />
   <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2">
     {#if loaders == 0}
       {#each filteredImages as image, i (image.name)}

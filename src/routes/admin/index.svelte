@@ -1,5 +1,5 @@
 <script lang="ts">
-import { mdiUpload, mdiTrashCan, mdiRefresh, mdiOpenInNew, mdiAlertCircle, mdiCheckCircle } from "@mdi/js";
+import { mdiUpload, mdiTrashCan, mdiRefresh, mdiOpenInNew } from "@mdi/js";
 import { useQuery, useMutation, useQueryClient } from "@sveltestack/svelte-query";
 import { goto } from "$app/navigation";
 import { supabase } from "$lib/supabase/connection";
@@ -14,7 +14,6 @@ import { onMount } from "svelte";
 import { transitionDuration } from "$lib/constants";
 import { blobToBase64 } from "$lib/utils";
 import { ripple } from "$lib/directives";
-import type { Session } from "@supabase/supabase-js";
 
 let search: string = "";
 let mounted = false;
@@ -40,6 +39,8 @@ const getResult = useQuery(
     loading = true;
     errorMsg = "";
     successMsg = "";
+
+    if (!$auth) throw new Error("Not logged in");
 
     const response = await fetch(`/admin/data?select=posts&images=${$admin.success ? 0 : 1}`, { headers });
     const data: Admin = await response.json();
@@ -85,16 +86,17 @@ const uploadMutation = useMutation(
     return data;
   },
   {
-    onMutate() {
+    onMutate(vars) {
+      const filename = vars.get("filename")?.toString() || "";
+      $admin.numposts = numloaders + ($admin.images?.find(image => image.filename === filename) ? 0 : 1);
       loading = true;
-      $admin.numposts = numloaders + 1;
     },
     onSuccess() {
-      queryClient.invalidateQueries("posts");
+      if ($auth) queryClient.invalidateQueries("posts");
       successMsg = "Post uploaded successfully";
     },
     onError(error: string) {
-      queryClient.invalidateQueries("posts");
+      if ($auth) queryClient.invalidateQueries("posts");
       errorMsg = error;
     }
   }
@@ -121,19 +123,19 @@ const deleteMutation = useMutation(
       $admin.numposts = Math.max(1, numloaders - 1);
     },
     onSuccess() {
-      queryClient.invalidateQueries("posts");
+      if ($auth) queryClient.invalidateQueries("posts");
       successMsg = "Post deleted successfully";
     },
     onError(error: string) {
-      queryClient.invalidateQueries("posts");
+      if ($auth) queryClient.invalidateQueries("posts");
       errorMsg = error;
     }
   }
 );
 
 const refresh = async () => {
-  loading = true;
   await queryClient.invalidateQueries("posts");
+  loading = true;
 };
 
 const upload = () => {
@@ -160,24 +162,11 @@ const remove = async (slug: string) => {
 };
 
 const checkError = async (error?: string) => {
-  if (error === "Unauthorized") {
-    console.log("Token expired, refreshing...");
-    let newSession: Session | null = null;
-    if ($auth?.refresh_token) {
-      newSession = (
-        await supabase.auth.signIn({
-          refreshToken: $auth?.refresh_token
-        })
-      )?.session;
-    }
-    if (newSession) $auth = newSession;
-    else {
-      console.log("Refresh failed, redirecting to login...");
-      alert("Unauthorized user");
-      await supabase.auth.signOut();
-      $auth = null;
-      await goto("/", { replaceState: true });
-    }
+  if (error?.startsWith("Unauthorized")) {
+    alert(error);
+    await supabase.auth.signOut();
+    $auth = null;
+    await goto("/", { replaceState: true });
     return "Unauthorized user";
   } else if (error) {
     return error;

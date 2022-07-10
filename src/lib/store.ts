@@ -39,3 +39,4 @@ export const admin = writable<Admin>({
 });
 
 export const auth = writable<Session | null>(null);
+export const authExpiresAt = writable<number>(0);
