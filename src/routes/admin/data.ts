@@ -187,9 +187,3 @@ const getError = async (error: Error | string, code = 500) => {
     }
   };
 };
-
-const deleteUser = async (user: User) => {
-  if (user.id === env.AUTH_UID) return;
-  const { error } = await service.auth.api.deleteUser(user.id);
-  return !error;
-};

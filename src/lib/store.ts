@@ -37,6 +37,3 @@ export const admin = writable<Admin>({
   skills: [],
   projects: []
 });
-
-export const auth = writable<Session | null>(null);
-export const authExpiresAt = writable<number>(0);

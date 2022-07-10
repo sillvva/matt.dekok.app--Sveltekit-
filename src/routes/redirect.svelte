@@ -1,7 +1,7 @@
 <script lang="ts">
 import { page } from "$app/stores";
 import { goto } from "$app/navigation";
-import { auth } from "$lib/store";
+import { auth } from "$lib/supabase/connection";
 import PageMessage from "$lib/components/page/message.svelte";
 
 let redirect = $page.url.searchParams.get("to") || "/";

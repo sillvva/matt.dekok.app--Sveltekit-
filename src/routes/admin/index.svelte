@@ -2,8 +2,8 @@
 import { mdiUpload, mdiTrashCan, mdiRefresh, mdiOpenInNew } from "@mdi/js";
 import { useQuery, useMutation, useQueryClient } from "@sveltestack/svelte-query";
 import { goto } from "$app/navigation";
-import { supabase } from "$lib/supabase/connection";
-import { admin, auth } from "$lib/store";
+import { supabase, auth } from "$lib/supabase/connection";
+import { admin } from "$lib/store";
 import type { Admin } from "$lib/store";
 import type { AdminMutation } from "./data";
 import Icon from "$lib/components/common/icon.svelte";
