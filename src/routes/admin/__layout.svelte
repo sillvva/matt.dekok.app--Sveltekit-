@@ -70,12 +70,11 @@ $: paths = [
               href={p.path}
               class={conClasses([
                 "relative section-border transition-[background] duration-500",
-                "md:block md:bg-transparent last:border-b-0 hover:bg-theme-hover hover:bg-opacity-15",
+                "md:block last:border-b-0 md:hover:bg-theme-hover md:hover:bg-opacity-15",
                 path == p.path || expanded ? "block" : "hidden",
                 path == p.path &&
-                  (width >= 868 || (width < 768 && expanded)) &&
-                  "md:bg-theme-hover md:bg-opacity-15 cursor-default",
-                path == p.path && expanded && paths.length > 1 ? "bg-active" : ""
+                  (width >= 768 || (width < 768 && expanded)) &&
+                  "bg-theme-hover bg-opacity-15 cursor-default"
               ])}
               on:click={() => (expanded = !expanded)}
               use:ripple={{ enabled: path !== p.path }}>
@@ -86,7 +85,7 @@ $: paths = [
                   </div>
                   <div class="flex-1 min-w-fit text-right">
                     {#if typeof p.value !== "undefined"}
-                      {p.value} {p.label}
+                      <span class="badge badge-lg">{p.value} {p.label}</span>
                     {:else}
                       <div class="loading-line text">
                         <span />

@@ -1,5 +1,5 @@
 <script lang="ts">
-import { mdiUpload, mdiTrashCan, mdiRefresh, mdiOpenInNew } from "@mdi/js";
+import { mdiUpload, mdiTrashCan, mdiRefresh, mdiOpenInNew, mdiAlertCircle, mdiCheckCircle } from "@mdi/js";
 import { useQuery, useMutation, useQueryClient } from "@sveltestack/svelte-query";
 import { goto } from "$app/navigation";
 import { supabase } from "$lib/supabase/connection";
@@ -7,6 +7,7 @@ import { admin, auth } from "$lib/store";
 import type { Admin } from "$lib/store";
 import type { AdminMutation } from "./data";
 import Icon from "$lib/components/common/icon.svelte";
+import Alert from "$lib/components/common/alert.svelte";
 import Image from "$lib/components/common/image.svelte";
 import Fab from "$lib/components/common/fab.svelte";
 import { onMount } from "svelte";
@@ -17,6 +18,8 @@ import { ripple } from "$lib/directives";
 let search: string = "";
 let mounted = false;
 let loading = true;
+let errorMsg = "";
+let successMsg = "";
 
 const headers = {
   authorization: `Bearer ${$auth?.access_token}`
@@ -34,10 +37,15 @@ const getResult = useQuery(
   "posts",
   async () => {
     loading = true;
+    errorMsg = "";
+    successMsg = "";
+
     const response = await fetch(`/admin/data?select=posts&images=${$admin.success ? 0 : 1}`, { headers });
     const data: Admin = await response.json();
 
-    if (await checkError(data.error)) return { success: false };
+    const error = await checkError(data.error);
+    if (error) throw new Error(data.error);
+
     return data;
   },
   {
@@ -53,6 +61,10 @@ const getResult = useQuery(
           return data;
         });
       loading = false;
+    },
+    onError(error: string) {
+      errorMsg = error;
+      loading = false;
     }
   }
 );
@@ -65,7 +77,10 @@ const uploadMutation = useMutation(
       body: formData
     });
     const data: AdminMutation = await response.json();
-    if (await checkError(data.error)) return { success: false };
+
+    const error = await checkError(data.error);
+    if (error) throw new Error(data.error);
+
     return data;
   },
   {
@@ -75,6 +90,11 @@ const uploadMutation = useMutation(
     },
     onSuccess() {
       queryClient.invalidateQueries("posts");
+      successMsg = "Post uploaded successfully";
+    },
+    onError(error: string) {
+      queryClient.invalidateQueries("posts");
+      errorMsg = error;
     }
   }
 );
@@ -89,7 +109,9 @@ const deleteMutation = useMutation(
     });
     const data: AdminMutation = await response.json();
 
-    if (await checkError(data.error)) return { success: false };
+    const error = await checkError(data.error);
+    if (error) throw new Error(data.error);
+
     return data;
   },
   {
@@ -99,6 +121,11 @@ const deleteMutation = useMutation(
     },
     onSuccess() {
       queryClient.invalidateQueries("posts");
+      successMsg = "Post deleted successfully";
+    },
+    onError(error: string) {
+      queryClient.invalidateQueries("posts");
+      errorMsg = error;
     }
   }
 );
@@ -131,7 +158,7 @@ const remove = async (slug: string) => {
   $deleteMutation.mutate(slug);
 };
 
-const checkError = async (error: any) => {
+const checkError = async (error?: string) => {
   if (error === "Unauthorized") {
     console.log("Token expired, refreshing...");
     const { session } = await supabase.auth.signIn({
@@ -145,12 +172,11 @@ const checkError = async (error: any) => {
       $auth = null;
       await goto("/", { replaceState: true });
     }
-    return true;
+    return "Unauthorized user";
   } else if (error) {
-    alert(error);
-    return true;
+    return error;
   }
-  return false;
+  return "";
 };
 
 $: loading = !($getResult.data && !$getResult.isFetching);
@@ -190,6 +216,7 @@ $: {
       </button>
     </div>
   </div>
+  <Alert {successMsg} {errorMsg} on:close={(e) => e.detail === "success" ? successMsg = "" : errorMsg = ""} />
   <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2">
     {#if loaders == 0}
       {#each filteredPosts as post (post.slug)}

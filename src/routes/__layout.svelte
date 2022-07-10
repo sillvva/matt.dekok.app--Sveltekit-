@@ -151,7 +151,12 @@ $: smallTitle = ($pageProps.title || "").length > 12 ? "small-title" : "";
               <span class="hidden xs:inline">
                 {$auth?.user.user_metadata.user_name}
               </span>
-              <img src={$auth?.user.user_metadata.avatar_url} alt="" class="w-12 h-12 rounded-full" />
+              <div class="avatar">
+                <div class="w-10 rounded-full ring ring-theme-link ring-offset-base-200 ring-offset-2">
+                  <img src="{$auth?.user.user_metadata.avatar_url}" alt="" />
+                </div>
+              </div>
+              <!-- <img src={$auth?.user.user_metadata.avatar_url} alt="" class="w-12 h-12 rounded-full" /> -->
             </a>
             <span class="hidden xs:inline">
               <Fab ariaLabel="Toggle Theme" active class="nav-fab" on:click={() => toggleTheme()}>

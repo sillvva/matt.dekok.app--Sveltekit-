@@ -35,6 +35,16 @@ module.exports = {
 					code: 'var(--color-bg-code)'
 				}
 			},
+			ringColor: {
+				theme: {
+					link: 'var(--color-text-link)',
+				}
+			},
+			ringOffsetColor: {
+				theme: {
+					link: 'var(--color-text-link)',
+				}
+			},
 			dropShadow: {
 				'theme-text': '1px 1px 2px var(--color-bg-shadow)',
 				'theme-text-outline':
@@ -60,5 +70,5 @@ module.exports = {
 			'2xl': '1536px'
 		}
 	},
-	plugins: []
+	plugins: [require("daisyui")]
 };

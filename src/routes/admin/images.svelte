@@ -7,6 +7,7 @@ import { admin, auth } from "$lib/store";
 import type { Admin } from "$lib/store";
 import type { AdminMutation } from "./data";
 import Icon from "$lib/components/common/icon.svelte";
+import Alert from "$lib/components/common/alert.svelte";
 import Image from "$lib/components/common/image.svelte";
 import Fab from "$lib/components/common/fab.svelte";
 import { onMount } from "svelte";
@@ -17,6 +18,8 @@ import { ripple } from "$lib/directives";
 let search: string = "";
 let loading = true;
 let mounted = false;
+let errorMsg = "";
+let successMsg = "";
 
 const headers = {
   authorization: `Bearer ${$auth?.access_token}`
@@ -35,10 +38,15 @@ const getResult = useQuery(
   "images",
   async () => {
     loading = true;
+    errorMsg = "";
+    successMsg = "";
+
     const response = await fetch("/admin/data?select=images", { headers });
     const data: Admin = await response.json();
 
-    if (await checkError(data.error)) return { success: false };
+    const error = await checkError(data.error);
+    if (error) throw new Error(data.error);
+
     return data;
   },
   {
@@ -66,7 +74,10 @@ const uploadMutation = useMutation(
       body: formData
     });
     const data: AdminMutation = await response.json();
-    if (await checkError(data.error)) return { success: false };
+
+    const error = await checkError(data.error);
+    if (error) throw new Error(data.error);
+
     return data;
   },
   {
@@ -76,6 +87,11 @@ const uploadMutation = useMutation(
     },
     onSuccess() {
       queryClient.invalidateQueries("images");
+      successMsg = "Image uploaded successfully";
+    },
+    onError(error: string) {
+      queryClient.invalidateQueries("posts");
+      errorMsg = error;
     }
   }
 );
@@ -90,7 +106,9 @@ const deleteMutation = useMutation(
     });
     const data: AdminMutation = await response.json();
 
-    if (await checkError(data.error)) return { success: false };
+    const error = await checkError(data.error);
+    if (error) throw new Error(data.error);
+
     return data;
   },
   {
@@ -100,6 +118,11 @@ const deleteMutation = useMutation(
     },
     onSuccess() {
       queryClient.invalidateQueries("images");
+      successMsg = "Image deleted successfully";
+    },
+    onError(error: string) {
+      queryClient.invalidateQueries("posts");
+      errorMsg = error;
     }
   }
 );
@@ -131,18 +154,17 @@ const remove = async (name: string) => {
   $deleteMutation.mutate(name);
 };
 
-const checkError = async (error: any) => {
+const checkError = async (error?: string) => {
   if (error === "Unauthorized") {
     alert("Unauthorized user");
     await supabase.auth.signOut();
     $auth = null;
     await goto("/", { replaceState: true });
-    return true;
+    return "Unauthorized user";
   } else if (error) {
-    alert(error);
-    return true;
+    return error;
   }
-  return false;
+  return "";
 };
 
 const copy = async (value: string) => {
@@ -182,6 +204,7 @@ $: {
       </button>
     </div>
   </div>
+  <Alert {successMsg} {errorMsg} on:close={(e) => e.detail === "success" ? successMsg = "" : errorMsg = ""} />
   <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2">
     {#if loaders == 0}
       {#each filteredImages as image, i (image.name)}
