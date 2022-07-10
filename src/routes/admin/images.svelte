@@ -1,19 +1,21 @@
 <script lang="ts">
+import { onMount } from "svelte";
 import { mdiUpload, mdiTrashCan, mdiRefresh, mdiOpenInNew } from "@mdi/js";
 import { useQuery, useMutation, useQueryClient } from "@sveltestack/svelte-query";
+import type { AdminMutation } from "./data";
 import { goto } from "$app/navigation";
 import { supabase, auth } from "$lib/supabase/connection";
 import { admin } from "$lib/store";
 import type { Admin } from "$lib/store";
-import type { AdminMutation } from "./data";
+import { transitionDuration } from "$lib/constants";
+import { blobToBase64 } from "$lib/utils";
+import { ripple } from "$lib/directives";
 import Icon from "$lib/components/common/icon.svelte";
 import Alert from "$lib/components/common/alert.svelte";
 import Image from "$lib/components/common/image.svelte";
 import Fab from "$lib/components/common/fab.svelte";
-import { onMount } from "svelte";
-import { transitionDuration } from "$lib/constants";
-import { blobToBase64 } from "$lib/utils";
-import { ripple } from "$lib/directives";
+import Pagination from "$lib/components/common/pagination.svelte";
+import { writable } from "svelte/store";
 
 let search: string = "";
 let loading = true;
@@ -178,6 +180,9 @@ const copy = async (value: string) => {
   await navigator.clipboard.writeText(value);
 };
 
+const perPage = 12;
+let pageStore = writable(1);
+
 $: loading = !($getResult.data && !$getResult.isFetching);
 $: numloaders = $admin.numimages ?? 12;
 $: loaders = $getResult.data && !loading ? 0 : numloaders;
@@ -195,6 +200,8 @@ $: {
     queryClient.invalidateQueries("images");
   }
 }
+$: pages = Math.ceil(filteredImages.length / perPage);
+$: paginatedImages = filteredImages.slice(($pageStore - 1) * perPage, $pageStore * perPage);
 </script>
 
 {#if mounted}
@@ -214,7 +221,7 @@ $: {
   <Alert {successMsg} {errorMsg} on:close={e => (e.detail === "success" ? (successMsg = "") : (errorMsg = ""))} />
   <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2">
     {#if loaders == 0}
-      {#each filteredImages as image, i (image.name)}
+      {#each paginatedImages as image (image.name)}
         <div
           class="flex flex-col bg-theme-article p-0 rounded-md shadow-md relative overflow-hidden"
           style:--tw-shadow-color="#0006"
@@ -278,4 +285,7 @@ $: {
       {/each}
     {/if}
   </div>
+  {#if pages > 1}
+    <Pagination {pageStore} {pages} />
+  {/if}
 {/if}
