@@ -18,7 +18,7 @@ export const get: RequestHandler<Admin> = async ({ request, url }) => {
   return getResult(select, images);
 };
 
-export type AdminMutation = {
+export interface AdminMutation {
   success: boolean;
   error?: string;
 };

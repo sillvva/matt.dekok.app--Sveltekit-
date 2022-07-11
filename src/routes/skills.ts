@@ -2,7 +2,7 @@ import type { RequestHandler } from "./__types/skills";
 import { supabase } from "$lib/supabase/connection";
 import type { Rating } from "$lib/types/rating";
 
-export type SkillSection = {
+export interface SkillSection {
   name: string;
   skills: Rating[];
   sort: number;

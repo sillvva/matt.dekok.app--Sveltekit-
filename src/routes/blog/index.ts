@@ -3,7 +3,7 @@ import type { RequestHandler } from "./__types/index";
 import { fetchPosts } from "$lib/supabase/blog";
 import { blogPostsPerPage } from "$lib/constants";
 
-type PostFetchOptions = {
+interface PostFetchOptions {
   page?: number;
   query?: string;
   limit?: number;

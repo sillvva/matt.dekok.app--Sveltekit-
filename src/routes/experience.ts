@@ -1,7 +1,7 @@
 import type { RequestHandler } from "./__types/experience";
 import { supabase } from "$lib/supabase/connection";
 
-export type ExperienceItem = {
+export interface ExperienceItem {
   name?: string;
   nameLink?: string;
   image: string;
@@ -10,15 +10,15 @@ export type ExperienceItem = {
   h5: string;
   h5Link?: string;
   created_at: string;
-};
+}
 
-export type ExperienceSection = {
+export interface ExperienceSection {
   name: string;
   experience: ExperienceItem[];
   sort: number;
-};
+}
 
-export const get: RequestHandler = async () => {
+export const get: RequestHandler<{ experience: ExperienceSection[] }> = async () => {
   const { data } = await supabase
     .from("experience_categories")
     .select("name, experience ( name, nameLink, image, h4, h4Link, h5, h5Link, created_at ), sort");

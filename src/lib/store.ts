@@ -1,9 +1,8 @@
 import { writable } from "svelte/store";
 import type { PostData } from "./types/blog";
 import type { Rating } from "./types/rating";
-import type { Session } from "@supabase/supabase-js";
 
-export type PageProps = {
+export interface PageProps {
   title?: string;
   description?: string;
   bodyClass?: string;
@@ -16,7 +15,7 @@ export const pageProps = writable<PageProps>({});
 
 export const drawer = writable(false);
 
-export type Admin = {
+export interface Admin {
   success: boolean;
   error?: string;
   numposts?: number;

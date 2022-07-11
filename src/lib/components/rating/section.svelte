@@ -2,7 +2,7 @@
 import Section from "$lib/components/page/section.svelte";
 import Header from "$lib/components/page/section-header.svelte";
 
-type RatingColumnBreakpoints = {
+interface RatingColumnBreakpoints {
   sm?: number;
   md?: number;
   lg?: number;

@@ -5,7 +5,7 @@ import { supabase } from "./connection";
 import { getContentDir } from "./func";
 import type { PostData } from "../types/blog";
 
-type FetchOptions = {
+interface FetchOptions {
   getPosts?: boolean;
   page?: number;
   perpage?: number;

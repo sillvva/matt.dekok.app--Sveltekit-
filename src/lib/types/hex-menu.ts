@@ -1,4 +1,4 @@
-export type Item = {
+export interface Item {
   link: string;
   label: string;
   active?: boolean;

@@ -1,4 +1,4 @@
-export type PostProps = {
+export interface PostProps {
   slug: string;
   title: string;
   date: string;
@@ -12,10 +12,10 @@ export type PostProps = {
   full?: boolean;
 };
 
-export type PostData = {
+export interface PostData extends PostProps {
   id: number;
   name: string;
   created_at: string;
   updated_at: string;
   match: number;
-} & PostProps;
+};

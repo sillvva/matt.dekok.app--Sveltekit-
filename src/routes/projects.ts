@@ -1,7 +1,7 @@
 import type { RequestHandler } from "./__types/projects";
 import { supabase } from "$lib/supabase/connection";
 
-export type Project = {
+export interface Project {
   title: string;
   subtitle: string;
   description: string;
