@@ -8,7 +8,7 @@ export let items: ExperienceItem[];
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-y-5 gap-x-2">
   {#each items as item}
     <div
-      class="text-theme-base pb-5 lg:pb-0 min-h-[60px] overflow-hidden section-border lg:border-b-0 last:pb-0 last:border-b-0">
+      class="text-theme-base pb-5 lg:pb-0 min-h-[60px] overflow-hidden section-divider lg:border-b-0 last:pb-0 last:border-b-0">
       <div class="relative float-left w-14 h-14 grid justify-center items-center bg-white rounded-sm">
         <Image
           src={item.image}

@@ -76,7 +76,7 @@ $: resources = [
             <a
               href={p.path}
               class={conClasses([
-                "relative section-border transition-[background] duration-500",
+                "relative section-divider transition-[background] duration-500",
                 "md:block last:border-b-0 md:hover:bg-theme-hover md:hover:bg-opacity-15",
                 path == p.path || expanded ? "block" : "hidden",
                 path == p.path &&

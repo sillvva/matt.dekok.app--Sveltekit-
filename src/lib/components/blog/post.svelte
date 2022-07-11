@@ -21,7 +21,7 @@ let active = false;
       "[--tw-shadow-color:var(--shadowColor)] [--tw-shadow:var(--tw-shadow-colored)]",
       "hover:shadow-xl hover:[--tw-shadow-color:var(--shadowHover)]"
     ])}
-    class:focused={active && !post.link}
+    class:post-focused={active && !post.link}
     use:ripple
     on:click={e => (active = true)}>
     <div
@@ -65,33 +65,3 @@ let active = false;
     {/if}
   </div>
 </a>
-
-<style lang="scss">
-@tailwind components;
-
-@layer components {
-  .focused {
-    @apply relative z-0;
-    &::before {
-      content: "";
-      @apply absolute -left-1/2 -top-1/2 -z-20 w-[200%] h-[200%] animate-spin-medium;
-      @apply left-[calc(50%-max(60vw,50vh))] top-[calc(50%-max(60vw,50vh))] w-[max(120vw,100vh)] h-[max(120vw,100vh)];
-      @apply bg-theme-body bg-no-repeat;
-      background-image: conic-gradient(
-        var(--color-bg-article) 0deg,
-        var(--color-bg-link) 90deg,
-        var(--color-bg-article) 90deg,
-        var(--color-bg-article) 180deg,
-        var(--color-bg-article) 180deg,
-        var(--color-bg-link) 270deg,
-        var(--color-bg-article) 270deg,
-        var(--color-bg-article) 360deg
-      );
-    }
-    &::after {
-      content: "";
-      @apply absolute -z-10 inset-1 rounded-[5px] bg-theme-article;
-    }
-  }
-}
-</style>

@@ -46,22 +46,3 @@ $: loading = lazy ? "lazy" : "eager";
       className
     ])} />
 </span>
-
-<style lang="scss">
-@tailwind components;
-
-@layer components {
-  .cover-img {
-    @apply -left-20 bottom-36 md:bottom-0 xs:-left-0 sm:-left-8 md:-left-28 lg:left-0;
-    @apply [--gto:60%] md:[--gto:100%];
-    &::after {
-      content: "";
-      @apply fixed z-0 left-0 right-0 bottom-0 h-[65vh] md:h-[20vh] lg:hidden;
-      background-image: linear-gradient(transparent, rgb(var(--color-bg-body)) var(--gto));
-    }
-    img {
-      @apply object-left lg:object-center;
-    }
-  }
-}
-</style>
