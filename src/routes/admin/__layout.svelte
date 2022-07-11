@@ -50,9 +50,9 @@ onMount(async () => {
 $: paths = [
   { name: "Blog", path: "/admin", value: $admin.numposts, label: "posts" },
   { name: "Images", path: "/admin/images", value: $admin.numimages, label: "posts" },
-  { name: "Experience", path: "/admin/experience", value: $admin.numexperience, label: "items" },
-  { name: "Skills", path: "/admin/skills", value: $admin.numskills, label: "skills" },
-  { name: "Projects", path: "/admin/projects", value: $admin.numprojects, label: "projects" }
+  // { name: "Experience", path: "/admin/experience", value: $admin.numexperience, label: "items" },
+  // { name: "Skills", path: "/admin/skills", value: $admin.numskills, label: "skills" },
+  // { name: "Projects", path: "/admin/projects", value: $admin.numprojects, label: "projects" }
 ];
 $: resources = [
   { name: "Github", path: "https://github.com/sillvva/sveltekit.dekok.app" },
