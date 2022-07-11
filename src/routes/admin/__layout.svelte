@@ -11,6 +11,7 @@ export const load: Load = async ({ url }) => {
 
 <script lang="ts">
 import { onMount } from "svelte";
+import { mdiOpenInNew } from "@mdi/js";
 import type { User } from "@supabase/supabase-js";
 import { page } from "$app/stores";
 import { supabase, auth } from "$lib/supabase/connection";
@@ -20,6 +21,7 @@ import { ripple } from "$lib/directives";
 import Article from "$lib/components/page/article.svelte";
 import Section from "$lib/components/page/section.svelte";
 import PageMessage from "$lib/components/page/message.svelte";
+import Icon from "$lib/components/common/icon.svelte";
 
 export let path: string;
 let user: User | null;
@@ -48,9 +50,14 @@ onMount(async () => {
 $: paths = [
   { name: "Blog", path: "/admin", value: $admin.numposts, label: "posts" },
   { name: "Images", path: "/admin/images", value: $admin.numimages, label: "posts" },
-  { name: "Experience", path: "/admin/experience", value: $admin.numexperience, label: "items" },
-  { name: "Skills", path: "/admin/skills", value: $admin.numskills, label: "skills" },
-  { name: "Projects", path: "/admin/projects", value: $admin.numprojects, label: "projects" }
+  // { name: "Experience", path: "/admin/experience", value: $admin.numexperience, label: "items" },
+  // { name: "Skills", path: "/admin/skills", value: $admin.numskills, label: "skills" },
+  // { name: "Projects", path: "/admin/projects", value: $admin.numprojects, label: "projects" }
+];
+$: resources = [
+  { name: "Github", path: "https://github.com/sillvva/sveltekit.dekok.app" },
+  { name: "Vercel", path: "https://vercel.com/dashboard" },
+  { name: "Supabase", path: "https://app.supabase.com/" }
 ];
 </script>
 
@@ -98,57 +105,28 @@ $: paths = [
           {/each}
         </Article>
         <Article class="hidden md:block">
-          <a
-            href="https://github.com/sillvva/sveltekit.dekok.app"
-            target="_blank"
-            rel="noreferrer noopener"
-            class={conClasses([
-              "relative border-solid border-b-black/25 border-b-[1px] transition-[background] duration-500",
-              "md:block md:bg-transparent last:border-b-0 hover:bg-theme-hover hover:bg-opacity-15"
-            ])}
-            use:ripple>
-            <Section>
-              <div class="flex">
-                <div class="flex-1">
-                  <span class="text-theme-link font-semibold">Github</span>
+          {#each resources as p}
+            <a
+              href={p.path}
+              target="_blank"
+              rel="noreferrer noopener"
+              class={conClasses([
+                "relative border-solid border-b-black/25 border-b-[1px] transition-[background] duration-500",
+                "md:block md:bg-transparent last:border-b-0 hover:bg-theme-hover hover:bg-opacity-15"
+              ])}
+              use:ripple>
+              <Section>
+                <div class="flex">
+                  <div class="flex-1">
+                    <span class="text-theme-link font-semibold">
+                      {p.name}
+                      <Icon path={mdiOpenInNew} size={0.8} class="ml-1" />
+                    </span>
+                  </div>
                 </div>
-              </div>
-            </Section>
-          </a>
-          <a
-            href="https://vercel.com/"
-            target="_blank"
-            rel="noreferrer noopener"
-            class={conClasses([
-              "relative border-solid border-b-black/25 border-b-[1px] transition-[background] duration-500",
-              "md:block md:bg-transparent last:border-b-0 hover:bg-theme-hover hover:bg-opacity-15"
-            ])}
-            use:ripple>
-            <Section>
-              <div class="flex">
-                <div class="flex-1">
-                  <span class="text-theme-link font-semibold">Vercel</span>
-                </div>
-              </div>
-            </Section>
-          </a>
-          <a
-            href="https://app.supabase.com/"
-            target="_blank"
-            rel="noreferrer noopener"
-            class={conClasses([
-              "relative border-solid border-b-black/25 border-b-[1px] transition-[background] duration-500",
-              "md:block md:bg-transparent last:border-b-0 hover:bg-theme-hover hover:bg-opacity-15"
-            ])}
-            use:ripple>
-            <Section>
-              <div class="flex">
-                <div class="flex-1">
-                  <span class="text-theme-link font-semibold">Supabase</span>
-                </div>
-              </div>
-            </Section>
-          </a>
+              </Section>
+            </a>
+          {/each}
         </Article>
       </div>
     </div>

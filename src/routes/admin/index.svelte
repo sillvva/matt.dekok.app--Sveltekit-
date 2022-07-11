@@ -180,8 +180,8 @@ const perPage = 12;
 let pageStore = writable(1);
 
 $: loading = !($getResult.data && !$getResult.isFetching);
-$: numloaders = $admin.numposts ?? 6;
-$: loaders = $getResult.data && !loading ? 0 : numloaders;
+$: numloaders = Math.min(perPage, $admin.numposts ?? perPage);
+$: loaders = loading ? numloaders : 0;
 $: filteredPosts =
   search.length > 2
     ? ($admin.posts || [])
@@ -195,7 +195,7 @@ $: filteredPosts =
         .sort((a, b) => (a.date > b.date ? -1 : 1))
     : ($admin.posts || []).sort((a, b) => (a.date > b.date ? -1 : 1));
 $: {
-  if (!$getResult.isFetching && loaders === 0 && filteredPosts.length === 0) {
+  if (!$getResult.isFetching && !loading && filteredPosts.length === 0) {
     console.log("No posts found, refreshing query...");
     queryClient.invalidateQueries("posts");
   }

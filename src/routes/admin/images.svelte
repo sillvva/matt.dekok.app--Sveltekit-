@@ -148,14 +148,43 @@ const upload = () => {
   input.onchange = async () => {
     if (!input.files) return;
     const file = input.files[0];
+    let name = file.name;
+    const parts = name.split(".");
     const blob = new Blob([file], { type: file.type });
     const base64 = await blobToBase64(blob);
+    let overwrite = false;
+
+    if (fileExists(name)) {
+      if (confirm("File already exists. Overwrite?")) {
+        overwrite = true;
+      } else {
+        let newName = prompt("Enter a new file name", `_${name}`) || "";
+        if (newName.trim()) {
+          const newParts = newName.trim().split(".");
+          newName =
+            newName + (parts[parts.length - 1] === newParts[newParts.length - 1] ? "" : "." + parts[parts.length - 1]);
+          if (newName.trim() === name) {
+            while (fileExists(name)) {
+              name = `_${name}`;
+            }
+          } else name = newName;
+        } else {
+          return;
+        }
+      }
+    }
+    
     const formData = new FormData();
     formData.append("file", base64);
-    formData.append("filename", file.name);
+    formData.append("filename", name);
+    formData.append("overwrite", overwrite ? '1' : '0');
     $uploadMutation.mutate(formData);
   };
   input.click();
+};
+
+const fileExists = (name: string) => {
+  return $admin.images?.find(image => image.name === name);
 };
 
 const remove = async (name: string) => {
@@ -184,8 +213,8 @@ const perPage = 12;
 let pageStore = writable(1);
 
 $: loading = !($getResult.data && !$getResult.isFetching);
-$: numloaders = $admin.numimages ?? 12;
-$: loaders = $getResult.data && !loading ? 0 : numloaders;
+$: numloaders = Math.min(perPage, $admin.numimages ?? perPage);
+$: loaders = loading ? numloaders : 0;
 $: filteredImages =
   search.length > 2
     ? ($admin.images || [])
@@ -195,7 +224,7 @@ $: filteredImages =
         .sort((a, b) => (a.created_at > b.created_at ? -1 : 1))
     : ($admin.images || []).sort((a, b) => (a.created_at > b.created_at ? -1 : 1));
 $: {
-  if (!$getResult.isFetching && loaders === 0 && filteredImages.length === 0) {
+  if (!$getResult.isFetching && !loading && filteredImages.length === 0) {
     console.log("No images found, refreshing query...");
     queryClient.invalidateQueries("images");
   }

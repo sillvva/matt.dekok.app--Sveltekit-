@@ -25,7 +25,7 @@ export let errorMsg = "";
   <div class="alert alert-error shadow-lg mb-3" in:slide out:slide>
     <div>
       <Icon path={mdiAlertCircle} />
-      <span>Error! {errorMsg}</span>
+      <span>{errorMsg}</span>
     </div>
     <div class="flex-none">
       <button class="btn btn-sm btn-ghost" on:click={() => dispatch("close", "error")}>Close</button>

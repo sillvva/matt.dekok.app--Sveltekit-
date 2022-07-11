@@ -57,6 +57,7 @@ export const post: RequestHandler<AdminMutation> = async ({ request, url }) => {
     const buffer = Buffer.from(file, "base64");
     const filename = formData.get("filename")?.toString();
     const extname = path.extname(filename || "");
+    const upsert = formData.get("overwrite")?.toString() === "1";
 
     let bucket = "";
     if (extname === ".png" || extname === ".jpg" || extname === ".jpeg" || extname === ".svg" || extname === ".webp")
@@ -66,10 +67,10 @@ export const post: RequestHandler<AdminMutation> = async ({ request, url }) => {
     if (!extname || !bucket) return getError("Invalid file extension");
 
     const { error } = await supabase.storage.from(bucket).upload(filename, buffer, {
-      upsert: false
+      upsert
     });
 
-    if (error) return getError(error);
+    if (error) return getError(error.message);
     else if (bucket === "blog") await fetchPosts();
   }
 

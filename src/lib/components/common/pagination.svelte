@@ -46,7 +46,7 @@ const pageHandler = (newPage: number) => {
         {p}
       </span>
     {:else if p}
-      {#if pageStore}
+      {#if $pageStore}
         <button
           on:click={() => ($pageStore = p)}
           class={conClasses([
