@@ -44,11 +44,12 @@ export const getPosts = async (options?: PostFetchOptions) => {
       .filter(post => post.match)
       .sort((a, b) => (a.match > b.match ? -1 : 1));
     num = posts.length;
+    posts = posts.slice((page - 1) * limit, page * limit);
   } else posts = posts.sort((a, b) => (a.date > b.date ? -1 : 1));
 
   return {
     pages: Math.ceil(num / limit),
-    posts: posts.slice((page - 1) * limit, page * limit),
+    posts: posts,
     num
   };
 };
