@@ -1,1 +1,1 @@
-<p class="mb-4"><slot /></p>
+<p class="mb-5 text-theme-base"><slot /></p>
