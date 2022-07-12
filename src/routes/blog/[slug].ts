@@ -3,7 +3,7 @@ import { readFileSync, rmSync, existsSync, writeFileSync, statSync } from "node:
 import matter from "gray-matter";
 import type { RequestHandler } from "./__types/[slug]";
 import type { PostData } from "$lib/types/blog";
-import { supabase } from "$lib/supabase/connection";
+import { supabase } from "$lib/supabase/client";
 import { getContentDir } from "$lib/supabase/func";
 
 export const get: RequestHandler = async ({ params: { slug } }) => {

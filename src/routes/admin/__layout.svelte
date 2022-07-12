@@ -14,7 +14,7 @@ import { onMount } from "svelte";
 import { mdiOpenInNew } from "@mdi/js";
 import type { User } from "@supabase/supabase-js";
 import { page } from "$app/stores";
-import { supabase, auth } from "$lib/supabase/connection";
+import { supabase, auth } from "$lib/supabase/client";
 import { pageProps, admin } from "$lib/store";
 import { conClasses } from "$lib/utils";
 import { ripple } from "$lib/directives";

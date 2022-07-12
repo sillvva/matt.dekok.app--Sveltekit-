@@ -21,7 +21,7 @@ import type { Item } from "$lib/types/hex-menu";
 import { pageProps, drawer } from "$lib/store";
 import { themes, metaTags, conClasses } from "$lib/utils";
 import { transitionDuration } from "$lib/constants";
-import { supabase, auth } from "$lib/supabase/connection";
+import { supabase, auth } from "$lib/supabase/client";
 import Menu from "$lib/components/page/menu.svelte";
 import Title from "$lib/components/page/title.svelte";
 import Drawer from "$lib/components/page/drawer.svelte";

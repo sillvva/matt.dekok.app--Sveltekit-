@@ -1,5 +1,5 @@
 import type { RequestHandler } from "./__types/skills";
-import { supabase } from "$lib/supabase/connection";
+import { supabase } from "$lib/supabase/client";
 import type { Rating } from "$lib/types/rating";
 
 export interface SkillSection {

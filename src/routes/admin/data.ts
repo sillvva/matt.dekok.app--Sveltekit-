@@ -1,11 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { RequestHandler } from "./__types/data";
-import type { User } from "@supabase/supabase-js";
 import path from "path";
 import type { Admin } from "$lib/store";
-import { env } from "$lib/constants";
-import { supabase } from "$lib/supabase/connection";
-import { service } from "$lib/supabase/service";
+import { supabase } from "$lib/supabase/client";
+// import { service } from "$lib/supabase/server";
 import { fetchPosts } from "$lib/supabase/blog";
 
 export const get: RequestHandler<Admin> = async ({ request, url }) => {

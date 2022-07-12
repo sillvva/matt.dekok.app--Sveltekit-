@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import matter from "gray-matter";
 import { writeFileSync } from "fs";
-import { supabase } from "./connection";
+import { supabase } from "./client";
 import { getContentDir } from "./func";
 import type { PostData } from "../types/blog";
 

@@ -5,7 +5,7 @@ import { mdiUpload, mdiTrashCan, mdiRefresh, mdiOpenInNew } from "@mdi/js";
 import { useQuery, useMutation, useQueryClient } from "@sveltestack/svelte-query";
 import type { AdminMutation } from "./data";
 import { goto } from "$app/navigation";
-import { supabase, auth } from "$lib/supabase/connection";
+import { supabase, auth } from "$lib/supabase/client";
 import { admin } from "$lib/store";
 import type { Admin } from "$lib/store";
 import { transitionDuration } from "$lib/constants";
@@ -194,12 +194,12 @@ $: filteredPosts =
         })
         .sort((a, b) => (a.date > b.date ? -1 : 1))
     : ($admin.posts || []).sort((a, b) => (a.date > b.date ? -1 : 1));
-$: {
-  if (!$getResult.isFetching && !loading && filteredPosts.length === 0) {
-    console.log("No posts found, refreshing query...");
-    queryClient.invalidateQueries("posts");
-  }
-}
+// $: {
+//   if (!$getResult.isFetching && !loading && filteredPosts.length === 0) {
+//     console.log("No posts found, refreshing query...");
+//     queryClient.invalidateQueries("posts");
+//   }
+// }
 $: pages = Math.ceil(filteredPosts.length / perPage);
 $: paginatedPosts = filteredPosts.slice(($pageStore - 1) * perPage, $pageStore * perPage);
 </script>

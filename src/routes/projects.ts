@@ -1,5 +1,5 @@
 import type { RequestHandler } from "./__types/projects";
-import { supabase } from "$lib/supabase/connection";
+import { supabase } from "$lib/supabase/client";
 
 export interface Project {
   title: string;

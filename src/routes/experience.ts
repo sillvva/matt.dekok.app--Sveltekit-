@@ -1,5 +1,5 @@
 import type { RequestHandler } from "./__types/experience";
-import { supabase } from "$lib/supabase/connection";
+import { supabase } from "$lib/supabase/client";
 
 export interface ExperienceItem {
   name?: string;

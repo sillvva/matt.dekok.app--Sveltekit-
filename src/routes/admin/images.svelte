@@ -4,7 +4,7 @@ import { mdiUpload, mdiTrashCan, mdiRefresh, mdiOpenInNew } from "@mdi/js";
 import { useQuery, useMutation, useQueryClient } from "@sveltestack/svelte-query";
 import type { AdminMutation } from "./data";
 import { goto } from "$app/navigation";
-import { supabase, auth } from "$lib/supabase/connection";
+import { supabase, auth } from "$lib/supabase/client";
 import { admin } from "$lib/store";
 import type { Admin } from "$lib/store";
 import { transitionDuration } from "$lib/constants";
@@ -223,12 +223,12 @@ $: filteredImages =
         })
         .sort((a, b) => (a.created_at > b.created_at ? -1 : 1))
     : ($admin.images || []).sort((a, b) => (a.created_at > b.created_at ? -1 : 1));
-$: {
-  if (!$getResult.isFetching && !loading && filteredImages.length === 0) {
-    console.log("No images found, refreshing query...");
-    queryClient.invalidateQueries("images");
-  }
-}
+// $: {
+//   if (!$getResult.isFetching && !loading && filteredImages.length === 0) {
+//     console.log("No images found, refreshing query...");
+//     queryClient.invalidateQueries("images");
+//   }
+// }
 $: pages = Math.ceil(filteredImages.length / perPage);
 $: paginatedImages = filteredImages.slice(($pageStore - 1) * perPage, $pageStore * perPage);
 </script>
