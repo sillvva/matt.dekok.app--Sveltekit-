@@ -103,17 +103,13 @@ export const isJSON = (text: string) => {
   }
 };
 
-export const blobToBase64 = async (blob: Blob) => {
-  return await new Promise<string>((resolve, reject) => {
+export const toBase64 = async (data: string | Uint8Array | Blob) => {
+  const base64url = await new Promise<string>(r => {
     const reader = new FileReader();
-    reader.onload = function () {
-      const dataUrl = String(reader.result);
-      const base64 = dataUrl.split(",")[1];
-      resolve(base64);
-    };
-    reader.onerror = () => {
-      reject(reader.error?.message || "Unknown file reader error");
-    };
-    reader.readAsDataURL(blob);
+    reader.onload = () => r((reader.result || "").toString());
+    if (data instanceof Blob) reader.readAsDataURL(data);
+    else reader.readAsDataURL(new Blob([data]));
   });
+
+  return base64url.split(",", 2)[1];
 };

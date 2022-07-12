@@ -9,14 +9,14 @@ let isAuthRedirect = $page.url.searchParams.get("auth");
 
 $: {
   if (isAuthRedirect) {
-    if ($auth) goto(redirect, {
-      replaceState: true
-    });
-  }
-  else {
+    if ($auth)
+      goto(redirect, {
+        replaceState: true
+      });
+  } else {
     goto(redirect, {
       replaceState: true
-    })
+    });
   }
 }
 </script>

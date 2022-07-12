@@ -8,7 +8,7 @@ import { supabase, auth } from "$lib/supabase/client";
 import { admin } from "$lib/store";
 import type { Admin } from "$lib/store";
 import { transitionDuration } from "$lib/constants";
-import { blobToBase64 } from "$lib/utils";
+import { toBase64 } from "$lib/utils";
 import { ripple } from "$lib/directives";
 import Icon from "$lib/components/common/icon.svelte";
 import Alert from "$lib/components/common/alert.svelte";
@@ -151,7 +151,7 @@ const upload = () => {
     let name = file.name;
     const parts = name.split(".");
     const blob = new Blob([file], { type: file.type });
-    const base64 = await blobToBase64(blob);
+    const base64 = await toBase64(blob);
     let overwrite = false;
 
     if (fileExists(name)) {
