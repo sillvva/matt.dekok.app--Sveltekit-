@@ -1,3 +1,4 @@
+import { goto } from "$app/navigation";
 import { createClient, type Session } from "@supabase/supabase-js";
 import { writable } from "svelte/store";
 import { env } from "../constants";
@@ -8,6 +9,18 @@ const supabaseAnonKey = env.SUPABASE_KEY;
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export const auth = writable<Session | null>(null);
+
+supabase.auth.onAuthStateChange((event, session) => {
+  if (event === "SIGNED_IN") {
+    auth.set(session);
+  } else if (event === "SIGNED_OUT") {
+    auth.set(null);
+    goto("/")
+  } else {
+    console.log(event);
+  }
+});
+
 let authExpiresAt = 0;
 let refreshTimer: NodeJS.Timeout | null = null;
 auth.subscribe((session) => {

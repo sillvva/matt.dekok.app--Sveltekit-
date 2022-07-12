@@ -17,7 +17,6 @@ import { parse } from "cookie";
 import { fade } from "svelte/transition";
 import { page, session } from "$app/stores";
 import { browser } from "$app/env";
-import { goto } from "$app/navigation";
 import type { Item } from "$lib/types/hex-menu";
 import { pageProps, drawer } from "$lib/store";
 import { themes, metaTags, conClasses } from "$lib/utils";
@@ -32,27 +31,12 @@ import "../app.scss";
 import "../misc.scss";
 import "../anim.scss";
 
-supabase.auth.onAuthStateChange((event, session) => {
-  if (event === "SIGNED_IN") {
-    if (!$auth) {
-      $auth = session;
-    }
-  } else if (event === "SIGNED_OUT") {
-    $auth = null;
-    goto("/");
-  } else {
-    console.log(event);
-  }
-});
-
 const queryClient = new QueryClient();
 
 export let path: string;
 let loaded = false;
 let scroll = 0;
 let delay = 0;
-
-if (browser && !$auth) $auth = supabase.auth.session();
 
 let theme = $session.theme;
 const toggleTheme = (newtheme?: typeof theme) => {
