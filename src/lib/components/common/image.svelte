@@ -9,6 +9,7 @@ export let title: string | undefined = undefined;
 export let lazy = true;
 export let id = ``;
 export let objectFit = `cover`;
+export let noAspect = false;
 
 let containerClass = "";
 export { containerClass as container };
@@ -28,7 +29,8 @@ $: loading = lazy ? "lazy" : "eager";
   class={conClasses([
     "transition-all duration-500 bg-none",
     "overflow-hidden w-[initial] h-[initial] p-0",
-    "absolute inset-0",
+    "inset-0",
+    !noAspect && "absolute",
     containerClass
   ])}
   style:--fit={objectFit}>
@@ -40,9 +42,8 @@ $: loading = lazy ? "lazy" : "eager";
     {alt}
     {loading}
     class={conClasses([
-      "absolute inset-0 border-none",
-      "p-0 m-auto block [object-fit:var(--fit)] object-center",
-      "w-0 h-0 min-w-full max-w-full min-h-full max-h-full",
+      !noAspect && "absolute inset-0 w-0 h-0 min-w-full max-w-full min-h-full max-h-full",
+      "p-0 m-auto block [object-fit:var(--fit)] object-center border-none",
       className
     ])} />
 </span>
