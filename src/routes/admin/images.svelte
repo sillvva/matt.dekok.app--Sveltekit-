@@ -223,12 +223,6 @@ $: filteredImages =
         })
         .sort((a, b) => (a.created_at > b.created_at ? -1 : 1))
     : ($admin.images || []).sort((a, b) => (a.created_at > b.created_at ? -1 : 1));
-// $: {
-//   if (!$getResult.isFetching && !loading && filteredImages.length === 0) {
-//     console.log("No images found, refreshing query...");
-//     queryClient.invalidateQueries("images");
-//   }
-// }
 $: pages = Math.ceil(filteredImages.length / perPage);
 $: paginatedImages = filteredImages.slice(($pageStore - 1) * perPage, $pageStore * perPage);
 </script>

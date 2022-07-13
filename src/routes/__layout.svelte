@@ -45,7 +45,7 @@ const toggleTheme = (newtheme?: typeof theme) => {
   $session.theme = theme;
 };
 $: {
-  if (typeof document !== "undefined" && $session.theme !== parse(document.cookie).theme) {
+  if (browser && $session.theme !== parse(document.cookie).theme) {
     toggleTheme($session.theme);
   }
 }

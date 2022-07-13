@@ -19,7 +19,7 @@ export const get: RequestHandler<Admin> = async ({ request, url }) => {
 export interface AdminMutation {
   success: boolean;
   error?: string;
-};
+}
 
 export const post: RequestHandler<AdminMutation> = async ({ request, url }) => {
   const token = request.headers.get("authorization")?.replace("Bearer ", "") ?? "";

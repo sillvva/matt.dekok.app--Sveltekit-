@@ -194,12 +194,6 @@ $: filteredPosts =
         })
         .sort((a, b) => (a.date > b.date ? -1 : 1))
     : ($admin.posts || []).sort((a, b) => (a.date > b.date ? -1 : 1));
-// $: {
-//   if (!$getResult.isFetching && !loading && filteredPosts.length === 0) {
-//     console.log("No posts found, refreshing query...");
-//     queryClient.invalidateQueries("posts");
-//   }
-// }
 $: pages = Math.ceil(filteredPosts.length / perPage);
 $: paginatedPosts = filteredPosts.slice(($pageStore - 1) * perPage, $pageStore * perPage);
 </script>
