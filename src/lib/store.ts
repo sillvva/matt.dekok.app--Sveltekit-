@@ -1,6 +1,5 @@
 import { writable } from "svelte/store";
-import type { PostData } from "./types/blog";
-import type { Rating } from "./types/rating";
+import type { InferQueryOutput } from "./trpc/client";
 
 export interface PageProps {
   title?: string;
@@ -15,21 +14,7 @@ export const pageProps = writable<PageProps>({});
 
 export const drawer = writable(false);
 
-export interface Admin {
-  success: boolean;
-  error?: string;
-  numposts?: number;
-  posts?: PostData[];
-  numimages?: number;
-  images?: any[];
-  numexperience?: number;
-  experience?: any[];
-  numskills?: number;
-  skills?: Rating[];
-  numprojects?: number;
-  projects?: any[];
-};
-export const admin = writable<Admin>({
+export const admin = writable<InferQueryOutput<"posts:get">>({
   success: false,
   posts: [],
   experience: [],

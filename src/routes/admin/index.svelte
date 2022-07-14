@@ -23,13 +23,6 @@ let errorMsg = "";
 let successMsg = "";
 
 const queryClient = useQueryClient();
-const queryOptions = {
-  context: {
-    headers: {
-      authorization: `Bearer ${$auth?.access_token}`
-    }
-  }
-};
 
 onMount(() => {
   setTimeout(() => {
@@ -47,17 +40,7 @@ const getResult = useQuery(
     if (!$auth) throw new Error("Not logged in");
 
     try {
-      const data = await t.query(
-        "posts:get",
-        { images: !$admin.success },
-        {
-          context: {
-            headers: {
-              authorization: `Bearer ${$auth?.access_token}`
-            }
-          }
-        }
-      );
+      const data = await t.query("posts:get", { images: !$admin.success });
       return data;
     } catch (err: any) {
       const error = await checkError(err);
@@ -90,7 +73,7 @@ const getResult = useQuery(
 const uploadMutation = useMutation(
   async (input: { file: string; filename: string }) => {
     try {
-      return await t.mutation("posts:post", input, queryOptions);
+      return await t.mutation("posts:post", input);
     } catch (err: any) {
       const error = await checkError(err);
       if (error) throw new Error(err);
@@ -115,13 +98,9 @@ const uploadMutation = useMutation(
 const deleteMutation = useMutation(
   async (slug: string) => {
     try {
-      return await t.mutation(
-        "posts:delete",
-        {
-          slug
-        },
-        queryOptions
-      );
+      return await t.mutation("posts:delete", {
+        slug
+      });
     } catch (err: any) {
       const error = await checkError(err);
       if (error) throw new Error(err);

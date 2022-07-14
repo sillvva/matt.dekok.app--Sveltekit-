@@ -1,5 +1,6 @@
-import type { Admin } from "$lib/store";
 import { supabase } from "$lib/supabase/client";
+import type { PostData } from "$lib/types/blog";
+import type { Rating } from "$lib/types/rating";
 
 export const getError = async (error: Error | string, code = 500) => {
   return {
@@ -12,6 +13,21 @@ export const getError = async (error: Error | string, code = 500) => {
       "Cache-Control": "no-cache"
     }
   };
+};
+
+interface Admin {
+  success: boolean;
+  error?: string;
+  numposts?: number;
+  posts?: PostData[];
+  numimages?: number;
+  images?: any[];
+  numexperience?: number;
+  experience?: any[];
+  numskills?: number;
+  skills?: Rating[];
+  numprojects?: number;
+  projects?: any[];
 };
 
 export const getResult = async (select: string | null, getImages?: boolean): Promise<Admin> => {

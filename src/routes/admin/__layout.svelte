@@ -13,7 +13,6 @@ export const load: Load = async ({ url }) => {
 import { onMount } from "svelte";
 import { mdiOpenInNew } from "@mdi/js";
 import type { User } from "@supabase/supabase-js";
-import { browser } from "$app/env";
 import { page, session } from "$app/stores";
 import { supabase, auth } from "$lib/supabase/client";
 import { pageProps, admin } from "$lib/store";
@@ -60,12 +59,6 @@ $: resources = [
   { name: "Vercel", path: "https://vercel.com/dashboard" },
   { name: "Supabase", path: "https://app.supabase.com/" }
 ];
-$: {
-  if (browser && $auth)
-    document.cookie = `supabase_auth=${$auth.access_token}; path=/; expires=${new Date(
-      ($auth.expires_at || 0) * 1000
-    ).toUTCString()}`;
-}
 </script>
 
 <svelte:head>

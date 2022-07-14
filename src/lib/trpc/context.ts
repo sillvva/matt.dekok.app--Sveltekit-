@@ -3,7 +3,6 @@ import { TRPCError } from "@trpc/server";
 import type { RequestEvent } from "@sveltejs/kit";
 import type { MiddlewareFunction } from "@trpc/server/dist/declarations/src/internals/middlewares";
 import { supabase } from "$lib/supabase/client";
-import { parse } from "cookie";
 
 export const createContext = async ({ request }: RequestEvent) => {
   return {
@@ -19,8 +18,8 @@ export const authMiddleware: MiddlewareFunction<{ req: Request }, unknown, unkno
   ctx: { req },
   next
 }) => {
-  const cookies = parse(req.headers.get("cookie") || "");
-  const token = cookies.supabase_auth;
+  const authorization = req.headers.get("authorization") || " ";
+  const token = authorization.split(" ")[1];
   const { user, error } = await supabase.auth.api.getUser(token);
   if (!user) throw new TRPCError({ message: `Unauthorized: ${error?.message}`, code: "UNAUTHORIZED" });
   return next();
