@@ -4,7 +4,7 @@ import SvelteMarkdown from "svelte-markdown";
 import Article from "$lib/components/page/article.svelte";
 import Section from "$lib/components/page/section.svelte";
 import Image from "$lib/components/common/image.svelte";
-import type { PostProps } from "$lib/types/blog";
+import type { PostProps } from "$lib/types";
 import { pageProps } from "$lib/store";
 import { metaTags } from "$lib/utils";
 

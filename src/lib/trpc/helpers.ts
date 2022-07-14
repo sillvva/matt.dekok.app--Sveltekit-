@@ -1,6 +1,5 @@
 import { supabase } from "$lib/supabase/client";
-import type { PostData } from "$lib/types/blog";
-import type { Rating } from "$lib/types/rating";
+import type { Admin, Image } from "$lib/types";
 
 export const getError = async (error: Error | string, code = 500) => {
   return {
@@ -13,21 +12,6 @@ export const getError = async (error: Error | string, code = 500) => {
       "Cache-Control": "no-cache"
     }
   };
-};
-
-interface Admin {
-  success: boolean;
-  error?: string;
-  numposts?: number;
-  posts?: PostData[];
-  numimages?: number;
-  images?: any[];
-  numexperience?: number;
-  experience?: any[];
-  numskills?: number;
-  skills?: Rating[];
-  numprojects?: number;
-  projects?: any[];
 };
 
 export const getResult = async (select: string | null, getImages?: boolean): Promise<Admin> => {
@@ -47,10 +31,10 @@ export const getResult = async (select: string | null, getImages?: boolean): Pro
     .from("projects")
     .select("*", { count: "exact", head: select === "projects" ? false : true });
 
-  let images: any[] = [];
+  let images: Image[] = [];
   if (select === "images" || getImages) {
     const { data: imageData } = await supabase.storage.from("images").list();
-    const filteredImages = (imageData || []).filter(
+    images = (imageData || []).filter(
       image =>
         image.name.endsWith(".png") ||
         image.name.endsWith(".jpg") ||
@@ -58,7 +42,6 @@ export const getResult = async (select: string | null, getImages?: boolean): Pro
         image.name.endsWith(".svg") ||
         image.name.endsWith(".webp")
     );
-    images = filteredImages;
   }
 
   return {

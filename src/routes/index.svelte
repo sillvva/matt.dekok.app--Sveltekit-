@@ -1,14 +1,14 @@
 <script lang="ts">
 import { page } from "$app/stores";
 import { pageProps } from "$lib/store";
-import type { Item } from "$lib/types/hex-menu";
+import type { HexMenuItem } from "$lib/types";
 import Image from "$lib/components/common/image.svelte";
 import HexMenu from "$lib/components/hex-menu/svg.svelte";
 // @ts-ignore
 import MeSS from "$lib/assets/images/me3x.webp?width=500;1000;1500;2000";
 import { conClasses, metaTags } from "$lib/utils";
 
-const items: (Item | null)[] = [
+const items: (HexMenuItem | null)[] = [
   { link: "/about", label: "About Me" },
   { link: "/experience", label: "Experience" },
   { link: "/skills", label: "Skills" },

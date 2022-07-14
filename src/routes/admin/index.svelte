@@ -81,7 +81,7 @@ const uploadMutation = useMutation(
   },
   {
     onMutate({ filename }) {
-      $admin.numposts = numloaders + ($admin.images?.find(image => image.filename === filename) ? 0 : 1);
+      $admin.numposts = numloaders + ($admin.posts?.find(post => post.name === filename) ? 0 : 1);
       loading = true;
     },
     onSuccess() {

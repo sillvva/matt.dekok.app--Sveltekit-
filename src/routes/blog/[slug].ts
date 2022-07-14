@@ -2,7 +2,7 @@
 import { readFileSync, rmSync, existsSync, writeFileSync, statSync } from "node:fs";
 import matter from "gray-matter";
 import type { RequestHandler } from "./__types/[slug]";
-import type { PostData } from "$lib/types/blog";
+import type { PostData } from "$lib/types";
 import { supabase } from "$lib/supabase/client";
 import { getContentDir } from "$lib/supabase/func";
 

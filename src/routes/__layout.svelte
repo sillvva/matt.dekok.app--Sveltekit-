@@ -17,7 +17,7 @@ import { parse } from "cookie";
 import { fade } from "svelte/transition";
 import { page, session } from "$app/stores";
 import { browser } from "$app/env";
-import type { Item } from "$lib/types/hex-menu";
+import type { HexMenuItem } from "$lib/types";
 import { pageProps, drawer } from "$lib/store";
 import { themes, metaTags, conClasses } from "$lib/utils";
 import { transitionDuration } from "$lib/constants";
@@ -67,7 +67,7 @@ onDestroy(() => {
   if (mm) mm.removeEventListener("change", listener);
 });
 
-const menuItems: Item[] = [
+const menuItems: HexMenuItem[] = [
   { link: "/", label: "Intro" },
   { link: "/about", label: "About Me" },
   { link: "/experience", label: "Experience" },

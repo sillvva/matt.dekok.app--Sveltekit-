@@ -1,11 +1,11 @@
 <script lang="ts">
 import { page } from "$app/stores";
 import { conClasses } from "$lib/utils";
-import type { Item } from "$lib/types/hex-menu";
+import type { HexMenuItem } from "$lib/types";
 
 $: pathname = $page.url.pathname;
 
-export let items: (Item | null)[] = [];
+export let items: (HexMenuItem | null)[] = [];
 export let maxLength: number;
 export let classes: string[];
 export let rotated: boolean;
@@ -15,7 +15,7 @@ export let activeColor: string = "var(--menuActive)";
 export let textColor: string = "var(--menuText)";
 export let itemClasses: string[];
 
-let menuRows: Item[][] = [[]];
+let menuRows: HexMenuItem[][] = [[]];
 items.forEach((item, i) => {
   const rowIndex = menuRows.length - 1;
   if (item)

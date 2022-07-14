@@ -1,7 +1,7 @@
 <script lang="ts">
 import { ripple } from "$lib/directives";
 import Image from "$lib/components/common/image.svelte";
-import type { PostData } from "$lib/types/blog";
+import type { PostData } from "$lib/types";
 import { conClasses } from "$lib/utils";
 
 export let post: PostData;

@@ -1,5 +1,5 @@
 <script lang="ts">
-import type { Rating } from "$lib/types/rating";
+import type { Rating } from "$lib/types";
 import Stars from "./stars.svelte";
 
 export let rating: Rating;
