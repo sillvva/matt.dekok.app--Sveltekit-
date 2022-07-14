@@ -1,3 +1,4 @@
+import type { Admin } from "$lib/store";
 import { supabase } from "$lib/supabase/client";
 
 export const getError = async (error: Error | string, code = 500) => {
@@ -13,7 +14,7 @@ export const getError = async (error: Error | string, code = 500) => {
   };
 };
 
-export const getResult = async (select: string | null, getImages: boolean) => {
+export const getResult = async (select: string | null, getImages?: boolean): Promise<Admin> => {
   const { data: posts, count: numposts } = await supabase
     .from("blog")
     .select("*", { count: "exact", head: select === "posts" ? false : true });

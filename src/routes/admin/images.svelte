@@ -2,11 +2,10 @@
 import { onMount } from "svelte";
 import { mdiUpload, mdiTrashCan, mdiRefresh, mdiOpenInNew } from "@mdi/js";
 import { useQuery, useMutation, useQueryClient } from "@sveltestack/svelte-query";
-import type { AdminMutation } from "./data";
 import { goto } from "$app/navigation";
 import { supabase, auth } from "$lib/supabase/client";
 import { admin } from "$lib/store";
-import type { Admin } from "$lib/store";
+import t from "$lib/trpc/client";
 import { transitionDuration } from "$lib/constants";
 import { toBase64 } from "$lib/utils";
 import { ripple } from "$lib/directives";
@@ -24,11 +23,6 @@ let errorMsg = "";
 let successMsg = "";
 
 const queryClient = useQueryClient();
-const headers = {
-  authorization: `Bearer ${$auth?.access_token}`
-};
-
-// const queryClient = useQueryClient();
 const imagePath = "https://slxazldgfeytirfrculz.supabase.co/storage/v1/object/public/images/";
 
 onMount(() => {
@@ -46,19 +40,20 @@ const getResult = useQuery(
 
     if (!$auth) throw new Error("Not logged in");
 
-    const response = await fetch("/admin/data?select=images", { headers });
-    const data: Admin = await response.json();
-
-    const error = await checkError(data.error);
-    if (error) throw new Error(data.error);
-
-    return data;
+    try {
+      const data = await t.query("images:get");
+      return data;
+    } catch (err: any) {
+      const error = await checkError(err);
+      if (error) throw new Error(err);
+    }
   },
   {
     refetchOnWindowFocus: false,
     cacheTime: 30 * 60 * 1000,
     staleTime: 15 * 60 * 1000,
     onSuccess(result) {
+      if (!result) return;
       if (!$admin.success) admin.set(result);
       else
         admin.update(data => {
@@ -76,22 +71,21 @@ const getResult = useQuery(
 );
 
 const uploadMutation = useMutation(
-  async (formData: FormData) => {
-    const response = await fetch("/admin/data?select=images", {
-      method: "POST",
-      headers,
-      body: formData
-    });
-    const data: AdminMutation = await response.json();
-
-    const error = await checkError(data.error);
-    if (error) throw new Error(data.error);
-
-    return data;
+  async ({ file, filename, upsert }: { file: string; filename: string; upsert: boolean }) => {
+    try {
+      const data = await t.mutation("images:post", {
+        file,
+        filename,
+        upsert
+      });
+      return data;
+    } catch (err: any) {
+      const error = await checkError(err);
+      if (error) throw new Error(err);
+    }
   },
   {
-    onMutate(vars) {
-      const filename = vars.get("filename")?.toString() || "";
+    onMutate({ filename }) {
       $admin.numposts = numloaders + ($admin.posts?.find(post => post.name === filename) ? 0 : 1);
       loading = true;
     },
@@ -107,19 +101,18 @@ const uploadMutation = useMutation(
 );
 
 const deleteMutation = useMutation(
-  async (name: string) => {
-    if (!name && (await checkError("File name not defined"))) return { success: false };
+  async (filename: string) => {
+    if (!filename && (await checkError("File name not defined"))) return { success: false };
 
-    const response = await fetch(`/admin/data?select=images&file=${name}`, {
-      method: "DELETE",
-      headers
-    });
-    const data: AdminMutation = await response.json();
-
-    const error = await checkError(data.error);
-    if (error) throw new Error(data.error);
-
-    return data;
+    try {
+      const data = await t.mutation("images:delete", {
+        filename
+      });
+      return data;
+    } catch (err: any) {
+      const error = await checkError(err);
+      if (error) throw new Error(err);
+    }
   },
   {
     onMutate() {
@@ -174,12 +167,8 @@ const upload = () => {
         }
       }
     }
-    
-    const formData = new FormData();
-    formData.append("file", base64);
-    formData.append("filename", name);
-    formData.append("overwrite", overwrite ? '1' : '0');
-    $uploadMutation.mutate(formData);
+
+    $uploadMutation.mutate({ file: base64, filename: name, upsert: overwrite });
   };
   input.click();
 };
@@ -193,17 +182,18 @@ const remove = async (name: string) => {
   $deleteMutation.mutate(name);
 };
 
-const checkError = async (error?: string) => {
-  if (error?.startsWith("Unauthorized")) {
-    alert(error);
+const checkError = async (error?: Error | string) => {
+  const message = typeof error === "string" ? error : error?.message;
+  if (message?.startsWith("Unauthorized")) {
+    alert(message);
     await supabase.auth.signOut();
     $auth = null;
     await goto("/", { replaceState: true });
     return "Unauthorized user";
   } else if (error) {
-    return error;
+    return message;
   }
-  return "";
+  return "Unknown error";
 };
 
 const copy = async (value: string) => {

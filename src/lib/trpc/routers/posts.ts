@@ -1,8 +1,8 @@
 import path from "path";
 import { supabase } from "$lib/supabase/client";
 import { fetchPosts } from "$lib/supabase/blog";
-import { authMiddleware, createRouter } from "./context";
-import { getError, getResult } from "./helpers";
+import { authMiddleware, createRouter } from "../context";
+import { getError, getResult } from "../helpers";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 
@@ -39,7 +39,7 @@ export const postsRouter = createRouter()
         upsert: true
       });
 
-      if (error) throw new TRPCError({ message: error.message, code: "BAD_REQUEST" });
+      if (error) throw new TRPCError({ message: error?.message, code: "BAD_REQUEST" });
       if (bucket === "blog") await fetchPosts();
 
       return {

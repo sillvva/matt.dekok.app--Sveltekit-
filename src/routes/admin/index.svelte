@@ -6,7 +6,7 @@ import { useQuery, useMutation, useQueryClient } from "@sveltestack/svelte-query
 import t from "$lib/trpc/client";
 import { goto } from "$app/navigation";
 import { supabase, auth } from "$lib/supabase/client";
-import { admin, type Admin } from "$lib/store";
+import { admin } from "$lib/store";
 import { transitionDuration } from "$lib/constants";
 import { toBase64 } from "$lib/utils";
 import { ripple } from "$lib/directives";
@@ -54,7 +54,7 @@ const getResult = useQuery(
           }
         }
       });
-      return data.json;
+      return data;
     } catch (err: any) {
       const error = await checkError(err);
       if (error) throw new Error(err);

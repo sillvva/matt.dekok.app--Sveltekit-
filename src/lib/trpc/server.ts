@@ -1,11 +1,10 @@
 import { createRouter } from "./context";
-import superjson from "superjson";
-
-import { postsRouter } from "./posts"; 
+import { postsRouter } from "./routers/posts"; 
+import { imagesRouter } from "./routers/images"; 
 
 export const router = createRouter()
-  .transformer(superjson)
-  .merge("posts:", postsRouter);
+  .merge("posts:", postsRouter)
+  .merge("images:", imagesRouter);
 
 // export type definition of API
 export type Router = typeof router;
