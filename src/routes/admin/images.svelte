@@ -23,11 +23,12 @@ let mounted = false;
 let errorMsg = "";
 let successMsg = "";
 
+const queryClient = useQueryClient();
 const headers = {
   authorization: `Bearer ${$auth?.access_token}`
 };
 
-const queryClient = useQueryClient();
+// const queryClient = useQueryClient();
 const imagePath = "https://slxazldgfeytirfrculz.supabase.co/storage/v1/object/public/images/";
 
 onMount(() => {

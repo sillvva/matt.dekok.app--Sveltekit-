@@ -3,11 +3,10 @@ import { onMount } from "svelte";
 import { writable } from "svelte/store";
 import { mdiUpload, mdiTrashCan, mdiRefresh, mdiOpenInNew } from "@mdi/js";
 import { useQuery, useMutation, useQueryClient } from "@sveltestack/svelte-query";
-import type { AdminMutation } from "./data";
+import t from "$lib/trpc/client";
 import { goto } from "$app/navigation";
 import { supabase, auth } from "$lib/supabase/client";
-import { admin } from "$lib/store";
-import type { Admin } from "$lib/store";
+import { admin, type Admin } from "$lib/store";
 import { transitionDuration } from "$lib/constants";
 import { toBase64 } from "$lib/utils";
 import { ripple } from "$lib/directives";
@@ -23,11 +22,14 @@ let loading = true;
 let errorMsg = "";
 let successMsg = "";
 
-const headers = {
-  authorization: `Bearer ${$auth?.access_token}`
-};
-
 const queryClient = useQueryClient();
+const queryOptions = {
+  context: {
+    headers: {
+      authorization: `Bearer ${$auth?.access_token}`
+    }
+  }
+};
 
 onMount(() => {
   setTimeout(() => {
@@ -44,27 +46,35 @@ const getResult = useQuery(
 
     if (!$auth) throw new Error("Not logged in");
 
-    const response = await fetch(`/admin/data?select=posts&images=${$admin.success ? 0 : 1}`, { headers });
-    const data: Admin = await response.json();
-
-    const error = await checkError(data.error);
-    if (error) throw new Error(data.error);
-
-    return data;
+    try {
+      const data = await t.query("posts:get", { images: !$admin.success }, {
+        context: {
+          headers: {
+            authorization: `Bearer ${$auth?.access_token}`
+          }
+        }
+      });
+      return data.json;
+    } catch (err: any) {
+      const error = await checkError(err);
+      if (error) throw new Error(err);
+    }
   },
   {
     refetchOnWindowFocus: false,
     cacheTime: 30 * 60 * 1000,
     staleTime: 15 * 60 * 1000,
     onSuccess(result) {
-      if (!$admin.success) admin.set(result);
-      else
-        admin.update(data => {
-          data.numposts = result.numposts;
-          data.posts = result.posts;
-          return data;
-        });
-      loading = false;
+      if (result) {
+        if (!$admin.success) admin.set(result);
+        else
+          admin.update(data => {
+            data.numposts = result.numposts;
+            data.posts = result.posts;
+            return data;
+          });
+        loading = false;
+      }
     },
     onError(error: string) {
       errorMsg = error;
@@ -74,22 +84,16 @@ const getResult = useQuery(
 );
 
 const uploadMutation = useMutation(
-  async (formData: FormData) => {
-    const response = await fetch("/admin/data?select=posts", {
-      method: "POST",
-      headers,
-      body: formData
-    });
-    const data: AdminMutation = await response.json();
-
-    const error = await checkError(data.error);
-    if (error) throw new Error(data.error);
-
-    return data;
+  async (input: { file: string; filename: string }) => {
+    try {
+      return await t.mutation("posts:post", input, queryOptions);
+    } catch (err: any) {
+      const error = await checkError(err);
+      if (error) throw new Error(err);
+    }
   },
   {
-    onMutate(vars) {
-      const filename = vars.get("filename")?.toString() || "";
+    onMutate({ filename }) {
       $admin.numposts = numloaders + ($admin.images?.find(image => image.filename === filename) ? 0 : 1);
       loading = true;
     },
@@ -106,18 +110,18 @@ const uploadMutation = useMutation(
 
 const deleteMutation = useMutation(
   async (slug: string) => {
-    if (!slug && (await checkError("Slug not defined"))) return { success: false };
-
-    const response = await fetch(`/admin/data?select=posts&slug=${slug}`, {
-      method: "DELETE",
-      headers
-    });
-    const data: AdminMutation = await response.json();
-
-    const error = await checkError(data.error);
-    if (error) throw new Error(data.error);
-
-    return data;
+    try {
+      return await t.mutation(
+        "posts:delete",
+        {
+          slug
+        },
+        queryOptions
+      );
+    } catch (err: any) {
+      const error = await checkError(err);
+      if (error) throw new Error(err);
+    }
   },
   {
     onMutate() {
@@ -150,10 +154,7 @@ const upload = () => {
     if (!file.name.endsWith(".md")) return alert("Only markdown files are supported");
     const blob = new Blob([file], { type: file.type });
     const base64 = await toBase64(blob);
-    const formData = new FormData();
-    formData.append("file", base64);
-    formData.append("filename", file.name);
-    $uploadMutation.mutate(formData);
+    $uploadMutation.mutate({ file: base64, filename: file.name });
   };
   input.click();
 };

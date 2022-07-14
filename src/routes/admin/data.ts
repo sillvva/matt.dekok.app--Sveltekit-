@@ -69,7 +69,6 @@ export const post: RequestHandler<AdminMutation> = async ({ request, url }) => {
     });
 
     if (error) return getError(error.message);
-    else if (bucket === "blog") await fetchPosts();
   }
 
   return {

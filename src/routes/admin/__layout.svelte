@@ -13,6 +13,7 @@ export const load: Load = async ({ url }) => {
 import { onMount } from "svelte";
 import { mdiOpenInNew } from "@mdi/js";
 import type { User } from "@supabase/supabase-js";
+import { browser } from "$app/env";
 import { page } from "$app/stores";
 import { supabase, auth } from "$lib/supabase/client";
 import { pageProps, admin } from "$lib/store";
@@ -49,7 +50,7 @@ onMount(async () => {
 
 $: paths = [
   { name: "Blog", path: "/admin", value: $admin.numposts, label: "posts" },
-  { name: "Images", path: "/admin/images", value: $admin.numimages, label: "posts" },
+  { name: "Images", path: "/admin/images", value: $admin.numimages, label: "posts" }
   // { name: "Experience", path: "/admin/experience", value: $admin.numexperience, label: "items" },
   // { name: "Skills", path: "/admin/skills", value: $admin.numskills, label: "skills" },
   // { name: "Projects", path: "/admin/projects", value: $admin.numprojects, label: "projects" }
@@ -59,6 +60,12 @@ $: resources = [
   { name: "Vercel", path: "https://vercel.com/dashboard" },
   { name: "Supabase", path: "https://app.supabase.com/" }
 ];
+$: {
+  if (browser && $auth)
+    document.cookie = `supabase_auth=${$auth.access_token}; path=/; expires=${new Date(
+      ($auth.expires_at || 0) * 1000
+    ).toUTCString()}`;
+}
 </script>
 
 <svelte:head>
