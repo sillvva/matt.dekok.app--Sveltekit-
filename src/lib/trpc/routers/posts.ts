@@ -9,7 +9,6 @@ import { TRPCError } from "@trpc/server";
 const select = "posts";
 
 export const postsRouter = createRouter()
-  .middleware(authMiddleware)
   .query("get", {
     input: z
       .object({
@@ -20,6 +19,7 @@ export const postsRouter = createRouter()
       return await getResult(select, !!input?.images);
     }
   })
+  .middleware(authMiddleware)
   .mutation("post", {
     input: z.object({
       file: z.string(),

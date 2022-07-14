@@ -8,12 +8,12 @@ import { getResult } from "../helpers";
 const select = "images";
 
 export const imagesRouter = createRouter()
-  .middleware(authMiddleware)
   .query("get", {
     async resolve() {
       return await getResult(select);
     }
   })
+  .middleware(authMiddleware)
   .mutation("post", {
     input: z.object({
       file: z.string(),
