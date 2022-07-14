@@ -52,16 +52,15 @@ const getResult = useQuery(
     cacheTime: 30 * 60 * 1000,
     staleTime: 15 * 60 * 1000,
     onSuccess(result) {
-      if (result) {
-        if (!$admin.success) admin.set(result);
-        else
-          admin.update(data => {
-            data.numposts = result.numposts;
-            data.posts = result.posts;
-            return data;
-          });
-        loading = false;
-      }
+      if (!result) return (errorMsg = "Error loading posts");
+      if (!$admin.success) admin.set(result);
+      else
+        admin.update(data => {
+          data.numposts = result.numposts;
+          data.posts = result.posts;
+          return data;
+        });
+      loading = false;
     },
     onError(error: string) {
       errorMsg = error;

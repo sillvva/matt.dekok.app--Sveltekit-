@@ -53,7 +53,7 @@ const getResult = useQuery(
     cacheTime: 30 * 60 * 1000,
     staleTime: 15 * 60 * 1000,
     onSuccess(result) {
-      if (!result) return;
+      if (!result) return (errorMsg = "Error loading images");
       if (!$admin.success) admin.set(result);
       else
         admin.update(data => {
@@ -237,7 +237,11 @@ $: paginatedImages = filteredImages.slice(($pageStore - 1) * perPage, $pageStore
     {#if loaders == 0}
       {#each paginatedImages as image (image.name)}
         <div class="flex sm:flex-col min-h-[5.5rem] bg-theme-article p-0 rounded-md shadow-md relative overflow-hidden">
-          <a href="{imagePath}{image.name}" target="_blank" class="relative block aspect-video w-[5.5rem] sm:w-full" use:ripple>
+          <a
+            href="{imagePath}{image.name}"
+            target="_blank"
+            class="relative block aspect-video w-[5.5rem] sm:w-full"
+            use:ripple>
             <Image src="{imagePath}{image.name}" lazy alt={image.name} class="bg-black" />
           </a>
           <div class="flex-1 flex flex-col p-3 pr-12 sm:pr-3">
@@ -248,7 +252,7 @@ $: paginatedImages = filteredImages.slice(($pageStore - 1) * perPage, $pageStore
               </a>
             </h4>
             <div class="text-sm pb-1">
-              <span class="hidden sm:inline">Uploaded:</span> 
+              <span class="hidden sm:inline">Uploaded:</span>
               {new Date(image.created_at).toLocaleString()}
             </div>
           </div>
