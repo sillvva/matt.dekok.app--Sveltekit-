@@ -1,6 +1,6 @@
 <script lang="ts">
 import { onMount } from "svelte";
-import { mdiUpload, mdiTrashCan, mdiRefresh, mdiOpenInNew } from "@mdi/js";
+import { mdiUpload, mdiTrashCan, mdiRefresh, mdiOpenInNew, mdiClipboard } from "@mdi/js";
 import { useQuery, useMutation, useQueryClient } from "@sveltestack/svelte-query";
 import { goto } from "$app/navigation";
 import { supabase, auth } from "$lib/supabase/client";
@@ -236,18 +236,11 @@ $: paginatedImages = filteredImages.slice(($pageStore - 1) * perPage, $pageStore
   <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2">
     {#if loaders == 0}
       {#each paginatedImages as image (image.name)}
-        <div class="flex flex-col bg-theme-article p-0 rounded-md shadow-md relative overflow-hidden">
-          <div class="relative">
-            <a href="{imagePath}{image.name}" target="_blank" class="relative block aspect-video" use:ripple>
-              <Image src="{imagePath}{image.name}" lazy alt={image.name} class="bg-black" />
-            </a>
-            <Fab
-              on:click={() => remove(image.name)}
-              class="absolute top-2 right-2 w-9 h-9 bg-red-700 drop-shadow-theme-text">
-              <Icon path={mdiTrashCan} size={0.8} />
-            </Fab>
-          </div>
-          <div class="flex-1 flex flex-col p-3">
+        <div class="flex sm:flex-col min-h-[5.5rem] bg-theme-article p-0 rounded-md shadow-md relative overflow-hidden">
+          <a href="{imagePath}{image.name}" target="_blank" class="relative block aspect-video w-[5.5rem] sm:w-full" use:ripple>
+            <Image src="{imagePath}{image.name}" lazy alt={image.name} class="bg-black" />
+          </a>
+          <div class="flex-1 flex flex-col p-3 pr-12 sm:pr-3">
             <h4 class="font-semibold pb-1">
               <a href="{imagePath}{image.name}" target="_blank">
                 {image.name}
@@ -255,23 +248,29 @@ $: paginatedImages = filteredImages.slice(($pageStore - 1) * perPage, $pageStore
               </a>
             </h4>
             <div class="text-sm pb-1">
-              Uploaded: {new Date(image.created_at).toLocaleString()}
-            </div>
-            <div class="text-sm">
-              <button
-                on:click={() => {
-                  if (image.copied) return;
-                  copy(`${imagePath}${image.name}`);
-                  image.copied = true;
-                  setTimeout(() => {
-                    image.copied = false;
-                  }, 2000);
-                }}
-                class:text-theme-link={!image.copied}>
-                {image.copied ? "Copied" : "Copy Link"}
-              </button>
+              <span class="hidden sm:inline">Uploaded:</span> 
+              {new Date(image.created_at).toLocaleString()}
             </div>
           </div>
+          <Fab
+            on:click={() => remove(image.name)}
+            class="absolute top-2 right-2 w-8 h-8 bg-red-700 drop-shadow-theme-text">
+            <Icon path={mdiTrashCan} size={0.8} />
+          </Fab>
+          <Fab
+            on:click={() => {
+              if (image.copied) return;
+              copy(`${imagePath}${image.name}`);
+              image.copied = true;
+              setTimeout(() => {
+                image.copied = false;
+              }, 2000);
+            }}
+            class="absolute top-12 right-2 w-8 h-8 bg-theme-link !duration-200 {image.copied
+              ? '!bg-gray-500'
+              : ''} drop-shadow-theme-text">
+            <Icon path={mdiClipboard} size={0.8} />
+          </Fab>
         </div>
       {/each}
     {:else}
