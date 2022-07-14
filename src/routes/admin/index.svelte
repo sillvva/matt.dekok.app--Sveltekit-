@@ -47,13 +47,17 @@ const getResult = useQuery(
     if (!$auth) throw new Error("Not logged in");
 
     try {
-      const data = await t.query("posts:get", { images: !$admin.success }, {
-        context: {
-          headers: {
-            authorization: `Bearer ${$auth?.access_token}`
+      const data = await t.query(
+        "posts:get",
+        { images: !$admin.success },
+        {
+          context: {
+            headers: {
+              authorization: `Bearer ${$auth?.access_token}`
+            }
           }
         }
-      });
+      );
       return data;
     } catch (err: any) {
       const error = await checkError(err);
@@ -202,7 +206,7 @@ $: paginatedPosts = filteredPosts.slice(($pageStore - 1) * perPage, $pageStore *
 {#if mounted}
   <div class="flex gap-4 mb-4">
     <div class="flex-1">
-      <input type="text" bind:value={search} placeholder="Search" class="p-2 rounded-md w-full" />
+      <input type="text" bind:value={search} placeholder="Search" class="p-2 rounded-md w-full shadow-md" />
     </div>
     <div class="md:flex-1 flex justify-end gap-4">
       <button on:click={refresh}>
@@ -217,10 +221,7 @@ $: paginatedPosts = filteredPosts.slice(($pageStore - 1) * perPage, $pageStore *
   <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2">
     {#if loaders == 0}
       {#each paginatedPosts as post (post.slug)}
-        <div
-          class="flex flex-col bg-theme-article p-0 rounded-md shadow-md relative overflow-hidden"
-          style:--tw-shadow-color="#0006"
-          style:--tw-shadow="var(--tw-shadow-colored)">
+        <div class="flex flex-col bg-theme-article p-0 rounded-md shadow-md relative overflow-hidden">
           <div class="aspect-video relative hidden sm:block">
             <a href="/blog/{post.slug}" target="_blank" class="relative block aspect-video" use:ripple>
               <Image src={post.image} lazy alt={post.title} class="bg-black" />
@@ -251,10 +252,7 @@ $: paginatedPosts = filteredPosts.slice(($pageStore - 1) * perPage, $pageStore *
       {/each}
     {:else}
       {#each new Array(loaders).fill(1) as i}
-        <div
-          class="flex flex-col bg-theme-article p-0 rounded-md shadow-md relative overflow-hidden"
-          style:--tw-shadow-color="#0006"
-          style:--tw-shadow="var(--tw-shadow-colored)">
+        <div class="flex flex-col bg-theme-article p-0 rounded-md shadow-md relative overflow-hidden">
           <div class="aspect-video animate-pulse bg-theme-hover bg-opacity-15 hidden sm:block" />
           <div class="flex-1 flex flex-col p-3">
             <div class="loading-line title max-w-xs">

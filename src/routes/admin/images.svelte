@@ -221,7 +221,7 @@ $: paginatedImages = filteredImages.slice(($pageStore - 1) * perPage, $pageStore
 {#if mounted}
   <div class="flex gap-4 mb-4">
     <div class="flex-1">
-      <input type="text" bind:value={search} placeholder="Search" class="p-2 rounded-md w-full" />
+      <input type="text" bind:value={search} placeholder="Search" class="p-2 rounded-md w-full shadow-md" />
     </div>
     <div class="md:flex-1 flex justify-end gap-4">
       <button on:click={refresh}>
@@ -236,10 +236,7 @@ $: paginatedImages = filteredImages.slice(($pageStore - 1) * perPage, $pageStore
   <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2">
     {#if loaders == 0}
       {#each paginatedImages as image (image.name)}
-        <div
-          class="flex flex-col bg-theme-article p-0 rounded-md shadow-md relative overflow-hidden"
-          style:--tw-shadow-color="#0006"
-          style:--tw-shadow="var(--tw-shadow-colored)">
+        <div class="flex flex-col bg-theme-article p-0 rounded-md shadow-md relative overflow-hidden">
           <div class="relative">
             <a href="{imagePath}{image.name}" target="_blank" class="relative block aspect-video" use:ripple>
               <Image src="{imagePath}{image.name}" lazy alt={image.name} class="bg-black" />
@@ -279,10 +276,7 @@ $: paginatedImages = filteredImages.slice(($pageStore - 1) * perPage, $pageStore
       {/each}
     {:else}
       {#each new Array(loaders).fill(1) as i}
-        <div
-          class="flex flex-col bg-theme-article p-0 rounded-md shadow-md relative overflow-hidden"
-          style:--tw-shadow-color="#0006"
-          style:--tw-shadow="var(--tw-shadow-colored)">
+        <div class="flex flex-col bg-theme-article p-0 rounded-md shadow-md relative overflow-hidden">
           <div class="aspect-video animate-pulse bg-theme-hover bg-opacity-15" />
           <div class="flex-1 flex flex-col p-3">
             <div class="loading-line title max-w-xs">
