@@ -7,8 +7,9 @@ import type { Router } from "./server"; // 👈 only the types are imported from
 export default trpc.createTRPCClient<Router>({
   url: "/trpc",
   headers() {
+    const token = get(auth)?.access_token;
     return {
-      authorization: `Bearer ${get(auth)?.access_token}`
+      authorization: token && `Bearer ${token}`
     };
   }
 });

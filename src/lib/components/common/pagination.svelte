@@ -36,6 +36,11 @@ const pageHandler = (newPage: number) => {
   const q = query.toString();
   return `/blog${q ? `?${q}` : ""}`;
 };
+
+const pageStoreHandler = (newPage: number) => {
+  $pageStore = newPage;
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
 </script>
 
 <div class="flex justify-center gap-2 my-4">
@@ -48,7 +53,7 @@ const pageHandler = (newPage: number) => {
     {:else if p}
       {#if $pageStore}
         <button
-          on:click={() => ($pageStore = p)}
+          on:click={() => pageStoreHandler(p)}
           class={conClasses([
             "inline-flex w-8 h-8 justify-center items-center rounded-sm font-bold drop-shadow-sm bg-theme-article",
             "hover:text-theme-button hover:bg-theme-link hover:drop-shadow-theme-text"
