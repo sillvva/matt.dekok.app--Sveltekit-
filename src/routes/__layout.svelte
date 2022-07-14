@@ -41,7 +41,7 @@ let delay = 0;
 let theme = $session.theme;
 const toggleTheme = (newtheme?: typeof theme) => {
   theme = newtheme || themes[(themes.indexOf(theme) + 1) % themes.length];
-  document.cookie = `theme=${theme}`;
+  document.cookie = `theme=${theme}; path=/`;
   $session.theme = theme;
 };
 $: {
