@@ -1,10 +1,10 @@
 import { get } from "svelte/store";
 import { auth } from "$lib/supabase/client";
-import * as trpc from "@trpc/client";
+import { createTRPCClient } from "@trpc/client";
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server";
 import type { Router } from "./server"; // 👈 only the types are imported from the server
 
-export default trpc.createTRPCClient<Router>({
+export default createTRPCClient<Router>({
   url: "/trpc",
   headers() {
     const token = get(auth)?.access_token;
