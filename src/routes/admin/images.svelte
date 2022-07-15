@@ -55,6 +55,7 @@ const getResult = useQuery(
   },
   {
     refetchOnWindowFocus: false,
+    enabled: browser, // Errors during SSR
     cacheTime: 30 * 60 * 1000,
     staleTime: 15 * 60 * 1000,
     onSuccess(result) {
