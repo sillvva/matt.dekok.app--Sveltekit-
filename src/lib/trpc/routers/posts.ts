@@ -14,8 +14,8 @@ export const postsRouter = createRouter()
         images: z.boolean().nullish()
       })
       .nullish(),
-    async resolve({ input, ctx: { locals } }) {
-      return await getResult(locals.serverClient, select, !!input?.images);
+    async resolve({ input }) {
+      return await getResult(select, !!input?.images);
     }
   })
   .middleware(authMiddleware)

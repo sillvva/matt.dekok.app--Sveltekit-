@@ -8,8 +8,8 @@ const select = "images";
 
 export const imagesRouter = createRouter()
   .query("get", {
-    async resolve({ ctx: { locals } }) {
-      return await getResult(locals.serverClient, select);
+    async resolve() {
+      return await getResult(select);
     }
   })
   .middleware(authMiddleware)

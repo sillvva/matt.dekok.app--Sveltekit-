@@ -1,5 +1,5 @@
-import type { SupabaseClient } from "@supabase/auth-helpers-sveltekit";
 import type { Admin, Image } from "$lib/types";
+import { supabase } from "$lib/supabase/client";
 
 export const getError = async (error: Error | string, code = 500) => {
   return {
@@ -14,7 +14,9 @@ export const getError = async (error: Error | string, code = 500) => {
   };
 };
 
-export const getResult = async (supabase: SupabaseClient, select: string | null, getImages?: boolean): Promise<Admin> => {
+export const getResult = async (select: string | null, getImages?: boolean): Promise<Admin> => {
+  if (!supabase) throw new Error("Supabase not initialized");
+
   const { data: posts, count: numposts } = await supabase
     .from("blog")
     .select("*", { count: "exact", head: select === "posts" ? false : true });
