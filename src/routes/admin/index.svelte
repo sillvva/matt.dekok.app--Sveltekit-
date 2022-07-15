@@ -1,13 +1,14 @@
 <script lang="ts">
 import { onMount } from "svelte";
-import { writable } from "svelte/store";
 import { mdiUpload, mdiTrashCan, mdiRefresh, mdiOpenInNew } from "@mdi/js";
 import { useQuery, useMutation, useQueryClient } from "@sveltestack/svelte-query";
 import t from "$lib/trpc/client";
+import { browser } from "$app/env";
+import { navigating, page } from "$app/stores";
 import { goto } from "$app/navigation";
 import { supabase, auth } from "$lib/supabase/client";
-import { admin } from "$lib/store";
-import { transitionDuration } from "$lib/constants";
+import { admin, pageStore, queryStore } from "$lib/store";
+import { itemsPerPage, transitionDuration } from "$lib/constants";
 import { toBase64 } from "$lib/utils";
 import { ripple } from "$lib/directives";
 import Icon from "$lib/components/common/icon.svelte";
@@ -16,7 +17,6 @@ import Image from "$lib/components/common/image.svelte";
 import Fab from "$lib/components/common/fab.svelte";
 import Pagination from "$lib/components/common/pagination.svelte";
 
-let search: string = "";
 let mounted = false;
 let loading = true;
 let errorMsg = "";
@@ -28,6 +28,11 @@ onMount(() => {
   setTimeout(() => {
     mounted = true;
   }, transitionDuration / 2);
+
+  if (browser && !$navigating) {
+    $pageStore = parseInt($page.url.searchParams.get("page") || "1");
+    $queryStore = $page.url.searchParams.get("q") || "";
+  }
 });
 
 const getResult = useQuery(
@@ -159,32 +164,29 @@ const checkError = async (error?: string) => {
   return "";
 };
 
-const perPage = 12;
-let pageStore = writable(1);
-
 $: loading = !($getResult.data && !$getResult.isFetching);
-$: numloaders = Math.min(perPage, $admin.numposts ?? perPage);
+$: numloaders = Math.min(itemsPerPage, $admin.numposts ?? itemsPerPage);
 $: loaders = loading ? numloaders : 0;
 $: filteredPosts =
-  search.length > 2
+  $queryStore.length > 2
     ? ($admin.posts || [])
         .filter(post => {
           return (
-            post.title.toLowerCase().includes(search.toLowerCase()) ||
-            (post.description || "").toLowerCase().includes(search.toLowerCase()) ||
-            (post.tags || []).find(tag => tag.toLowerCase() == search.toLowerCase())
+            post.title.toLowerCase().includes($queryStore.toLowerCase()) ||
+            (post.description || "").toLowerCase().includes($queryStore.toLowerCase()) ||
+            (post.tags || []).find(tag => tag.toLowerCase() == $queryStore.toLowerCase())
           );
         })
         .sort((a, b) => (a.date > b.date ? -1 : 1))
     : ($admin.posts || []).sort((a, b) => (a.date > b.date ? -1 : 1));
-$: pages = Math.ceil(filteredPosts.length / perPage);
-$: paginatedPosts = filteredPosts.slice(($pageStore - 1) * perPage, $pageStore * perPage);
+$: pages = Math.ceil(filteredPosts.length / itemsPerPage);
+$: paginatedPosts = filteredPosts.slice(($pageStore - 1) * itemsPerPage, $pageStore * itemsPerPage);
 </script>
 
 {#if mounted}
-  <div class="flex gap-4 mb-4">
+  <div class="flex gap-2 mb-4">
     <div class="flex-1">
-      <input type="text" bind:value={search} placeholder="Search" class="p-2 rounded-md w-full shadow-md" />
+      <input type="text" bind:value={$queryStore} placeholder="Search" class="p-2 rounded-md w-full shadow-md" />
     </div>
     <div class="md:flex-1 flex justify-end gap-4">
       <button on:click={refresh}>
@@ -245,6 +247,6 @@ $: paginatedPosts = filteredPosts.slice(($pageStore - 1) * perPage, $pageStore *
     {/if}
   </div>
   {#if pages > 1}
-    <Pagination {pageStore} {pages} />
+    <Pagination page={$pageStore} {pages} />
   {/if}
 {/if}

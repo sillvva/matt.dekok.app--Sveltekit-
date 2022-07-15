@@ -63,3 +63,18 @@ export interface Admin {
   numprojects?: number;
   projects?: any[];
 };
+
+export interface PageQuery {
+  page: number;
+  query: string;
+}
+
+export interface PageProps {
+  title?: string;
+  description?: string;
+  bodyClass?: string;
+  backTo?: boolean | string;
+  menu?: boolean;
+  articleMeta?: object;
+  image?: string;
+}

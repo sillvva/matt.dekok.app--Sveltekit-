@@ -2,11 +2,13 @@
 import { onMount } from "svelte";
 import { mdiUpload, mdiTrashCan, mdiRefresh, mdiOpenInNew, mdiClipboard } from "@mdi/js";
 import { useQuery, useMutation, useQueryClient } from "@sveltestack/svelte-query";
+import { page, navigating } from "$app/stores";
+import { browser } from "$app/env";
 import { goto } from "$app/navigation";
 import { supabase, auth } from "$lib/supabase/client";
-import { admin } from "$lib/store";
+import { admin, pageStore, queryStore } from "$lib/store";
 import t from "$lib/trpc/client";
-import { transitionDuration } from "$lib/constants";
+import { transitionDuration, itemsPerPage } from "$lib/constants";
 import { toBase64 } from "$lib/utils";
 import { ripple } from "$lib/directives";
 import Icon from "$lib/components/common/icon.svelte";
@@ -14,9 +16,7 @@ import Alert from "$lib/components/common/alert.svelte";
 import Image from "$lib/components/common/image.svelte";
 import Fab from "$lib/components/common/fab.svelte";
 import Pagination from "$lib/components/common/pagination.svelte";
-import { writable } from "svelte/store";
 
-let search: string = "";
 let loading = true;
 let mounted = false;
 let errorMsg = "";
@@ -29,6 +29,11 @@ onMount(() => {
   setTimeout(() => {
     mounted = true;
   }, transitionDuration / 2);
+
+  if (browser && !$navigating) {
+    $pageStore = parseInt($page.url.searchParams.get("page") || "1");
+    $queryStore = $page.url.searchParams.get("q") || "";
+  }
 });
 
 const getResult = useQuery(
@@ -200,28 +205,25 @@ const copy = async (value: string) => {
   await navigator.clipboard.writeText(value);
 };
 
-const perPage = 12;
-let pageStore = writable(1);
-
 $: loading = !($getResult.data && !$getResult.isFetching);
-$: numloaders = Math.min(perPage, $admin.numimages ?? perPage);
+$: numloaders = Math.min(itemsPerPage, $admin.numimages ?? itemsPerPage);
 $: loaders = loading ? numloaders : 0;
 $: filteredImages =
-  search.length > 2
+  $queryStore.length > 2
     ? ($admin.images || [])
         .filter(image => {
-          return image.name.toLowerCase().includes(search.toLowerCase());
+          return image.name.toLowerCase().includes($queryStore.toLowerCase());
         })
         .sort((a, b) => (a.created_at > b.created_at ? -1 : 1))
     : ($admin.images || []).sort((a, b) => (a.created_at > b.created_at ? -1 : 1));
-$: pages = Math.ceil(filteredImages.length / perPage);
-$: paginatedImages = filteredImages.slice(($pageStore - 1) * perPage, $pageStore * perPage);
+$: pages = Math.ceil(filteredImages.length / itemsPerPage);
+$: paginatedImages = filteredImages.slice(($pageStore - 1) * itemsPerPage, $pageStore * itemsPerPage);
 </script>
 
 {#if mounted}
-  <div class="flex gap-4 mb-4">
+  <div class="flex gap-2 mb-4">
     <div class="flex-1">
-      <input type="text" bind:value={search} placeholder="Search" class="p-2 rounded-md w-full shadow-md" />
+      <input type="text" bind:value={$queryStore} placeholder="Search" class="p-2 rounded-md w-full shadow-md" />
     </div>
     <div class="md:flex-1 flex justify-end gap-4">
       <button on:click={refresh}>
@@ -288,15 +290,12 @@ $: paginatedImages = filteredImages.slice(($pageStore - 1) * perPage, $pageStore
             <div class="loading-line text">
               <span />
             </div>
-            <div class="loading-line text">
-              <span />
-            </div>
           </div>
         </div>
       {/each}
     {/if}
   </div>
   {#if pages > 1}
-    <Pagination {pageStore} {pages} />
+    <Pagination page={$pageStore} {pages} />
   {/if}
 {/if}

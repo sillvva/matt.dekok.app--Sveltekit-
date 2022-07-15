@@ -1,13 +1,15 @@
 <script lang="ts">
 import { page as p } from "$app/stores";
+import { pageStore } from "$lib/store";
 import { conClasses } from "$lib/utils";
-import { writable } from "svelte/store";
 
 export let page = 0;
-export let pageStore = writable(0);
 export let pages: number;
 
 $: pgs = page || $pageStore || 1;
+$: {
+  if (pages > 0 && pages < $pageStore) $pageStore = pages;
+}
 
 let pagination: (number | null)[] = [];
 $: {
@@ -34,13 +36,13 @@ const pageHandler = (newPage: number) => {
   if (newPage === 1) query.delete("page");
   else query.set("page", newPage.toString());
   const q = query.toString();
-  return `/blog${q ? `?${q}` : ""}`;
+  return `${$p.url.pathname}${q ? `?${q}` : ""}`;
 };
 
 const pageStoreHandler = (newPage: number) => {
   $pageStore = newPage;
   window.scrollTo({ top: 0, behavior: "smooth" });
-}
+};
 </script>
 
 <div class="flex justify-center gap-2 my-4">

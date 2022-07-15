@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const blogPostsPerPage = 12;
+export const itemsPerPage = 12;
 export const transitionDuration = 500;
 
 const envSchema = z.object({

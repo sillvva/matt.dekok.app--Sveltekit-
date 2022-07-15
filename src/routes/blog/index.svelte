@@ -1,7 +1,7 @@
 <script lang="ts">
 import { page as p } from "$app/stores";
 import { browser } from "$app/env";
-import { blogPostsPerPage } from "$lib/constants";
+import { itemsPerPage } from "$lib/constants";
 import { pageProps } from "$lib/store";
 import type { PostData } from "$lib/types";
 import Message from "$lib/components/page/message.svelte";
@@ -9,7 +9,7 @@ import Post from "$lib/components/blog/post.svelte";
 import Pagination from "$lib/components/common/pagination.svelte";
 import { metaTags } from "$lib/utils";
 
-const loaders: PostData[] = Array(blogPostsPerPage).fill({
+const loaders: PostData[] = Array(itemsPerPage).fill({
   title: "",
   date: "",
   image: "",

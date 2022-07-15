@@ -18,7 +18,7 @@ import { fade } from "svelte/transition";
 import { page, session } from "$app/stores";
 import { browser } from "$app/env";
 import type { HexMenuItem } from "$lib/types";
-import { pageProps, drawer } from "$lib/store";
+import { pageProps, drawer, pageStore, queryStore } from "$lib/store";
 import { themes, metaTags, conClasses } from "$lib/utils";
 import { transitionDuration } from "$lib/constants";
 import { supabase, auth } from "$lib/supabase/client";
@@ -30,6 +30,7 @@ import Icon from "$lib/components/common/icon.svelte";
 import "../app.scss";
 import "../misc.scss";
 import "../anim.scss";
+import { afterNavigate } from "$app/navigation";
 
 const queryClient = new QueryClient();
 
@@ -65,6 +66,40 @@ onMount(async () => {
 
 onDestroy(() => {
   if (mm) mm.removeEventListener("change", listener);
+});
+
+pageStore.subscribe(p => {
+  if (!browser) return;
+  const search = new URLSearchParams($page.url.search);
+
+  if (p <= 1) search.delete("page");
+  else search.set("page", p.toString());
+  if ($queryStore === "") search.delete("q");
+  else search.set("q", $queryStore);
+
+  const q = search.toString();
+  history.pushState({}, "", `${$page.url.pathname}${q ? `?${q}` : ""}`);
+});
+
+queryStore.subscribe(query => {
+  if (!browser) return;
+  const search = new URLSearchParams($page.url.search);
+
+  if ($pageStore <= 1) search.delete("page");
+  else search.set("page", $pageStore.toString());
+  if (query === "") search.delete("q");
+  else search.set("q", query);
+
+  const q = search.toString();
+  history.pushState({}, "", `${$page.url.pathname}${q ? `?${q}` : ""}`);
+});
+
+afterNavigate(({ from, to }) => {
+  if (!from) return;
+  setTimeout(() => {
+    $pageStore = 1;
+    $queryStore = "";
+  }, transitionDuration / 2);
 });
 
 const menuItems: HexMenuItem[] = [

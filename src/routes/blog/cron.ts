@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { RequestHandler } from "./__types/cron";
 import { fetchPosts } from "$lib/supabase/blog";
-import { blogPostsPerPage } from "$lib/constants";
+import { itemsPerPage } from "$lib/constants";
 
 export const post: RequestHandler<any> = async ({ url }) => {
   try {
     const getPosts = !!url.searchParams.get("posts");
     const page = parseInt(url.searchParams.get("page") || "1");
-    const perpage = parseInt(url.searchParams.get("limit") || blogPostsPerPage.toString());
+    const perpage = parseInt(url.searchParams.get("limit") || itemsPerPage.toString());
     const query = url.searchParams.get("s") || "";
 
     const result = await fetchPosts({ getPosts, page, perpage, query });
