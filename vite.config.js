@@ -11,7 +11,7 @@ const config = {
     include: ['highlight.js', 'highlight.js/lib/core']
   },
   server: {
-    port: 3000,
+    // port: 3000,
   }
 };
 
