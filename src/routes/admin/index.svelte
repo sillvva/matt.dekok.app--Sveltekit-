@@ -4,9 +4,9 @@ import { mdiUpload, mdiTrashCan, mdiRefresh, mdiOpenInNew } from "@mdi/js";
 import { useQuery, useMutation, useQueryClient } from "@sveltestack/svelte-query";
 import t from "$lib/trpc/client";
 import { browser } from "$app/env";
-import { navigating, page } from "$app/stores";
+import { navigating, page, session } from "$app/stores";
 import { goto } from "$app/navigation";
-import { supabase, auth } from "$lib/supabase/client";
+import { supabase } from "$lib/supabase/client";
 import { admin, pageStore, queryStore } from "$lib/store";
 import { itemsPerPage, transitionDuration } from "$lib/constants";
 import { toBase64 } from "$lib/utils";
@@ -16,6 +16,7 @@ import Alert from "$lib/components/common/alert.svelte";
 import Image from "$lib/components/common/image.svelte";
 import Fab from "$lib/components/common/fab.svelte";
 import Pagination from "$lib/components/common/pagination.svelte";
+import { writable } from "svelte/store";
 
 let mounted = false;
 let loading = true;
@@ -42,7 +43,7 @@ const getResult = useQuery(
     errorMsg = "";
     successMsg = "";
 
-    if (!$auth) throw new Error("Not logged in");
+    if (!$session.user) throw new Error("Not logged in");
 
     try {
       const data = await t.query("posts:get", { images: !$admin.success });
@@ -54,6 +55,7 @@ const getResult = useQuery(
   },
   {
     refetchOnWindowFocus: false,
+    enabled: browser, // Errors during SSR
     cacheTime: 30 * 60 * 1000,
     staleTime: 15 * 60 * 1000,
     onSuccess(result) {
@@ -89,11 +91,11 @@ const uploadMutation = useMutation(
       loading = true;
     },
     onSuccess() {
-      if ($auth) queryClient.invalidateQueries("posts");
+      if ($session.user) queryClient.invalidateQueries("posts");
       successMsg = "Post uploaded successfully";
     },
     onError(error: string) {
-      if ($auth) queryClient.invalidateQueries("posts");
+      if ($session.user) queryClient.invalidateQueries("posts");
       errorMsg = error;
     }
   }
@@ -116,11 +118,11 @@ const deleteMutation = useMutation(
       $admin.numposts = Math.max(1, numloaders - 1);
     },
     onSuccess() {
-      if ($auth) queryClient.invalidateQueries("posts");
+      if ($session.user) queryClient.invalidateQueries("posts");
       successMsg = "Post deleted successfully";
     },
     onError(error: string) {
-      if ($auth) queryClient.invalidateQueries("posts");
+      if ($session.user) queryClient.invalidateQueries("posts");
       errorMsg = error;
     }
   }
@@ -151,15 +153,15 @@ const remove = async (slug: string) => {
   $deleteMutation.mutate(slug);
 };
 
-const checkError = async (error?: string) => {
-  if (error?.startsWith("Unauthorized")) {
-    alert(error);
-    await supabase.auth.signOut();
-    $auth = null;
-    await goto("/", { replaceState: true });
+const checkError = async (error?: string | Error) => {
+  if (!supabase) return "Error connecting to database";
+  const message = typeof error === "string" ? error : error?.message;
+  if (message?.startsWith("Unauthorized")) {
+    alert(message);
+    await goto("/api/auth/logout");
     return "Unauthorized user";
   } else if (error) {
-    return error;
+    return message;
   }
   return "";
 };
@@ -208,7 +210,7 @@ $: paginatedPosts = filteredPosts.slice(($pageStore - 1) * itemsPerPage, $pageSt
             </a>
             <Fab
               on:click={() => remove(post.slug)}
-              class="absolute top-2 right-2 w-9 h-9 bg-red-700 drop-shadow-theme-text">
+              class="absolute top-2 right-2 !w-9 !h-9 bg-red-700 drop-shadow-theme-text">
               <Icon path={mdiTrashCan} size={0.8} />
             </Fab>
           </div>
@@ -224,7 +226,9 @@ $: paginatedPosts = filteredPosts.slice(($pageStore - 1) * itemsPerPage, $pageSt
                 Posted: {new Date(post.date).toLocaleDateString()}
               </div>
             </div>
-            <Fab on:click={() => remove(post.slug)} class="w-9 h-9 bg-red-700 drop-shadow-theme-text inline sm:hidden">
+            <Fab
+              on:click={() => remove(post.slug)}
+              class="!w-9 !h-9 bg-red-700 drop-shadow-theme-text inline sm:hidden">
               <Icon path={mdiTrashCan} size={0.8} />
             </Fab>
           </div>

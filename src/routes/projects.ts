@@ -1,16 +1,11 @@
 import type { RequestHandler } from "./__types/projects";
 import { supabase } from "$lib/supabase/client";
+import type { Project } from "$lib/types";
 
-export interface Project {
-  title: string;
-  subtitle: string;
-  description: string;
-  image: string;
-  link?: string;
-  created_at: string;
-};
 
-export const get: RequestHandler = async () => {
+export const get: RequestHandler<{ projects: Project[] }> = async () => {
+  if (!supabase) throw new Error("Supabase not initialized");
+  
   const { data } = await supabase.from("projects").select("*");
   const projects: Project[] = data || [];
 

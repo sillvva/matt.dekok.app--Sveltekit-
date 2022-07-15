@@ -7,6 +7,8 @@ import { supabase } from "$lib/supabase/client";
 import { getContentDir } from "$lib/supabase/func";
 
 export const get: RequestHandler = async ({ params: { slug } }) => {
+  if (!supabase) throw new Error("Supabase not initialized");
+  
   const dirPath = getContentDir();
   const postsPath = `${dirPath}/blog.json`;
   const filePath = `${dirPath}/${slug}.md`;

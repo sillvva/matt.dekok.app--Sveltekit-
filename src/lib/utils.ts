@@ -1,4 +1,4 @@
-import type { PageProps } from "./store";
+import type { PageProps } from "./types";
 import { env } from "$lib/constants";
 
 export const themes = ["dark", "light", "blue"] as const;

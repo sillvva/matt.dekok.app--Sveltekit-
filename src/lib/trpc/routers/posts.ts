@@ -1,5 +1,4 @@
 import path from "path";
-import { supabase } from "$lib/supabase/client";
 import { fetchPosts } from "$lib/supabase/blog";
 import { authMiddleware, createRouter } from "../context";
 import { getError, getResult } from "../helpers";
@@ -15,8 +14,8 @@ export const postsRouter = createRouter()
         images: z.boolean().nullish()
       })
       .nullish(),
-    async resolve({ input }) {
-      return await getResult(select, !!input?.images);
+    async resolve({ input, ctx: { locals } }) {
+      return await getResult(locals.serverClient, select, !!input?.images);
     }
   })
   .middleware(authMiddleware)
@@ -25,7 +24,9 @@ export const postsRouter = createRouter()
       file: z.string(),
       filename: z.string()
     }),
-    async resolve({ input: { file, filename } }) {
+    async resolve({ input: { file, filename }, ctx: { locals } }) {
+      const supabase = locals.serverClient;
+
       const buffer = Buffer.from(file, "base64");
       const extname = path.extname(filename || "");
 
@@ -52,7 +53,9 @@ export const postsRouter = createRouter()
     input: z.object({
       slug: z.string()
     }),
-    async resolve({ input: { slug } }) {
+    async resolve({ input: { slug }, ctx: { locals } }) {
+      const supabase = locals.serverClient;
+
       const blog = supabase.storage.from("blog");
       const { data } = await blog.list("archive", { search: slug });
       const suffix = data && data.length ? ` (${data.length + 1})` : "";

@@ -26,7 +26,7 @@ $pageProps = {
   bodyClass: "page-body",
   articleMeta: {
     published_date: data?.dateISO,
-    ...(data?.updatedISO && { modified_date: data?.updatedISO })
+    modified_date: data?.updatedISO
   },
   menu: true
 };
@@ -49,7 +49,7 @@ $: metaProps = metaTags($pageProps, $page.url.origin, $page.url.pathname);
 
   {#if metaProps.articleMeta}
     {#each Object.entries(metaProps.articleMeta) as t}
-      <meta property="article:{t[0]}" content={t[1]} />
+      <meta name="article:{t[0]}" content={t[1]} />
     {/each}
   {/if}
   {#each Object.entries(metaProps.ogProperties) as t}

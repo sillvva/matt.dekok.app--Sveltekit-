@@ -14,7 +14,7 @@ import { onMount } from "svelte";
 import { mdiOpenInNew } from "@mdi/js";
 import type { User } from "@supabase/supabase-js";
 import { page, session } from "$app/stores";
-import { supabase, auth } from "$lib/supabase/client";
+import { supabase } from "$lib/supabase/client";
 import { pageProps, admin } from "$lib/store";
 import { conClasses } from "$lib/utils";
 import { ripple } from "$lib/directives";
@@ -24,7 +24,7 @@ import PageMessage from "$lib/components/page/message.svelte";
 import Icon from "$lib/components/common/icon.svelte";
 
 export let path: string;
-let user: User | null;
+let user = $session.user;
 let width = 0;
 let expanded = false;
 
@@ -33,9 +33,7 @@ $pageProps = {
 };
 
 onMount(async () => {
-  if ($auth) user = $auth?.user;
-
-  if (!user) {
+  if (!user && supabase) {
     return await supabase.auth.signIn(
       {
         provider: "github"

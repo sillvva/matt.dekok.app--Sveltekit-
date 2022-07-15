@@ -1,14 +1,11 @@
 import type { RequestHandler } from "./__types/skills";
 import { supabase } from "$lib/supabase/client";
-import type { Rating } from "$lib/types";
+import type { SkillSection } from "$lib/types";
 
-export interface SkillSection {
-  name: string;
-  skills: Rating[];
-  sort: number;
-};
 
-export const get: RequestHandler = async () => {
+export const get: RequestHandler<{ skills: SkillSection[] }> = async () => {
+  if (!supabase) throw new Error("Supabase not initialized");
+  
   const { data } = await supabase
     .from("skill_categories")
     .select("name, skills ( name, rating ), sort");

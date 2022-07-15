@@ -3,7 +3,7 @@ import matter from "gray-matter";
 import { writeFileSync } from "fs";
 import { supabase } from "./client";
 import { getContentDir } from "./func";
-import type { PostData } from "../types/blog";
+import type { PostData } from "../types";
 
 interface FetchOptions {
   getPosts?: boolean;
@@ -13,6 +13,7 @@ interface FetchOptions {
 };
 
 export async function fetchPosts(options: FetchOptions = {}) {
+  if (!supabase) throw new Error("Supabase not initialized");
   const { getPosts, page, perpage, query } = options;
 
   let changes = 0;

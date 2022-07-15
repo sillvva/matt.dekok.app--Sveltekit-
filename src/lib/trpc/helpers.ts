@@ -1,4 +1,4 @@
-import { supabase } from "$lib/supabase/client";
+import type { SupabaseClient } from "@supabase/auth-helpers-sveltekit";
 import type { Admin, Image } from "$lib/types";
 
 export const getError = async (error: Error | string, code = 500) => {
@@ -14,7 +14,7 @@ export const getError = async (error: Error | string, code = 500) => {
   };
 };
 
-export const getResult = async (select: string | null, getImages?: boolean): Promise<Admin> => {
+export const getResult = async (supabase: SupabaseClient, select: string | null, getImages?: boolean): Promise<Admin> => {
   const { data: posts, count: numposts } = await supabase
     .from("blog")
     .select("*", { count: "exact", head: select === "posts" ? false : true });

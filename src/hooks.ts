@@ -3,25 +3,38 @@ import { parse } from "cookie";
 import { router } from "$lib/trpc/server";
 import { createContext } from "$lib/trpc/context";
 import { createTRPCHandle } from "trpc-sveltekit";
+import { handleAuth, supabaseServerClient } from "@supabase/auth-helpers-sveltekit";
+import { sequence } from "@sveltejs/kit/hooks";
+import type { Theme } from "$lib/utils";
 
-export const handle: Handle = async ({ event, resolve }) => {
-  const cookies = parse(event.request.headers?.get("cookie") || "");
-  event.locals.theme = <Theme>cookies.theme || "dark";
-	
-  const response = await createTRPCHandle({
-    url: "/trpc", // optional; defaults to '/trpc'
-    router,
-    createContext,
-    event,
-    resolve
-  });
+export const handle: Handle = sequence(
+  ...handleAuth({
+    logout: { returnTo: "/" }
+  }),
+  async ({ event, resolve }) => {
+    const cookies = parse(event.request.headers?.get("cookie") || "");
+    event.locals.theme = (cookies.theme as Theme) || "dark";
+    
+    event.locals.serverClient = supabaseServerClient(event.locals.accessToken || "");
 
-  return response;
-};
+    const response = await createTRPCHandle({
+      url: "/trpc", // optional; defaults to '/trpc'
+      router,
+      createContext,
+      event,
+      resolve
+    });
 
-export const getSession: GetSession = request => {
+    return response;
+  }
+);
+
+export const getSession: GetSession = async event => {
+  const { user, accessToken, error } = event.locals;
   return {
-    theme: request.locals.theme,
-    auth: {}
+    theme: event.locals.theme,
+    user,
+    accessToken,
+    error
   };
 };

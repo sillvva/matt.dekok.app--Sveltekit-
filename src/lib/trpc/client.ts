@@ -1,17 +1,9 @@
-import { get } from "svelte/store";
-import { auth } from "$lib/supabase/client";
 import { createTRPCClient } from "@trpc/client";
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server";
 import type { Router } from "./server"; // 👈 only the types are imported from the server
 
 export default createTRPCClient<Router>({
-  url: "/trpc",
-  headers() {
-    const token = get(auth)?.access_token;
-    return {
-      authorization: token && `Bearer ${token}`
-    };
-  }
+  url: "/trpc"
 });
 
 type Query = keyof Router["_def"]["queries"];

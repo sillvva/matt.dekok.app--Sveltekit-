@@ -1,7 +1,6 @@
 import path from "path";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
-import { supabase } from "$lib/supabase/client";
 import { authMiddleware, createRouter } from "../context";
 import { getResult } from "../helpers";
 
@@ -9,8 +8,8 @@ const select = "images";
 
 export const imagesRouter = createRouter()
   .query("get", {
-    async resolve() {
-      return await getResult(select);
+    async resolve({ ctx: { locals } }) {
+      return await getResult(locals.serverClient, select);
     }
   })
   .middleware(authMiddleware)
@@ -20,7 +19,9 @@ export const imagesRouter = createRouter()
       filename: z.string(),
       upsert: z.boolean()
     }),
-    async resolve({ input: { file, filename, upsert } }) {
+    async resolve({ input: { file, filename, upsert }, ctx: { locals } }) {
+      const supabase = locals.serverClient;
+
       const buffer = Buffer.from(file, "base64");
       const extname = path.extname(filename || "");
 
@@ -47,7 +48,9 @@ export const imagesRouter = createRouter()
     input: z.object({
       filename: z.string()
     }),
-    async resolve({ input: { filename } }) {
+    async resolve({ input: { filename }, ctx: { locals } }) {
+      const supabase = locals.serverClient;
+
       const images = supabase.storage.from("images");
       const { data } = await images.list("archive", { search: filename });
       const suffix = data && data.length ? ` (${data.length + 1})` : "";

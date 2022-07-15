@@ -2,10 +2,10 @@
 import { onMount } from "svelte";
 import { mdiUpload, mdiTrashCan, mdiRefresh, mdiOpenInNew, mdiClipboard } from "@mdi/js";
 import { useQuery, useMutation, useQueryClient } from "@sveltestack/svelte-query";
-import { page, navigating } from "$app/stores";
+import { page, navigating, session } from "$app/stores";
 import { browser } from "$app/env";
 import { goto } from "$app/navigation";
-import { supabase, auth } from "$lib/supabase/client";
+import { supabase } from "$lib/supabase/client";
 import { admin, pageStore, queryStore } from "$lib/store";
 import t from "$lib/trpc/client";
 import { transitionDuration, itemsPerPage } from "$lib/constants";
@@ -43,7 +43,7 @@ const getResult = useQuery(
     errorMsg = "";
     successMsg = "";
 
-    if (!$auth) throw new Error("Not logged in");
+    if (!$session.user) throw new Error("Not logged in");
 
     try {
       const data = await t.query("images:get");
@@ -95,11 +95,11 @@ const uploadMutation = useMutation(
       loading = true;
     },
     onSuccess() {
-      if ($auth) queryClient.invalidateQueries("images");
+      if ($session.user) queryClient.invalidateQueries("images");
       successMsg = "Image uploaded successfully";
     },
     onError(error: string) {
-      if ($auth) queryClient.invalidateQueries("images");
+      if ($session.user) queryClient.invalidateQueries("images");
       errorMsg = error;
     }
   }
@@ -125,11 +125,11 @@ const deleteMutation = useMutation(
       loading = true;
     },
     onSuccess() {
-      if ($auth) queryClient.invalidateQueries("images");
+      if ($session.user) queryClient.invalidateQueries("images");
       successMsg = "Image deleted successfully";
     },
     onError(error: string) {
-      if ($auth) queryClient.invalidateQueries("images");
+      if ($session.user) queryClient.invalidateQueries("images");
       errorMsg = error;
     }
   }
@@ -189,11 +189,10 @@ const remove = async (name: string) => {
 
 const checkError = async (error?: Error | string) => {
   const message = typeof error === "string" ? error : error?.message;
+  if (!supabase) return "Error connecting to database";
   if (message?.startsWith("Unauthorized")) {
     alert(message);
-    await supabase.auth.signOut();
-    $auth = null;
-    await goto("/", { replaceState: true });
+    await goto("/api/auth/logout");
     return "Unauthorized user";
   } else if (error) {
     return message;
@@ -260,7 +259,7 @@ $: paginatedImages = filteredImages.slice(($pageStore - 1) * itemsPerPage, $page
           </div>
           <Fab
             on:click={() => remove(image.name)}
-            class="absolute top-2 right-2 w-8 h-8 bg-red-700 drop-shadow-theme-text">
+            class="absolute top-2 right-2 !w-8 !h-8 bg-red-700 drop-shadow-theme-text">
             <Icon path={mdiTrashCan} size={0.8} />
           </Fab>
           <Fab
@@ -272,7 +271,7 @@ $: paginatedImages = filteredImages.slice(($pageStore - 1) * itemsPerPage, $page
                 image.copied = false;
               }, 2000);
             }}
-            class="absolute top-12 right-2 w-8 h-8 bg-theme-link !duration-200 {image.copied
+            class="absolute top-12 right-2 !w-8 !h-8 bg-theme-link !duration-200 {image.copied
               ? '!bg-gray-500'
               : ''} drop-shadow-theme-text">
             <Icon path={mdiClipboard} size={0.8} />

@@ -75,6 +75,41 @@ export interface PageProps {
   bodyClass?: string;
   backTo?: boolean | string;
   menu?: boolean;
-  articleMeta?: object;
+  articleMeta?: {
+    published_date?: string;
+    modified_date?: string;
+  };
   image?: string;
+}
+
+export interface Project {
+  title: string;
+  subtitle: string;
+  description: string;
+  image: string;
+  link?: string;
+  created_at: string;
+};
+
+export interface SkillSection {
+  name: string;
+  skills: Rating[];
+  sort: number;
+};
+
+export interface ExperienceItem {
+  name?: string;
+  nameLink?: string;
+  image: string;
+  h4: string;
+  h4Link?: string;
+  h5: string;
+  h5Link?: string;
+  created_at: string;
+}
+
+export interface ExperienceSection {
+  name: string;
+  experience: ExperienceItem[];
+  sort: number;
 }

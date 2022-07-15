@@ -42,6 +42,8 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@supabase/auth-helpers-svelte": "^0.4.5",
+		"@supabase/auth-helpers-sveltekit": "^0.6.7",
 		"@supabase/supabase-js": "^1.35.4",
 		"@sveltestack/svelte-query": "^1.6.0",
 		"@trpc/client": "^9.25.3",
