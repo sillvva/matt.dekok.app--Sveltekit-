@@ -5,6 +5,7 @@ import type { RequestHandler } from "./__types/[slug]";
 import type { PostData } from "$lib/types";
 import { supabase } from "$lib/supabase/client";
 import { getContentDir } from "$lib/supabase/func";
+import { env } from "$lib/constants";
 
 export const get: RequestHandler = async ({ params: { slug } }) => {
   if (!supabase) throw new Error("Supabase not initialized");
@@ -82,7 +83,7 @@ export const get: RequestHandler = async ({ params: { slug } }) => {
       data
     },
     headers: {
-      "Cache-Control": `public, max-age=86400`
+      "Cache-Control": env.MODE === "production" ? "public, max-age=10800" : "no-cache"
     }
   };
 };

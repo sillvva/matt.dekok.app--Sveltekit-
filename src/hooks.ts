@@ -30,9 +30,9 @@ export const handle: Handle = sequence(
 );
 
 export const getSession: GetSession = async event => {
-  const { user, accessToken, error } = event.locals;
+  const { user, accessToken, error, theme } = event.locals;
   return {
-    theme: event.locals.theme,
+    theme,
     user,
     accessToken,
     error
