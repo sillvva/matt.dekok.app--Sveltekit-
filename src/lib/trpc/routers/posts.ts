@@ -30,22 +30,21 @@ export const postsRouter = createRouter()
       const buffer = Buffer.from(file, "base64");
       const extname = path.extname(filename || "");
 
-      let bucket = "";
-      if (extname === ".md") bucket = "blog";
-
+      if (extname !== ".md") return (await getError("Invalid file extension")).body;
       if (!file || !filename) return (await getError("No file")).body;
-      if (!extname || !bucket) return (await getError("Invalid file extension")).body;
-
+      
+      const bucket = "blog";
       const { error } = await supabase.storage.from(bucket).upload(filename, buffer, {
+        contentType: "text/markdown",
         upsert: true
       });
 
       if (error) throw new TRPCError({ message: error?.message, code: "BAD_REQUEST" });
-      if (bucket === "blog") await fetchPosts();
+      await fetchPosts();
 
       return {
         success: true,
-        error: ""
+        error
       };
     }
   })
@@ -60,7 +59,7 @@ export const postsRouter = createRouter()
       const { data } = await blog.list("archive", { search: slug });
       const suffix = data && data.length ? ` (${data.length + 1})` : "";
       const { error } = await blog.move(`${slug}.md`, `archive/${slug}${suffix}.md`);
-      
+
       if (error) throw new TRPCError({ message: error.message, code: "BAD_REQUEST" });
       await fetchPosts();
 

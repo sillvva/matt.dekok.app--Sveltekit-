@@ -56,7 +56,8 @@ export const get: RequestHandler = async ({ params: { slug } }) => {
     console.log("Revalidating...", slug);
     if (!file) file = await supabase.from("blog").select("*").match({ slug });
     const { publicURL: url } = await supabase.storage.from("blog").getPublicUrl(file.data[0].name);
-    const response = await fetch(url || "");
+    if (!url) throw new Error(`Could not get public URL for ${file.data[0].name}`);
+    const response = await fetch(`${url}?t=${Date.now()}`);
     const content = await response.text();
     result.data = content;
     writeFileSync(filePath, content);

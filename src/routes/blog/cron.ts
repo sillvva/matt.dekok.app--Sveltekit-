@@ -6,7 +6,8 @@ import { itemsPerPage } from "$lib/constants";
 export const post: RequestHandler<any> = async ({ url }) => {
   try {
     const getPosts = !!url.searchParams.get("posts");
-    const page = parseInt(url.searchParams.get("page") || "1");
+    const sPage = url.searchParams.get("page");
+    const page = sPage ? parseInt(sPage) : undefined;
     const perpage = parseInt(url.searchParams.get("limit") || itemsPerPage.toString());
     const query = url.searchParams.get("s") || "";
 
