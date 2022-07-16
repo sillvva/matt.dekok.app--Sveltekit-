@@ -6,21 +6,18 @@ import { page, navigating, session } from "$app/stores";
 import { browser } from "$app/env";
 import { goto } from "$app/navigation";
 import { supabase } from "$lib/supabase/client";
-import { admin, pageStore, queryStore } from "$lib/store";
+import { admin, pageStore, queryStore, toasts } from "$lib/store";
 import t from "$lib/trpc/client";
 import { transitionDuration, itemsPerPage } from "$lib/constants";
 import { toBase64 } from "$lib/utils";
 import { ripple } from "$lib/directives";
 import Icon from "$lib/components/common/icon.svelte";
-import Alert from "$lib/components/common/alert.svelte";
 import Image from "$lib/components/common/image.svelte";
 import Fab from "$lib/components/common/fab.svelte";
 import Pagination from "$lib/components/common/pagination.svelte";
 
 let loading = true;
 let mounted = false;
-let errorMsg = "";
-let successMsg = "";
 
 const queryClient = useQueryClient();
 const imagePath = "https://slxazldgfeytirfrculz.supabase.co/storage/v1/object/public/images/";
@@ -40,8 +37,7 @@ const getResult = useQuery(
   "images",
   async () => {
     loading = true;
-    errorMsg = "";
-    successMsg = "";
+    $toasts = [];
 
     if (!$session.user) throw new Error("Not logged in");
 
@@ -59,7 +55,7 @@ const getResult = useQuery(
     cacheTime: 30 * 60 * 1000,
     staleTime: 15 * 60 * 1000,
     onSuccess(result) {
-      if (!result) return (errorMsg = "Error loading images");
+      if (!result) return ($toasts = [...$toasts, { type: "error", message: "Error loading images" }]);
       if (!$admin.success) admin.set(result);
       else
         admin.update(data => {
@@ -70,7 +66,7 @@ const getResult = useQuery(
       loading = false;
     },
     onError(error: string) {
-      errorMsg = error;
+      $toasts = [...$toasts, { type: "error", message: error }];
       loading = false;
     }
   }
@@ -97,11 +93,11 @@ const uploadMutation = useMutation(
     },
     onSuccess() {
       if ($session.user) queryClient.invalidateQueries("images");
-      successMsg = "Image uploaded successfully";
+      $toasts = [...$toasts, { type: "success", message: "Image uploaded successfully" }];
     },
     onError(error: string) {
       if ($session.user) queryClient.invalidateQueries("images");
-      errorMsg = error;
+      $toasts = [...$toasts, { type: "error", message: error }];
     }
   }
 );
@@ -127,11 +123,11 @@ const deleteMutation = useMutation(
     },
     onSuccess() {
       if ($session.user) queryClient.invalidateQueries("images");
-      successMsg = "Image deleted successfully";
+      $toasts = [...$toasts, { type: "success", message: "Image deleted successfully" }];
     },
     onError(error: string) {
       if ($session.user) queryClient.invalidateQueries("images");
-      errorMsg = error;
+      $toasts = [...$toasts, { type: "error", message: error }];
     }
   }
 );
@@ -234,7 +230,6 @@ $: paginatedImages = filteredImages.slice(($pageStore - 1) * itemsPerPage, $page
       </button>
     </div>
   </div>
-  <Alert {successMsg} {errorMsg} on:close={e => (e.detail === "success" ? (successMsg = "") : (errorMsg = ""))} />
   <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2">
     {#if loaders == 0}
       {#each paginatedImages as image (image.name)}

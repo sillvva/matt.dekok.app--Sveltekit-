@@ -26,6 +26,7 @@ import { SupaAuthHelper } from "@supabase/auth-helpers-svelte";
 import { supabase } from "$lib/supabase/client";
 import Menu from "$lib/components/page/menu.svelte";
 import Title from "$lib/components/page/title.svelte";
+import Toasts from "$lib/components/common/toasts.svelte";
 import Drawer from "$lib/components/page/drawer.svelte";
 import Fab from "$lib/components/common/fab.svelte";
 import Icon from "$lib/components/common/icon.svelte";
@@ -248,6 +249,8 @@ $: smallTitle = ($pageProps.title || "").length > 12 ? "small-title" : "";
     </div>
   </QueryClientProvider>
 </SupaAuthHelper>
+
+<Toasts />
 
 <style lang="scss">
 #app {

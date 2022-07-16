@@ -113,3 +113,8 @@ export interface ExperienceSection {
   experience: ExperienceItem[];
   sort: number;
 }
+
+export interface Toast {
+  type: "success" | "error" | "warning" | "info";
+  message: string;
+}

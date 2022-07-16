@@ -7,21 +7,17 @@ import { browser } from "$app/env";
 import { navigating, page, session } from "$app/stores";
 import { goto } from "$app/navigation";
 import { supabase } from "$lib/supabase/client";
-import { admin, pageStore, queryStore } from "$lib/store";
+import { admin, pageStore, queryStore, toasts } from "$lib/store";
 import { itemsPerPage, transitionDuration } from "$lib/constants";
 import { toBase64 } from "$lib/utils";
 import { ripple } from "$lib/directives";
 import Icon from "$lib/components/common/icon.svelte";
-import Alert from "$lib/components/common/alert.svelte";
 import Image from "$lib/components/common/image.svelte";
 import Fab from "$lib/components/common/fab.svelte";
 import Pagination from "$lib/components/common/pagination.svelte";
-import { writable } from "svelte/store";
 
 let mounted = false;
 let loading = true;
-let errorMsg = "";
-let successMsg = "";
 
 const queryClient = useQueryClient();
 
@@ -40,8 +36,7 @@ const getResult = useQuery(
   "posts",
   async () => {
     loading = true;
-    errorMsg = "";
-    successMsg = "";
+    $toasts = [];
 
     if (!$session.user) throw new Error("Not logged in");
 
@@ -59,7 +54,7 @@ const getResult = useQuery(
     cacheTime: 30 * 60 * 1000,
     staleTime: 15 * 60 * 1000,
     onSuccess(result) {
-      if (!result) return (errorMsg = "Error loading posts");
+      if (!result) return ($toasts = [...$toasts, { type: "error", message: "Error loading posts" }]);
       if (!$admin.success) admin.set(result);
       else
         admin.update(data => {
@@ -70,7 +65,7 @@ const getResult = useQuery(
       loading = false;
     },
     onError(error: string) {
-      errorMsg = error;
+      $toasts = [...$toasts, { type: "error", message: error }];
       loading = false;
     }
   }
@@ -92,11 +87,11 @@ const uploadMutation = useMutation(
     },
     onSuccess() {
       if ($session.user) queryClient.invalidateQueries("posts");
-      successMsg = "Post uploaded successfully";
+      $toasts = [...$toasts, { type: "success", message: "Post uploaded successfully" }];
     },
     onError(error: string) {
       if ($session.user) queryClient.invalidateQueries("posts");
-      errorMsg = error;
+      $toasts = [...$toasts, { type: "error", message: error }];
     }
   }
 );
@@ -119,11 +114,11 @@ const deleteMutation = useMutation(
     },
     onSuccess() {
       if ($session.user) queryClient.invalidateQueries("posts");
-      successMsg = "Post deleted successfully";
+      $toasts = [...$toasts, { type: "success", message: "Post deleted successfully" }];
     },
     onError(error: string) {
       if ($session.user) queryClient.invalidateQueries("posts");
-      errorMsg = error;
+      $toasts = [...$toasts, { type: "error", message: error }];
     }
   }
 );
@@ -199,7 +194,6 @@ $: paginatedPosts = filteredPosts.slice(($pageStore - 1) * itemsPerPage, $pageSt
       </button>
     </div>
   </div>
-  <Alert {successMsg} {errorMsg} on:close={e => (e.detail === "success" ? (successMsg = "") : (errorMsg = ""))} />
   <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2">
     {#if loaders == 0}
       {#each paginatedPosts as post (post.slug)}
