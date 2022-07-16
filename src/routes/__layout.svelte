@@ -44,7 +44,9 @@ let delay = 0;
 let theme = $session.theme;
 const toggleTheme = (newtheme?: typeof theme) => {
   theme = newtheme || themes[(themes.indexOf(theme) + 1) % themes.length];
-  document.cookie = `theme=${theme}; path=/`;
+  document.cookie = `theme=${theme}; path=/; domain=${$page.url.hostname}; expires=${new Date(
+    Date.now() + 1000 * 60 * 60 * 24 * 365.25 * 10
+  ).toUTCString()}`;
   $session.theme = theme;
 };
 $: {
