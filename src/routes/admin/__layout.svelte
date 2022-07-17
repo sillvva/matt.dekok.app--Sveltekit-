@@ -12,7 +12,6 @@ export const load: Load = async ({ url }) => {
 <script lang="ts">
 import { onMount } from "svelte";
 import { mdiOpenInNew } from "@mdi/js";
-import type { User } from "@supabase/supabase-js";
 import { page, session } from "$app/stores";
 import { supabase } from "$lib/supabase/client";
 import { pageProps, admin } from "$lib/store";

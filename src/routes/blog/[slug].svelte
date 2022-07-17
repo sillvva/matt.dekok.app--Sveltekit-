@@ -15,6 +15,8 @@ import paragraph from "$lib/components/blog/renderers/paragraph.svelte";
 import codespan from "$lib/components/blog/renderers/codespan.svelte";
 import image from "$lib/components/blog/renderers/image.svelte";
 import html from "$lib/components/blog/renderers/html.svelte";
+import list from "$lib/components/blog/renderers/list.svelte";
+import listitem from "$lib/components/blog/renderers/listitem.svelte";
 
 export let data: PostProps;
 export let content: string;
@@ -37,7 +39,9 @@ const renderers = {
   paragraph,
   codespan,
   image,
-  html
+  html,
+  list,
+  listitem
 };
 
 $: metaProps = metaTags($pageProps, $page.url.origin, $page.url.pathname);
