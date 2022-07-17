@@ -1,0 +1,12 @@
+name: Midnight Cron
+on:
+  schedule:
+    - cron: '0 0 * * *'
+jobs:
+  cron:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call API route to prevent Supabase pausing
+        run: |
+          curl --request GET \
+          --url 'https://sveletekit.dekok.app/trpc/posts:get'
