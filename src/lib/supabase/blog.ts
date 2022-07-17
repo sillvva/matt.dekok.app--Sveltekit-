@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import matter from "gray-matter";
 import { writeFileSync } from "fs";
-import { supabase } from "./connection";
+import { supabase } from "./client";
 import { getContentDir } from "./func";
-import type { PostData } from "../types/blog";
+import type { PostData } from "../types";
 
-type FetchOptions = {
+interface FetchOptions {
   getPosts?: boolean;
   page?: number;
   perpage?: number;
@@ -13,6 +13,7 @@ type FetchOptions = {
 };
 
 export async function fetchPosts(options: FetchOptions = {}) {
+  if (!supabase) throw new Error("Supabase not initialized");
   const { getPosts, page, perpage, query } = options;
 
   let changes = 0;
@@ -54,7 +55,8 @@ export async function fetchPosts(options: FetchOptions = {}) {
     } else continue;
 
     const { publicURL: url } = await supabase.storage.from("blog").getPublicUrl(file.name);
-    const response = await fetch(url || "");
+    if (!url) throw new Error(`Could not get public URL for ${file.name}`);
+    const response = await fetch(`${url}?t=${Date.now()}`);
     const result = await response.text();
 
     const parsedData = matter(result);

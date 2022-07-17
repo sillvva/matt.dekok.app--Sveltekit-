@@ -1,6 +1,11 @@
 import { getCursorPosition, wait } from "$lib/utils";
 
-type RippleParams = { enabled?: boolean; duration?: number; easing?: string; color?: string };
+interface RippleParams {
+  enabled?: boolean;
+  duration?: number;
+  easing?: string;
+  color?: string;
+}
 const defaultRippleParams = {
   enabled: true,
   duration: 800,

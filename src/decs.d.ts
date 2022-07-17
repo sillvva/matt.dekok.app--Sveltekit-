@@ -10,3 +10,4 @@ declare module 'svelte-highlight/languages/markdown';
 declare module 'svelte-highlight/languages/json';
 declare module 'svelte-highlight/languages/yaml';
 declare module 'svelte-highlight/languages/bash';
+declare module '@supabase/auth-helpers-svelte';

@@ -2,11 +2,14 @@
 import { readFileSync, rmSync, existsSync, writeFileSync, statSync } from "node:fs";
 import matter from "gray-matter";
 import type { RequestHandler } from "./__types/[slug]";
-import type { PostData } from "$lib/types/blog";
-import { supabase } from "$lib/supabase/connection";
+import type { PostData } from "$lib/types";
+import { supabase } from "$lib/supabase/client";
 import { getContentDir } from "$lib/supabase/func";
+import { env } from "$lib/constants";
 
 export const get: RequestHandler = async ({ params: { slug } }) => {
+  if (!supabase) throw new Error("Supabase not initialized");
+  
   const dirPath = getContentDir();
   const postsPath = `${dirPath}/blog.json`;
   const filePath = `${dirPath}/${slug}.md`;
@@ -53,7 +56,8 @@ export const get: RequestHandler = async ({ params: { slug } }) => {
     console.log("Revalidating...", slug);
     if (!file) file = await supabase.from("blog").select("*").match({ slug });
     const { publicURL: url } = await supabase.storage.from("blog").getPublicUrl(file.data[0].name);
-    const response = await fetch(url || "");
+    if (!url) throw new Error(`Could not get public URL for ${file.data[0].name}`);
+    const response = await fetch(`${url}?t=${Date.now()}`);
     const content = await response.text();
     result.data = content;
     writeFileSync(filePath, content);
@@ -80,7 +84,7 @@ export const get: RequestHandler = async ({ params: { slug } }) => {
       data
     },
     headers: {
-      "Cache-Control": `public, max-age=86400`
+      "Cache-Control": env.MODE === "production" ? "public, max-age=10800" : "no-cache"
     }
   };
 };

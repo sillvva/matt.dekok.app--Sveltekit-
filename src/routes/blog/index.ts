@@ -1,16 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { RequestHandler } from "./__types/index";
 import { fetchPosts } from "$lib/supabase/blog";
-import { blogPostsPerPage } from "$lib/constants";
+import { itemsPerPage } from "$lib/constants";
 
-type PostFetchOptions = {
+interface PostFetchOptions {
   page?: number;
   query?: string;
   limit?: number;
 };
 
 export const getPosts = async (options?: PostFetchOptions) => {
-  const { page = 1, query = "", limit = blogPostsPerPage } = options || {};
+  const { page = 1, query = "", limit = itemsPerPage } = options || {};
 
   let { posts, num } = await fetchPosts({ getPosts: true, page, perpage: limit, query });
 
@@ -54,9 +54,9 @@ export const getPosts = async (options?: PostFetchOptions) => {
   };
 };
 
-export const get: RequestHandler = async ({ url }) => {
+export const get: RequestHandler<typeof getPosts> = async ({ url }) => {
   const page = parseInt(url.searchParams.get("page") || "1");
-  const limit = parseInt(url.searchParams.get("limit") || blogPostsPerPage.toString());
+  const limit = parseInt(url.searchParams.get("limit") || itemsPerPage.toString());
   const query = url.searchParams.get("s") || "";
 
   try {

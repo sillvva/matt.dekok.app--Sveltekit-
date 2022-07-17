@@ -4,7 +4,7 @@ import SvelteMarkdown from "svelte-markdown";
 import Article from "$lib/components/page/article.svelte";
 import Section from "$lib/components/page/section.svelte";
 import Image from "$lib/components/common/image.svelte";
-import type { PostProps } from "$lib/types/blog";
+import type { PostProps } from "$lib/types";
 import { pageProps } from "$lib/store";
 import { metaTags } from "$lib/utils";
 
@@ -15,6 +15,8 @@ import paragraph from "$lib/components/blog/renderers/paragraph.svelte";
 import codespan from "$lib/components/blog/renderers/codespan.svelte";
 import image from "$lib/components/blog/renderers/image.svelte";
 import html from "$lib/components/blog/renderers/html.svelte";
+import list from "$lib/components/blog/renderers/list.svelte";
+import listitem from "$lib/components/blog/renderers/listitem.svelte";
 
 export let data: PostProps;
 export let content: string;
@@ -26,7 +28,7 @@ $pageProps = {
   bodyClass: "page-body",
   articleMeta: {
     published_date: data?.dateISO,
-    ...(data?.updatedISO && { modified_date: data?.updatedISO })
+    modified_date: data?.updatedISO
   },
   menu: true
 };
@@ -37,7 +39,9 @@ const renderers = {
   paragraph,
   codespan,
   image,
-  html
+  html,
+  list,
+  listitem
 };
 
 $: metaProps = metaTags($pageProps, $page.url.origin, $page.url.pathname);
@@ -49,7 +53,7 @@ $: metaProps = metaTags($pageProps, $page.url.origin, $page.url.pathname);
 
   {#if metaProps.articleMeta}
     {#each Object.entries(metaProps.articleMeta) as t}
-      <meta property="article:{t[0]}" content={t[1]} />
+      <meta name="article:{t[0]}" content={t[1]} />
     {/each}
   {/if}
   {#each Object.entries(metaProps.ogProperties) as t}

@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const blogPostsPerPage = 12;
+export const itemsPerPage = 12;
 export const transitionDuration = 500;
 
 const envSchema = z.object({
@@ -8,7 +8,8 @@ const envSchema = z.object({
   SUPABASE_KEY: z.string(),
   AUTH_UID: z.string(),
   PROD_URL: process.env.PROD_URL ? z.string().url() : z.undefined(),
-  VERCEL_URL: process.env.VERCEL_URL ? z.string() : z.undefined()
+  VERCEL_URL: process.env.VERCEL_URL ? z.string() : z.undefined(),
+  MODE: z.string()
 });
 
 const envCheck = envSchema.safeParse({
@@ -16,7 +17,8 @@ const envCheck = envSchema.safeParse({
   SUPABASE_KEY: process.env.VITE_SUPABASE_KEY ?? import.meta.env.VITE_SUPABASE_KEY,
   AUTH_UID: process.env.VITE_AUTH_UID ?? import.meta.env.VITE_AUTH_UID,
   PROD_URL: process.env.PROD_URL,
-  VERCEL_URL: process.env.VERCEL_URL
+  VERCEL_URL: process.env.VERCEL_URL,
+  MODE: process.env.NODE_ENV ?? import.meta.env.MODE ?? "development"
 });
 
 if (!envCheck.success) {

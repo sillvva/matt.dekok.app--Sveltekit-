@@ -2,7 +2,7 @@
 import { page } from "$app/stores";
 import Animatedbutton from "$lib/components/common/animated-button.svelte";
 
-type Item = {
+interface Item {
   link: string;
   label: string;
   color?: string;

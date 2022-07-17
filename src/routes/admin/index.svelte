@@ -1,31 +1,23 @@
 <script lang="ts">
 import { onMount } from "svelte";
-import { writable } from "svelte/store";
 import { mdiUpload, mdiTrashCan, mdiRefresh, mdiOpenInNew } from "@mdi/js";
 import { useQuery, useMutation, useQueryClient } from "@sveltestack/svelte-query";
-import type { AdminMutation } from "./data";
+import t from "$lib/trpc/client";
+import { browser } from "$app/env";
+import { navigating, page, session } from "$app/stores";
 import { goto } from "$app/navigation";
-import { supabase, auth } from "$lib/supabase/connection";
-import { admin } from "$lib/store";
-import type { Admin } from "$lib/store";
-import { transitionDuration } from "$lib/constants";
-import { blobToBase64 } from "$lib/utils";
+import { supabase } from "$lib/supabase/client";
+import { admin, pageStore, queryStore, toasts } from "$lib/store";
+import { itemsPerPage, transitionDuration } from "$lib/constants";
+import { toBase64 } from "$lib/utils";
 import { ripple } from "$lib/directives";
 import Icon from "$lib/components/common/icon.svelte";
-import Alert from "$lib/components/common/alert.svelte";
 import Image from "$lib/components/common/image.svelte";
 import Fab from "$lib/components/common/fab.svelte";
 import Pagination from "$lib/components/common/pagination.svelte";
 
-let search: string = "";
 let mounted = false;
 let loading = true;
-let errorMsg = "";
-let successMsg = "";
-
-const headers = {
-  authorization: `Bearer ${$auth?.access_token}`
-};
 
 const queryClient = useQueryClient();
 
@@ -33,30 +25,36 @@ onMount(() => {
   setTimeout(() => {
     mounted = true;
   }, transitionDuration / 2);
+
+  if (browser && !$navigating) {
+    $pageStore = parseInt($page.url.searchParams.get("page") || "1");
+    $queryStore = $page.url.searchParams.get("q") || "";
+  }
 });
 
 const getResult = useQuery(
   "posts",
   async () => {
     loading = true;
-    errorMsg = "";
-    successMsg = "";
+    $toasts = [];
 
-    if (!$auth) throw new Error("Not logged in");
+    if (!$session.user) throw new Error("Not logged in");
 
-    const response = await fetch(`/admin/data?select=posts&images=${$admin.success ? 0 : 1}`, { headers });
-    const data: Admin = await response.json();
-
-    const error = await checkError(data.error);
-    if (error) throw new Error(data.error);
-
-    return data;
+    try {
+      const data = await t.query("posts:get", { images: !$admin.success });
+      return data;
+    } catch (err: any) {
+      const error = await checkError(err);
+      if (error) throw new Error(err);
+    }
   },
   {
     refetchOnWindowFocus: false,
+    enabled: browser, // Errors during SSR
     cacheTime: 30 * 60 * 1000,
     staleTime: 15 * 60 * 1000,
     onSuccess(result) {
+      if (!result) return ($toasts = [...$toasts, { type: "error", message: "Error loading posts" }]);
       if (!$admin.success) admin.set(result);
       else
         admin.update(data => {
@@ -67,57 +65,47 @@ const getResult = useQuery(
       loading = false;
     },
     onError(error: string) {
-      errorMsg = error;
+      $toasts = [...$toasts, { type: "error", message: error }];
       loading = false;
     }
   }
 );
 
 const uploadMutation = useMutation(
-  async (formData: FormData) => {
-    const response = await fetch("/admin/data?select=posts", {
-      method: "POST",
-      headers,
-      body: formData
-    });
-    const data: AdminMutation = await response.json();
-
-    const error = await checkError(data.error);
-    if (error) throw new Error(data.error);
-
-    return data;
+  async (input: { file: string; filename: string }) => {
+    try {
+      return await t.mutation("posts:post", input);
+    } catch (err: any) {
+      const error = await checkError(err);
+      if (error) throw new Error(err);
+    }
   },
   {
-    onMutate(vars) {
-      const filename = vars.get("filename")?.toString() || "";
-      $admin.numposts = numloaders + ($admin.images?.find(image => image.filename === filename) ? 0 : 1);
+    onMutate({ filename }) {
+      $admin.numposts = numloaders + ($admin.posts?.find(post => post.name === filename) ? 0 : 1);
       loading = true;
     },
     onSuccess() {
-      if ($auth) queryClient.invalidateQueries("posts");
-      successMsg = "Post uploaded successfully";
+      if ($session.user) queryClient.invalidateQueries("posts");
+      $toasts = [...$toasts, { type: "success", message: "Post uploaded successfully" }];
     },
     onError(error: string) {
-      if ($auth) queryClient.invalidateQueries("posts");
-      errorMsg = error;
+      if ($session.user) queryClient.invalidateQueries("posts");
+      $toasts = [...$toasts, { type: "error", message: error }];
     }
   }
 );
 
 const deleteMutation = useMutation(
   async (slug: string) => {
-    if (!slug && (await checkError("Slug not defined"))) return { success: false };
-
-    const response = await fetch(`/admin/data?select=posts&slug=${slug}`, {
-      method: "DELETE",
-      headers
-    });
-    const data: AdminMutation = await response.json();
-
-    const error = await checkError(data.error);
-    if (error) throw new Error(data.error);
-
-    return data;
+    try {
+      return await t.mutation("posts:delete", {
+        slug
+      });
+    } catch (err: any) {
+      const error = await checkError(err);
+      if (error) throw new Error(err);
+    }
   },
   {
     onMutate() {
@@ -125,12 +113,12 @@ const deleteMutation = useMutation(
       $admin.numposts = Math.max(1, numloaders - 1);
     },
     onSuccess() {
-      if ($auth) queryClient.invalidateQueries("posts");
-      successMsg = "Post deleted successfully";
+      if ($session.user) queryClient.invalidateQueries("posts");
+      $toasts = [...$toasts, { type: "success", message: "Post deleted successfully" }];
     },
     onError(error: string) {
-      if ($auth) queryClient.invalidateQueries("posts");
-      errorMsg = error;
+      if ($session.user) queryClient.invalidateQueries("posts");
+      $toasts = [...$toasts, { type: "error", message: error }];
     }
   }
 );
@@ -149,11 +137,8 @@ const upload = () => {
     const file = input.files[0];
     if (!file.name.endsWith(".md")) return alert("Only markdown files are supported");
     const blob = new Blob([file], { type: file.type });
-    const base64 = await blobToBase64(blob);
-    const formData = new FormData();
-    formData.append("file", base64);
-    formData.append("filename", file.name);
-    $uploadMutation.mutate(formData);
+    const base64 = await toBase64(blob);
+    $uploadMutation.mutate({ file: base64, filename: file.name });
   };
   input.click();
 };
@@ -163,51 +148,42 @@ const remove = async (slug: string) => {
   $deleteMutation.mutate(slug);
 };
 
-const checkError = async (error?: string) => {
-  if (error?.startsWith("Unauthorized")) {
-    alert(error);
-    await supabase.auth.signOut();
-    $auth = null;
-    await goto("/", { replaceState: true });
+const checkError = async (error?: string | Error) => {
+  if (!supabase) return "Error connecting to database";
+  const message = typeof error === "string" ? error : error?.message;
+  if (message?.startsWith("Unauthorized")) {
+    alert(message);
+    await goto("/api/auth/logout");
     return "Unauthorized user";
   } else if (error) {
-    return error;
+    return message;
   }
   return "";
 };
 
-const perPage = 12;
-let pageStore = writable(1);
-
 $: loading = !($getResult.data && !$getResult.isFetching);
-$: numloaders = Math.min(perPage, $admin.numposts ?? perPage);
+$: numloaders = Math.min(itemsPerPage, $admin.numposts ?? itemsPerPage);
 $: loaders = loading ? numloaders : 0;
 $: filteredPosts =
-  search.length > 2
+  $queryStore.length > 2
     ? ($admin.posts || [])
         .filter(post => {
           return (
-            post.title.toLowerCase().includes(search.toLowerCase()) ||
-            (post.description || "").toLowerCase().includes(search.toLowerCase()) ||
-            (post.tags || []).find(tag => tag.toLowerCase() == search.toLowerCase())
+            post.title.toLowerCase().includes($queryStore.toLowerCase()) ||
+            (post.description || "").toLowerCase().includes($queryStore.toLowerCase()) ||
+            (post.tags || []).find(tag => tag.toLowerCase() == $queryStore.toLowerCase())
           );
         })
         .sort((a, b) => (a.date > b.date ? -1 : 1))
     : ($admin.posts || []).sort((a, b) => (a.date > b.date ? -1 : 1));
-$: {
-  if (!$getResult.isFetching && !loading && filteredPosts.length === 0) {
-    console.log("No posts found, refreshing query...");
-    queryClient.invalidateQueries("posts");
-  }
-}
-$: pages = Math.ceil(filteredPosts.length / perPage);
-$: paginatedPosts = filteredPosts.slice(($pageStore - 1) * perPage, $pageStore * perPage);
+$: pages = Math.ceil(filteredPosts.length / itemsPerPage);
+$: paginatedPosts = filteredPosts.slice(($pageStore - 1) * itemsPerPage, $pageStore * itemsPerPage);
 </script>
 
 {#if mounted}
-  <div class="flex gap-4 mb-4">
+  <div class="flex gap-2 mb-4">
     <div class="flex-1">
-      <input type="text" bind:value={search} placeholder="Search" class="p-2 rounded-md w-full" />
+      <input type="text" bind:value={$queryStore} placeholder="Search" class="p-2 rounded-md w-full shadow-md" />
     </div>
     <div class="md:flex-1 flex justify-end gap-4">
       <button on:click={refresh}>
@@ -218,21 +194,17 @@ $: paginatedPosts = filteredPosts.slice(($pageStore - 1) * perPage, $pageStore *
       </button>
     </div>
   </div>
-  <Alert {successMsg} {errorMsg} on:close={e => (e.detail === "success" ? (successMsg = "") : (errorMsg = ""))} />
   <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2">
     {#if loaders == 0}
       {#each paginatedPosts as post (post.slug)}
-        <div
-          class="flex flex-col bg-theme-article p-0 rounded-md shadow-md relative overflow-hidden"
-          style:--tw-shadow-color="#0006"
-          style:--tw-shadow="var(--tw-shadow-colored)">
+        <div class="flex flex-col bg-theme-article p-0 rounded-md shadow-md relative overflow-hidden">
           <div class="aspect-video relative hidden sm:block">
             <a href="/blog/{post.slug}" target="_blank" class="relative block aspect-video" use:ripple>
               <Image src={post.image} lazy alt={post.title} class="bg-black" />
             </a>
             <Fab
               on:click={() => remove(post.slug)}
-              class="absolute top-2 right-2 w-9 h-9 bg-red-700 drop-shadow-theme-text">
+              class="absolute top-2 right-2 !w-9 !h-9 bg-red-700 drop-shadow-theme-text">
               <Icon path={mdiTrashCan} size={0.8} />
             </Fab>
           </div>
@@ -248,7 +220,9 @@ $: paginatedPosts = filteredPosts.slice(($pageStore - 1) * perPage, $pageStore *
                 Posted: {new Date(post.date).toLocaleDateString()}
               </div>
             </div>
-            <Fab on:click={() => remove(post.slug)} class="w-9 h-9 bg-red-700 drop-shadow-theme-text inline sm:hidden">
+            <Fab
+              on:click={() => remove(post.slug)}
+              class="!w-9 !h-9 bg-red-700 drop-shadow-theme-text inline sm:hidden">
               <Icon path={mdiTrashCan} size={0.8} />
             </Fab>
           </div>
@@ -256,10 +230,7 @@ $: paginatedPosts = filteredPosts.slice(($pageStore - 1) * perPage, $pageStore *
       {/each}
     {:else}
       {#each new Array(loaders).fill(1) as i}
-        <div
-          class="flex flex-col bg-theme-article p-0 rounded-md shadow-md relative overflow-hidden"
-          style:--tw-shadow-color="#0006"
-          style:--tw-shadow="var(--tw-shadow-colored)">
+        <div class="flex flex-col bg-theme-article p-0 rounded-md shadow-md relative overflow-hidden">
           <div class="aspect-video animate-pulse bg-theme-hover bg-opacity-15 hidden sm:block" />
           <div class="flex-1 flex flex-col p-3">
             <div class="loading-line title max-w-xs">
@@ -274,6 +245,6 @@ $: paginatedPosts = filteredPosts.slice(($pageStore - 1) * perPage, $pageStore *
     {/if}
   </div>
   {#if pages > 1}
-    <Pagination {pageStore} {pages} />
+    <Pagination page={$pageStore} {pages} />
   {/if}
 {/if}

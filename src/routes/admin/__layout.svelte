@@ -12,9 +12,8 @@ export const load: Load = async ({ url }) => {
 <script lang="ts">
 import { onMount } from "svelte";
 import { mdiOpenInNew } from "@mdi/js";
-import type { User } from "@supabase/supabase-js";
-import { page } from "$app/stores";
-import { supabase, auth } from "$lib/supabase/connection";
+import { page, session } from "$app/stores";
+import { supabase } from "$lib/supabase/client";
 import { pageProps, admin } from "$lib/store";
 import { conClasses } from "$lib/utils";
 import { ripple } from "$lib/directives";
@@ -24,7 +23,7 @@ import PageMessage from "$lib/components/page/message.svelte";
 import Icon from "$lib/components/common/icon.svelte";
 
 export let path: string;
-let user: User | null;
+let user = $session.user;
 let width = 0;
 let expanded = false;
 
@@ -33,9 +32,7 @@ $pageProps = {
 };
 
 onMount(async () => {
-  if ($auth) user = $auth?.user;
-
-  if (!user) {
+  if (!user && supabase) {
     return await supabase.auth.signIn(
       {
         provider: "github"
@@ -49,7 +46,7 @@ onMount(async () => {
 
 $: paths = [
   { name: "Blog", path: "/admin", value: $admin.numposts, label: "posts" },
-  { name: "Images", path: "/admin/images", value: $admin.numimages, label: "posts" },
+  { name: "Images", path: "/admin/images", value: $admin.numimages, label: "posts" }
   // { name: "Experience", path: "/admin/experience", value: $admin.numexperience, label: "items" },
   // { name: "Skills", path: "/admin/skills", value: $admin.numskills, label: "skills" },
   // { name: "Projects", path: "/admin/projects", value: $admin.numprojects, label: "projects" }
@@ -71,17 +68,17 @@ $: resources = [
   <div class="flex flex-col md:flex-row w-full gap-4">
     <div class="flex-1 md:max-w-[20rem] relative">
       <div class="static md:sticky top-20">
-        <Article>
+        <Article class="!shadow-lg">
           {#each paths as p}
             <a
               href={p.path}
               class={conClasses([
-                "relative section-border transition-[background] duration-500",
+                "relative section-divider transition-[background] duration-500",
                 "md:block last:border-b-0 md:hover:bg-theme-hover md:hover:bg-opacity-15",
                 path == p.path || expanded ? "block" : "hidden",
                 path == p.path &&
                   (width >= 768 || (width < 768 && expanded)) &&
-                  "bg-theme-hover bg-opacity-15 cursor-default"
+                  `bg-theme-hover ${$session.theme == "light" ? "bg-opacity-40" : "bg-opacity-15"} cursor-default`
               ])}
               on:click={() => (expanded = !expanded)}
               use:ripple={{ enabled: path !== p.path }}>
@@ -104,7 +101,7 @@ $: resources = [
             </a>
           {/each}
         </Article>
-        <Article class="hidden md:block">
+        <Article class="hidden md:block !shadow-lg">
           {#each resources as p}
             <a
               href={p.path}

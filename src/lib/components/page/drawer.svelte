@@ -2,10 +2,10 @@
 import { fade, scale } from "svelte/transition";
 import { page } from "$app/stores";
 import { drawer } from "$lib/store";
-import type { Item } from "$lib/types/hex-menu";
+import type { HexMenuItem } from "$lib/types";
 import HexMenu from "$lib/components/hex-menu/svg.svelte";
 
-export let menuItems: Item[];
+export let menuItems: HexMenuItem[];
 const duration = 300;
 
 $: menuItems = menuItems.map(item => {
