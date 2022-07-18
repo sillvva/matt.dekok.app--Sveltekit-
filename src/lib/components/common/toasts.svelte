@@ -19,14 +19,14 @@ function toastClass(type: string) {
 </script>
 
 <div class="fixed top-0 left-1/2 -translate-x-1/2 z-10 m-4 w-full max-w-lg">
-  {#each $toasts as toast, t}
+  {#each $toasts as toast (toast.id)}
     <div class="alert {toastClass(toast.type)} shadow-lg mb-3" in:slide out:slide>
       <div>
         <Icon path={toast.type === "success" ? mdiCheckCircle : mdiAlertCircle} />
         <span>{toast.message}</span>
       </div>
       <div class="flex-none">
-        <button class="btn btn-sm btn-ghost" on:click={() => ($toasts = $toasts.filter((fToast, fT) => fT !== t))}>Close</button>
+        <button class="btn btn-sm btn-ghost" on:click={() => toasts.remove(toast.id)}>Close</button>
       </div>
     </div>
   {/each}
