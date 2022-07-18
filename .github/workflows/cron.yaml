@@ -9,4 +9,4 @@ jobs:
       - name: Call API route to prevent Supabase pausing
         run: |
           curl --request GET \
-          --url 'https://sveletekit.dekok.app/trpc/posts:get'
+          --url 'https://sveltekit.dekok.app/trpc/posts:get'
