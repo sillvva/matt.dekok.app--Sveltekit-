@@ -11,13 +11,14 @@ function toastClass(type: string) {
     return "alert-danger";
   } else if (type === "info") {
     return "alert-info";
-  } else {
+  } else if (type === "warning") {
     return "alert-warning";
   }
+  return "";
 }
 </script>
 
-<div class="fixed top-0 left-1/2 -translate-x-1/2 z-10 m-4 w-full sm:w-2/3 lg:1/2">
+<div class="fixed top-0 left-1/2 -translate-x-1/2 z-10 m-4 w-full max-w-lg">
   {#each $toasts as toast, t}
     <div class="alert {toastClass(toast.type)} shadow-lg mb-3" in:slide out:slide>
       <div>
