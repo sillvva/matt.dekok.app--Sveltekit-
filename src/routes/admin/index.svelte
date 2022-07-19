@@ -86,11 +86,11 @@ const uploadMutation = useMutation(
       loading = true;
     },
     onSuccess() {
-      if ($session.user) queryClient.invalidateQueries("posts");
+      queryClient.invalidateQueries("posts");
       toasts.add("success", "Post uploaded successfully");
     },
     onError(error: string) {
-      if ($session.user) queryClient.invalidateQueries("posts");
+      queryClient.invalidateQueries("posts");
       toasts.add("error", error);
     }
   }
@@ -113,11 +113,11 @@ const deleteMutation = useMutation(
       $admin.numposts = Math.max(1, numloaders - 1);
     },
     onSuccess() {
-      if ($session.user) queryClient.invalidateQueries("posts");
+      queryClient.invalidateQueries("posts");
       toasts.add("success", "Post deleted successfully");
     },
     onError(error: string) {
-      if ($session.user) queryClient.invalidateQueries("posts");
+      queryClient.invalidateQueries("posts");
       toasts.add("error", error);
     }
   }

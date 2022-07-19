@@ -92,11 +92,11 @@ const uploadMutation = useMutation(
       loading = true;
     },
     onSuccess() {
-      if ($session.user) queryClient.invalidateQueries("images");
+      queryClient.invalidateQueries("images");
       toasts.add("success", "Image uploaded successfully");
     },
     onError(error: string) {
-      if ($session.user) queryClient.invalidateQueries("images");
+      queryClient.invalidateQueries("images");
       toasts.add("error", error);
     }
   }
@@ -122,11 +122,11 @@ const deleteMutation = useMutation(
       loading = true;
     },
     onSuccess() {
-      if ($session.user) queryClient.invalidateQueries("images");
+      queryClient.invalidateQueries("images");
       toasts.add("success", "Image deleted successfully");
     },
     onError(error: string) {
-      if ($session.user) queryClient.invalidateQueries("images");
+      queryClient.invalidateQueries("images");
       toasts.add("error", error);
     }
   }
