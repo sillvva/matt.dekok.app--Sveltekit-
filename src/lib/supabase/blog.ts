@@ -3,14 +3,14 @@ import matter from "gray-matter";
 import { writeFileSync } from "fs";
 import { supabase } from "./client";
 import { getContentDir } from "./func";
-import type { PostData } from "../types";
+import prisma from "$lib/prisma";
 
 interface FetchOptions {
   getPosts?: boolean;
   page?: number;
   perpage?: number;
   query?: string;
-};
+}
 
 export async function fetchPosts(options: FetchOptions = {}) {
   if (!supabase) throw new Error("Supabase not initialized");
@@ -19,28 +19,34 @@ export async function fetchPosts(options: FetchOptions = {}) {
   let changes = 0;
   let added = 0;
   const upserted: string[] = [];
-  const removed: string[] = [];
+  const removed: number[] = [];
   const errors: { slug: string; error: any }[] = [];
 
   const { data: stgData } = await supabase.storage.from("blog").list();
   const contentList = (stgData || []).filter(post => post.name.endsWith(".md"));
-  let num = contentList.length;
 
-  let result: { data: PostData[] | null; count: number | null };
-  if (query) {
-    result = await supabase.rpc("search_posts", { keyword: query });
-    num = (result.data || []).length;
-  } else if (page && perpage)
-    result = await supabase
-      .from("blog")
-      .select("*")
-      .range((page - 1) * perpage, page * perpage - 1);
-  else result = await supabase.from("blog").select("*");
+  const posts = (
+    await prisma.blog.findMany({
+      where: query
+        ? {
+            OR: [
+              { title: { contains: query } },
+              { description: { contains: query } },
+              { tags: { array_contains: query } }
+            ]
+          }
+        : {},
+      ...(page && perpage ? { skip: (page - 1) * perpage, take: perpage } : {})
+    })
+  ).map(post => ({
+    ...post,
+    tags: (post.tags as string[]) || [],
+    id: Number(post.id)
+  }));
 
-  const posts = result.data || [];
+  const num = posts.length;
 
-  if (query || (page && perpage))
-    return { changes, upserted, removed, errors, posts, num };
+  if (query || (page && perpage)) return { changes, upserted, removed, errors, posts, num };
 
   for (const file of contentList) {
     const slug = file.name.slice(0, file.name.length - 3);
@@ -48,7 +54,7 @@ export async function fetchPosts(options: FetchOptions = {}) {
     const fsIndex = posts.findIndex(p => p.slug == slug);
     const fsItem = posts[fsIndex];
     if (!fsItem) added++;
-    if (!fsItem || !fsItem.created_at || file.updated_at > fsItem.updated_at) {
+    if (!fsItem || !fsItem.created_at || file.updated_at > fsItem.updated_at.toISOString()) {
       console.log(`Upserting: ${slug}`);
       upserted.push(slug);
       changes++;
@@ -86,7 +92,7 @@ export async function fetchPosts(options: FetchOptions = {}) {
     if (!storageFile) {
       console.log(`Removing: ${post.slug}`);
       posts.splice(pi, 1);
-      removed.push(post.slug);
+      removed.push(post.id);
       changes++;
     }
   });
@@ -96,19 +102,29 @@ export async function fetchPosts(options: FetchOptions = {}) {
   if (changes) {
     console.log("Storing metadata to Firestore");
     for (const post of posts.filter(p => !!upserted.find(a => a === p.slug))) {
-      const { error } = await supabase.from("blog").upsert(post);
-      if (error) errors.push({ slug: post.slug, error });
+      try {
+        await prisma.blog.upsert({
+          where: { id: post.id },
+          update: post,
+          create: post
+        });
+      } catch (err: any) {
+        errors.push({ slug: post.slug, error: err.message });
+      }
     }
-    for (const slug of removed) {
-      const { error } = await supabase.from("blog").delete().match({ slug });
-      if (error) errors.push({ slug, error });
+    for (const id of removed) {
+      try {
+        await prisma.blog.delete({ where: { id } });
+      } catch (err: any) {
+        errors.push({ slug: posts.find(p => p.id === id)?.slug || "", error: err.message });
+      }
     }
   } else console.log("No changes found");
 
   return {
     changes,
     upserted,
-    removed,
+    removed: removed.map(id => posts.find(p => p.id === id)?.slug || ""),
     errors,
     posts: getPosts ? posts : [],
     num: (num || 0) + added - removed.length

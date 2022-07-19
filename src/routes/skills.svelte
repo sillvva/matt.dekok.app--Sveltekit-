@@ -5,7 +5,7 @@ import Article from "$lib/components/page/article.svelte";
 import ArticleSection from "$lib/components/page/section.svelte";
 import Section from "$lib/components/rating/section.svelte";
 import Item from "$lib/components/rating/item.svelte";
-import type { SkillSection } from "./skills";
+import type { SkillCategory } from "./skills";
 import { metaTags } from "$lib/utils";
 
 $pageProps = {
@@ -14,7 +14,7 @@ $pageProps = {
   menu: true
 };
 
-export let skills: SkillSection[] = [];
+export let skills: SkillCategory[] = [];
 const cols = {
   sm: 12,
   md: 6,
@@ -44,7 +44,7 @@ $: metaProps = metaTags($pageProps, $page.url.origin, $page.url.pathname);
       the subject.
     </p>
   </ArticleSection>
-  {#each skills as section, i}
+  {#each skills as section}
     <Section name={section.name} columns={cols}>
       {#each section.skills as skill}
         <Item rating={skill} />

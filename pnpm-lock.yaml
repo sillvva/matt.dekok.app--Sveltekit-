@@ -2,6 +2,7 @@ lockfileVersion: 5.4
 
 specifiers:
   '@mdi/js': ^6.7.96
+  '@prisma/client': ^4.1.0
   '@supabase/auth-helpers-svelte': ^0.4.5
   '@supabase/auth-helpers-sveltekit': ^0.6.7
   '@supabase/supabase-js': ^1.35.4
@@ -27,6 +28,7 @@ specifiers:
   prettier: ^2.7.1
   prettier-plugin-svelte: ^2.7.0
   prettier-plugin-tailwindcss: ^0.1.11
+  prisma: ^4.1.0
   sass: ^1.53.0
   svelte: ^3.44.0
   svelte-check: ^2.7.1
@@ -42,6 +44,7 @@ specifiers:
   zod: ^3.17.3
 
 dependencies:
+  '@prisma/client': 4.1.0_prisma@4.1.0
   '@supabase/auth-helpers-svelte': 0.4.5
   '@supabase/auth-helpers-sveltekit': 0.6.7
   '@supabase/supabase-js': 1.35.4
@@ -53,13 +56,13 @@ dependencies:
   daisyui: 2.19.0_ugi4xkrfysqkt4c4y6hkyfj344
   gray-matter: 4.0.3
   svelte-preprocess: 4.10.7_yzgb7wkzq6wz6qgj3h2t2u7ppa
-  trpc-sveltekit: 2.1.1_lixvnzax6l3qloz7lq7zlubohy
+  trpc-sveltekit: 2.1.1_nvi7xgub3akn42lvnhs4uusrqm
   zod: 3.17.3
 
 devDependencies:
   '@mdi/js': 6.7.96
-  '@sveltejs/adapter-auto': 1.0.0-next.60
-  '@sveltejs/kit': 1.0.0-next.375_svelte@3.48.0+vite@3.0.0
+  '@sveltejs/adapter-auto': 1.0.0-next.62
+  '@sveltejs/kit': 1.0.0-next.379_svelte@3.48.0+vite@3.0.0
   '@types/cookie': 0.5.1
   '@types/mime-types': 2.1.1
   '@typescript-eslint/eslint-plugin': 5.29.0_qqmbkyiaixvppdwswpytuf2hgm
@@ -73,6 +76,7 @@ devDependencies:
   prettier: 2.7.1
   prettier-plugin-svelte: 2.7.0_nakrehnrzdf7fdea5k3a4dfy4m
   prettier-plugin-tailwindcss: 0.1.11_prettier@2.7.1
+  prisma: 4.1.0
   sass: 1.53.0
   svelte: 3.48.0
   svelte-check: 2.7.2_s4vji4hbm6754nioyrbgjz6o3e
@@ -189,6 +193,28 @@ packages:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.13.0
 
+  /@prisma/client/4.1.0_prisma@4.1.0:
+    resolution: {integrity: sha512-MvfPGAd42vHTiCYxwS6N+2U3F+ukoJ48D2QRnX1zSPJHBkh1CBtshl75daKzvVfgQwSouzSQeugKDej5di+E/g==}
+    engines: {node: '>=14.17'}
+    requiresBuild: true
+    peerDependencies:
+      prisma: '*'
+    peerDependenciesMeta:
+      prisma:
+        optional: true
+    dependencies:
+      '@prisma/engines-version': 4.1.0-48.8d8414deb360336e4698a65aa45a1fbaf1ce13d8
+      prisma: 4.1.0
+    dev: false
+
+  /@prisma/engines-version/4.1.0-48.8d8414deb360336e4698a65aa45a1fbaf1ce13d8:
+    resolution: {integrity: sha512-cRRJwpHFGFJZvtHbY3GZjMffNBEjjZk68ztn+S2hDgPCGB4H66IK26roK94GJxBodSehwRJ0wGyebC2GoIH1JQ==}
+    dev: false
+
+  /@prisma/engines/4.1.0:
+    resolution: {integrity: sha512-quqHXD3P83NBLVtRlts4SgKHmqgA8GMiyDTJ7af03Wg0gl6F5t65mBYvIuwmD+52vHm42JtIsp/fAO9YIV0JBA==}
+    requiresBuild: true
+
   /@rollup/pluginutils/4.2.1:
     resolution: {integrity: sha512-iKnFXr7NkdZAIHiIWE+BX5ULi/ucVFYWD6TbAV+rZctiRTY2PL6tsIKhoIOaoskiWAkgu+VsbXgUVDNLHf+InQ==}
     engines: {node: '>= 8.0.0'}
@@ -277,12 +303,12 @@ packages:
       - supports-color
     dev: false
 
-  /@sveltejs/adapter-auto/1.0.0-next.60:
-    resolution: {integrity: sha512-qi9O1syDSAJBIsjlWSgdxS8zAxW5XWhm3AYIhVqFhVXV+3HGW1vR/BzmGr1Vtz/iiCN8kEXh/RozFgk5Ldi5uw==}
+  /@sveltejs/adapter-auto/1.0.0-next.62:
+    resolution: {integrity: sha512-+yZZ3SzjBQEXXuIs12DfqgRmV9CQSCcEnYvaQ4R2LFyAxUOiGUJt2DtRJIELF+2dwHVxnvrR2CssqaNJ7J9bAA==}
     dependencies:
       '@sveltejs/adapter-cloudflare': 1.0.0-next.29
       '@sveltejs/adapter-netlify': 1.0.0-next.69
-      '@sveltejs/adapter-vercel': 1.0.0-next.62
+      '@sveltejs/adapter-vercel': 1.0.0-next.64
     transitivePeerDependencies:
       - encoding
       - supports-color
@@ -305,8 +331,8 @@ packages:
       tiny-glob: 0.2.9
     dev: true
 
-  /@sveltejs/adapter-vercel/1.0.0-next.62:
-    resolution: {integrity: sha512-4wzKUG5BJBg3llnxOEPBx9d4Alit4uHO+VDcePoFA/lWzF0OElPYuDKUGe1wZIfD+s2P+YcbWVqrjxEDdseMmA==}
+  /@sveltejs/adapter-vercel/1.0.0-next.64:
+    resolution: {integrity: sha512-UpDQAm3upsKsA6fca3+lOntHaX77EnL0OBYewOycdicJqlnoLq/DDr44xNeSjtW95Y8CVqALMxkPS6oMPipAYQ==}
     dependencies:
       '@vercel/nft': 0.20.1
       esbuild: 0.14.49
@@ -315,8 +341,8 @@ packages:
       - supports-color
     dev: true
 
-  /@sveltejs/kit/1.0.0-next.375_svelte@3.48.0+vite@3.0.0:
-    resolution: {integrity: sha512-9+gKm97TW/xIz6DfWOqdsIwGY4yckUkmMFlsJmEGkjcTy60Q6ZCfrQhMULzL/fILLydF0wZcD/fWE/urAbp2nw==}
+  /@sveltejs/kit/1.0.0-next.379_svelte@3.48.0+vite@3.0.0:
+    resolution: {integrity: sha512-mhy0GW4KUJ3tq6mDMF0fs/B6Nh2oJM6ZAA2fwilTOdqzhKD3f2WJLH9RXx1Z5/8eodFeQsURTPRn5a0r3QAZew==}
     engines: {node: '>=16.9'}
     hasBin: true
     peerDependencies:
@@ -2128,6 +2154,14 @@ packages:
     hasBin: true
     dev: true
 
+  /prisma/4.1.0:
+    resolution: {integrity: sha512-iwqpAT6In1uvMSwQAM3PqmaBdhh2OaQ/2t+n3RjpW4vAKP3R7E1T34FZUU4zGOWtMWm5dt0sPThQkT/h87r6gw==}
+    engines: {node: '>=14.17'}
+    hasBin: true
+    requiresBuild: true
+    dependencies:
+      '@prisma/engines': 4.1.0
+
   /pump/3.0.0:
     resolution: {integrity: sha512-LwZy+p3SFs1Pytd/jYct4wpv49HiYCqd9Rlc5ZVdk0V+8Yzv6jR5Blk3TRmPL1ft69TxP0IMZGJ+WPFU2BFhww==}
     dependencies:
@@ -2616,13 +2650,13 @@ packages:
   /tr46/0.0.3:
     resolution: {integrity: sha512-N3WMsuqV66lT30CrXNbEjx4GEwlow3v6rr4mCcv6prnfwhS01rkgyFdjPNBYd9br7LpXV1+Emh01fHnq2Gdgrw==}
 
-  /trpc-sveltekit/2.1.1_lixvnzax6l3qloz7lq7zlubohy:
+  /trpc-sveltekit/2.1.1_nvi7xgub3akn42lvnhs4uusrqm:
     resolution: {integrity: sha512-iiMAkaVl9V4sdfmGkafcSF8MwaTIG5lV8rZjYGDixgbWJ6iPc6hg755CP04tAMDeuuOXYJCIWd2m8YnWSpFH6g==}
     peerDependencies:
       '@sveltejs/kit': ^1.0.0-next
       '@trpc/server': ^9.25.3
     dependencies:
-      '@sveltejs/kit': 1.0.0-next.375_svelte@3.48.0+vite@3.0.0
+      '@sveltejs/kit': 1.0.0-next.379_svelte@3.48.0+vite@3.0.0
       '@trpc/server': 9.25.3
     dev: false
 

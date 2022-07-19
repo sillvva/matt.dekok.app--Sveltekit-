@@ -32,14 +32,13 @@ $: metaProps = metaTags($pageProps, $page.url.origin, $page.url.pathname);
   <div class="p-0 md:p-2 basis-full 2xl:basis-11/12">
     <div class="flex flex-wrap -m-2 justify-center md:justify-start">
       {#each projects as project}
-        <div
-          class="p-1 px-0 sm:p-3 basis-full sm:basis-9/12 md:basis-6/12 xl:basis-4/12 aspect-video">
+        <div class="p-1 px-0 sm:p-3 basis-full sm:basis-9/12 md:basis-6/12 xl:basis-4/12 aspect-video">
           <GalleryItem
             image={project.image}
             title={project.title}
             subtitle={project.subtitle}
-            description={project.description}
-            link={project.link} />
+            description={project.description || ""}
+            link={project.link || ""} />
         </div>
       {/each}
     </div>

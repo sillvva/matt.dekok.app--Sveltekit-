@@ -1,19 +1,36 @@
 import type { RequestHandler } from "./__types/skills";
 import { supabase } from "$lib/supabase/client";
-import type { SkillSection } from "$lib/types";
+import prisma from "$lib/prisma";
+import type { skills, skill_categories } from "@prisma/client";
 
+interface Skill extends Omit<Omit<skills, "id">, "category_id"> {
+  id: number;
+  category_id: number;
+}
 
-export const get: RequestHandler<{ skills: SkillSection[] }> = async () => {
+export interface SkillCategory extends Omit<skill_categories & { skills: Skill[] }, "id"> {
+  id: number;
+}
+
+export const GET: RequestHandler<{ skills: SkillCategory[] }> = async () => {
   if (!supabase) throw new Error("Supabase not initialized");
-  
-  const { data } = await supabase
-    .from("skill_categories")
-    .select("name, skills ( name, rating ), sort");
-  let skills: SkillSection[] =
-    data?.sort((a: SkillSection, b: SkillSection) => (a.sort > b.sort ? 1 : -1)) || [];
-  skills = skills.map(section => ({
-    ...section,
-    skills: section.skills.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1))
+
+  const data = await prisma.skill_categories.findMany({
+    include: {
+      skills: true
+    }
+  });
+
+  const skills: SkillCategory[] = data.map(category => ({
+    ...category,
+    id: Number(category.id),
+    skills: category.skills
+      .map(skill => ({
+        ...skill,
+        id: Number(skill.id),
+        category_id: Number(category.id)
+      }))
+      .sort((a, b) => (a.name.toLocaleLowerCase() > b.name.toLocaleLowerCase() ? -1 : 1))
   }));
 
   return {

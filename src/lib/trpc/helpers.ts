@@ -1,24 +1,21 @@
-import type { Admin, Image } from "$lib/types";
+import type { Image } from "$lib/types";
 import { supabase } from "$lib/supabase/client";
+import prisma from '$lib/prisma';
 
-export const getResult = async (select: string | null, getImages?: boolean): Promise<Admin> => {
+export const getResult = async (select: string | null, getImages?: boolean) => {
   if (!supabase) throw new Error("Supabase not initialized");
 
-  const { data: posts, count: numposts } = await supabase
-    .from("blog")
-    .select("*", { count: "exact", head: select === "posts" ? false : true });
+  const numposts = await prisma.blog.count();
+  const posts = select === "posts" ? await prisma.blog.findMany() : [];
 
-  const { data: experience, count: numexperience } = await supabase
-    .from("experience")
-    .select("*", { count: "exact", head: select === "experience" ? false : true });
+  const numexperience = await prisma.experience.count();
+  const experience = select === "experience" ? await prisma.experience.findMany() : [];
 
-  const { data: skills, count: numskills } = await supabase
-    .from("skills")
-    .select("*", { count: "exact", head: select === "skills" ? false : true });
+  const numskills = await prisma.skills.count();
+  const skills = select === "skills" ? await prisma.skills.findMany() : [];
 
-  const { data: projects, count: numprojects } = await supabase
-    .from("projects")
-    .select("*", { count: "exact", head: select === "projects" ? false : true });
+  const numprojects = await prisma.projects.count();
+  const projects = select === "projects" ? await prisma.projects.findMany() : [];
 
   let images: Image[] = [];
   if (select === "images" || getImages) {
@@ -35,15 +32,15 @@ export const getResult = async (select: string | null, getImages?: boolean): Pro
 
   return {
     success: true,
-    numposts: numposts || 0,
-    posts: posts || [],
+    numposts,
+    posts: posts.map(post => ({ ...post, id: Number(post.id), tags: (post.tags as string[]) })),
     numimages: images.length,
     images: select === "images" ? images : [],
-    numexperience: numexperience || 0,
-    experience: experience || [],
-    numskills: numskills || 0,
-    skills: skills || [],
-    numprojects: numprojects || 0,
-    projects: projects || []
+    numexperience,
+    experience: experience.map(exp => ({ ...exp, id: Number(exp.id) })),
+    numskills,
+    skills: skills.map(skill => ({ ...skill, id: Number(skill.id) })),
+    numprojects,
+    projects: projects.map(project => ({ ...project, id: Number(project.id) })),
   };
 };

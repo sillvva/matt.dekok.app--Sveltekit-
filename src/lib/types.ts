@@ -1,25 +1,3 @@
-export interface PostProps {
-  slug: string;
-  title: string;
-  date: string;
-  dateISO?: string;
-  updated?: string;
-  updatedISO?: string;
-  description?: string;
-  tags: string[];
-  image: string;
-  link?: string;
-  full?: boolean;
-};
-
-export interface PostData extends PostProps {
-  id: number;
-  name: string;
-  created_at: string;
-  updated_at: string;
-  match: number;
-};
-
 export interface HexMenuItem {
   link: string;
   label: string;
@@ -49,21 +27,6 @@ export interface Image {
   }
 }
 
-export interface Admin {
-  success: boolean;
-  error?: string;
-  numposts?: number;
-  posts?: PostData[];
-  numimages?: number;
-  images?: Image[];
-  numexperience?: number;
-  experience?: any[];
-  numskills?: number;
-  skills?: Rating[];
-  numprojects?: number;
-  projects?: any[];
-};
-
 export interface PageQuery {
   page: number;
   query: string;
@@ -71,47 +34,15 @@ export interface PageQuery {
 
 export interface PageProps {
   title?: string;
-  description?: string;
+  description?: string | null;
   bodyClass?: string;
   backTo?: boolean | string;
   menu?: boolean;
   articleMeta?: {
-    published_date?: string;
-    modified_date?: string;
+    published_date?: string | null;
+    modified_date?: string | null;
   };
   image?: string;
-}
-
-export interface Project {
-  title: string;
-  subtitle: string;
-  description: string;
-  image: string;
-  link?: string;
-  created_at: string;
-};
-
-export interface SkillSection {
-  name: string;
-  skills: Rating[];
-  sort: number;
-};
-
-export interface ExperienceItem {
-  name?: string;
-  nameLink?: string;
-  image: string;
-  h4: string;
-  h4Link?: string;
-  h5: string;
-  h5Link?: string;
-  created_at: string;
-}
-
-export interface ExperienceSection {
-  name: string;
-  experience: ExperienceItem[];
-  sort: number;
 }
 
 export type ToastType = "success" | "error" | "warning" | "info";

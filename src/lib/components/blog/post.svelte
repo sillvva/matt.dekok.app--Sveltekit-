@@ -1,10 +1,10 @@
 <script lang="ts">
 import { ripple } from "$lib/directives";
 import Image from "$lib/components/common/image.svelte";
-import type { PostData } from "$lib/types";
+import type { blog } from "@prisma/client";
 import { conClasses } from "$lib/utils";
 
-export let post: PostData;
+export let post: blog;
 let active = false;
 </script>
 

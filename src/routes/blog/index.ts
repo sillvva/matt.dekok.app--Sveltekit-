@@ -54,7 +54,7 @@ export const getPosts = async (options?: PostFetchOptions) => {
   };
 };
 
-export const get: RequestHandler<typeof getPosts> = async ({ url }) => {
+export const GET: RequestHandler<typeof getPosts> = async ({ url }) => {
   const page = parseInt(url.searchParams.get("page") || "1");
   const limit = parseInt(url.searchParams.get("limit") || itemsPerPage.toString());
   const query = url.searchParams.get("s") || "";

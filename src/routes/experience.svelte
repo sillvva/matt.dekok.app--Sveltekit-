@@ -5,7 +5,7 @@ import Article from "$lib/components/page/article.svelte";
 import Section from "$lib/components/page/section.svelte";
 import Header from "$lib/components/page/section-header.svelte";
 import SectionItems from "$lib/components/page/section-items.svelte";
-import type { ExperienceSection } from "./experience";
+import type { ExperienceCategory } from "./experience";
 import { metaTags } from "$lib/utils";
 
 $pageProps = {
@@ -14,7 +14,7 @@ $pageProps = {
   menu: true
 };
 
-export let experience: ExperienceSection[];
+export let experience: ExperienceCategory[];
 
 $: metaProps = metaTags($pageProps, $page.url.origin, $page.url.pathname);
 </script>

@@ -4,7 +4,7 @@ import SvelteMarkdown from "svelte-markdown";
 import Article from "$lib/components/page/article.svelte";
 import Section from "$lib/components/page/section.svelte";
 import Image from "$lib/components/common/image.svelte";
-import type { PostProps } from "$lib/types";
+import type { blog } from "@prisma/client";
 import { pageProps } from "$lib/store";
 import { metaTags } from "$lib/utils";
 
@@ -18,17 +18,18 @@ import html from "$lib/components/blog/renderers/html.svelte";
 import list from "$lib/components/blog/renderers/list.svelte";
 import listitem from "$lib/components/blog/renderers/listitem.svelte";
 
-export let data: PostProps;
+export let data: blog;
 export let content: string;
+let tags = data.tags as string[] || [];
 
 $pageProps = {
   title: data.title,
-  description: data?.description,
-  image: data?.image || "",
+  description: data.description,
+  image: data.image,
   bodyClass: "page-body",
   articleMeta: {
-    published_date: data?.dateISO,
-    modified_date: data?.updatedISO
+    published_date: new Date(data.date).toISOString(),
+    modified_date: data.updated && new Date(data.updated).toISOString(),
   },
   menu: true
 };
@@ -78,10 +79,10 @@ $: metaProps = metaTags($pageProps, $page.url.origin, $page.url.pathname);
     <div class="mb-4">
       <SvelteMarkdown source={content} {renderers} />
     </div>
-    {#if !!(data.tags || []).length}
+    {#if !!tags.length}
       <p class="mt-4 mb-2">Tags:</p>
       <div class="flex flex-wrap gap-2">
-        {#each data.tags as tag}
+        {#each tags as tag}
           <span class="rounded-full text-theme-base py-1 px-3 bg-theme-body">
             {tag}
           </span>
