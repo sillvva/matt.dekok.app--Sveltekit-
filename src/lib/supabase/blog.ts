@@ -40,8 +40,7 @@ export async function fetchPosts(options: FetchOptions = {}) {
     })
   ).map(post => ({
     ...post,
-    tags: (post.tags as string[]) || [],
-    id: Number(post.id)
+    tags: (post.tags as string[]) || []
   }));
 
   const num = posts.length;

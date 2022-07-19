@@ -33,14 +33,14 @@ export const getResult = async (select: string | null, getImages?: boolean) => {
   return {
     success: true,
     numposts,
-    posts: posts.map(post => ({ ...post, id: Number(post.id), tags: (post.tags as string[]) })),
+    posts: posts.map(post => ({ ...post, tags: (post.tags as string[]) })),
     numimages: images.length,
     images: select === "images" ? images : [],
     numexperience,
-    experience: experience.map(exp => ({ ...exp, id: Number(exp.id) })),
+    experience,
     numskills,
-    skills: skills.map(skill => ({ ...skill, id: Number(skill.id) })),
+    skills,
     numprojects,
-    projects: projects.map(project => ({ ...project, id: Number(project.id) })),
+    projects,
   };
 };

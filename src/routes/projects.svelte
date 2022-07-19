@@ -2,7 +2,7 @@
 import { page } from "$app/stores";
 import { pageProps } from "$lib/store";
 import GalleryItem from "$lib/components/gallery/item.svelte";
-import type { Project } from "./projects";
+import type { projects } from "@prisma/client";
 import { metaTags } from "$lib/utils";
 
 $pageProps = {
@@ -11,7 +11,7 @@ $pageProps = {
   menu: true
 };
 
-export let projects: Project[] = [];
+export let projects: projects[] = [];
 
 $: metaProps = metaTags($pageProps, $page.url.origin, $page.url.pathname);
 </script>
