@@ -1,19 +1,6 @@
 import type { Admin, Image } from "$lib/types";
 import { supabase } from "$lib/supabase/client";
 
-export const getError = async (error: Error | string, code = 500) => {
-  return {
-    status: code,
-    body: {
-      success: false,
-      error: error.toString()
-    },
-    headers: {
-      "Cache-Control": "no-cache"
-    }
-  };
-};
-
 export const getResult = async (select: string | null, getImages?: boolean): Promise<Admin> => {
   if (!supabase) throw new Error("Supabase not initialized");
 

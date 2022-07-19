@@ -1,7 +1,7 @@
 import path from "path";
 import { fetchPosts } from "$lib/supabase/blog";
 import { authMiddleware, createRouter } from "../context";
-import { getError, getResult } from "../helpers";
+import { getResult } from "../helpers";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 
@@ -30,8 +30,8 @@ export const postsRouter = createRouter()
       const buffer = Buffer.from(file, "base64");
       const extname = path.extname(filename || "");
 
-      if (extname !== ".md") return (await getError("Invalid file extension")).body;
-      if (!file || !filename) return (await getError("No file")).body;
+      if (extname !== ".md") throw new TRPCError({ message: "Invalid file extension", code: "INTERNAL_SERVER_ERROR" });
+      if (!file || !filename) throw new TRPCError({ message: "No file", code: "INTERNAL_SERVER_ERROR" });
       
       const bucket = "blog";
       const { error } = await supabase.storage.from(bucket).upload(filename, buffer, {
