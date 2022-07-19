@@ -32,11 +32,14 @@ onMount(async () => {
   else if (language == "yaml" || language == "yml")
     highlight = await import("svelte-highlight/languages/yaml").then(c => c.default);
   else if (language == "markdown") highlight = await import("svelte-highlight/languages/markdown").then(c => c.default);
-  else if (language == "bash") highlight = await import("svelte-highlight/languages/bash").then(c => c.default);
+  else if (language == "bash" || language == "npm")
+    highlight = await import("svelte-highlight/languages/bash").then(c => c.default);
   else if (language == "svelte" || language == "html" || language == "env")
     SyntaxHighlighter = await import("svelte-highlight").then(c => c.HighlightSvelte);
   if (highlight && !SyntaxHighlighter) SyntaxHighlighter = await import("svelte-highlight").then(c => c.default);
 });
+
+let npmTabs = "npm";
 </script>
 
 <svelte:head>
@@ -49,6 +52,46 @@ onMount(async () => {
 
 {#if CustomEmbed}
   <svelte:component this={CustomEmbed} {...props} />
+{:else if language === "npm"}
+  <p class="mb-4">
+    Using <a href="https://npmjs.org" target="_blank" rel="noreferrer noopener">npm</a>,
+    <a href="https://classic.yarnpkg.com" target="_blank" rel="noreferrer noopener">yarn</a>, or
+    <a href="https://pnpm.js.org" target="_blank" rel="noreferrer noopener">pnpm</a>, you can install the packages with:
+  </p>
+  <div class="code">
+    <div class="tabs tabs-boxed">
+      <button
+        on:click={() => (npmTabs = "npm")}
+        class="tab"
+        class:tab-active={npmTabs === "npm"}
+        class:!bg-theme-link={npmTabs === "npm"}>npm</button>
+      <button
+        on:click={() => (npmTabs = "yarn")}
+        class="tab"
+        class:tab-active={npmTabs === "yarn"}
+        class:!bg-theme-link={npmTabs === "yarn"}>yarn</button>
+      <button
+        on:click={() => (npmTabs = "pnpm")}
+        class="tab"
+        class:tab-active={npmTabs === "pnpm"}
+        class:!bg-theme-link={npmTabs === "pnpm"}>pnpm</button>
+    </div>
+    {#if npmTabs === "npm"}
+      <svelte:component this={SyntaxHighlighter} language={highlight} code={text} />
+    {/if}
+    {#if npmTabs === "yarn"}
+      <svelte:component
+        this={SyntaxHighlighter}
+        language={highlight}
+        code={text.replaceAll("npm install", "yarn add")} />
+    {/if}
+    {#if npmTabs === "pnpm"}
+      <svelte:component
+        this={SyntaxHighlighter}
+        language={highlight}
+        code={text.replaceAll("npm install", "pnpm add")} />
+    {/if}
+  </div>
 {:else if SyntaxHighlighter}
   <div class="code">
     {#if filename}<span class="filename">{filename}</span>{/if}

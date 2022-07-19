@@ -114,7 +114,10 @@ export interface ExperienceSection {
   sort: number;
 }
 
+export type ToastType = "success" | "error" | "warning" | "info";
+
 export interface Toast {
-  type: "success" | "error" | "warning" | "info";
+  id: number;
+  type: ToastType;
   message: string;
 }

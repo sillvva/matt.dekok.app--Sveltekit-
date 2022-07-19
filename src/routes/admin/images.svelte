@@ -37,7 +37,7 @@ const getResult = useQuery(
   "images",
   async () => {
     loading = true;
-    $toasts = [];
+    toasts.reset();
 
     if (!$session.user) throw new Error("Not logged in");
 
@@ -55,7 +55,7 @@ const getResult = useQuery(
     cacheTime: 30 * 60 * 1000,
     staleTime: 15 * 60 * 1000,
     onSuccess(result) {
-      if (!result) return ($toasts = [...$toasts, { type: "error", message: "Error loading images" }]);
+      if (!result) return toasts.add("error", "Error loading images");
       if (!$admin.success) admin.set(result);
       else
         admin.update(data => {
@@ -66,7 +66,7 @@ const getResult = useQuery(
       loading = false;
     },
     onError(error: string) {
-      $toasts = [...$toasts, { type: "error", message: error }];
+      toasts.add("error", error);
       loading = false;
     }
   }
@@ -93,11 +93,11 @@ const uploadMutation = useMutation(
     },
     onSuccess() {
       if ($session.user) queryClient.invalidateQueries("images");
-      $toasts = [...$toasts, { type: "success", message: "Image uploaded successfully" }];
+      toasts.add("success", "Image uploaded successfully");
     },
     onError(error: string) {
       if ($session.user) queryClient.invalidateQueries("images");
-      $toasts = [...$toasts, { type: "error", message: error }];
+      toasts.add("error", error);
     }
   }
 );
@@ -123,11 +123,11 @@ const deleteMutation = useMutation(
     },
     onSuccess() {
       if ($session.user) queryClient.invalidateQueries("images");
-      $toasts = [...$toasts, { type: "success", message: "Image deleted successfully" }];
+      toasts.add("success", "Image deleted successfully");
     },
     onError(error: string) {
       if ($session.user) queryClient.invalidateQueries("images");
-      $toasts = [...$toasts, { type: "error", message: error }];
+      toasts.add("error", error);
     }
   }
 );

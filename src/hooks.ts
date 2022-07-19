@@ -9,7 +9,8 @@ import type { Theme } from "$lib/utils";
 
 export const handle: Handle = sequence(
   ...handleAuth({
-    logout: { returnTo: "/" }
+    logout: { returnTo: "/" },
+    tokenRefreshMargin: 60 * 10 // 10 minutes
   }),
   async ({ event, resolve }) => {
     const cookies = parse(event.request.headers?.get("cookie") || "");
