@@ -4,12 +4,10 @@ import { TRPCError } from "@trpc/server";
 import { authMiddleware, createRouter } from "../context";
 import { getResult } from "../helpers";
 
-const select = "images";
-
 export const imagesRouter = createRouter()
   .query("get", {
     async resolve() {
-      return await getResult(select);
+      return await getResult("images");
     }
   })
   .middleware(authMiddleware)
@@ -22,17 +20,14 @@ export const imagesRouter = createRouter()
     async resolve({ input: { file, filename, upsert }, ctx: { locals } }) {
       const supabase = locals.serverClient;
 
-      const buffer = Buffer.from(file, "base64");
-      const extname = path.extname(filename || "");
-
-      let bucket = "";
-      if (extname === ".png" || extname === ".jpg" || extname === ".jpeg" || extname === ".svg" || extname === ".webp")
-        bucket = "images";
-
       if (!file || !filename) throw new TRPCError({ message: "No file", code: "BAD_REQUEST" });
-      if (!extname || !bucket) throw new TRPCError({ message: "Invalid file extension", code: "BAD_REQUEST" });
 
-      const { error } = await supabase.storage.from(bucket).upload(filename, buffer, {
+      const extname = path.extname(filename || "");
+      if (![".png", ".jpg", ".jpeg", ".svg", ".webp"].includes(extname))
+        throw new TRPCError({ message: "Invalid file extension", code: "BAD_REQUEST" });
+
+      const buffer = Buffer.from(file, "base64");
+      const { error } = await supabase.storage.from("images").upload(filename, buffer, {
         upsert
       });
 

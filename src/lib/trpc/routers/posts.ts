@@ -5,8 +5,6 @@ import { getResult } from "../helpers";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 
-const select = "posts";
-
 export const postsRouter = createRouter()
   .query("get", {
     input: z
@@ -15,7 +13,7 @@ export const postsRouter = createRouter()
       })
       .nullish(),
     async resolve({ input }) {
-      return await getResult(select, !!input?.images);
+      return await getResult("posts", !!input?.images);
     }
   })
   .middleware(authMiddleware)
@@ -27,14 +25,13 @@ export const postsRouter = createRouter()
     async resolve({ input: { file, filename }, ctx: { locals } }) {
       const supabase = locals.serverClient;
 
-      const buffer = Buffer.from(file, "base64");
-      const extname = path.extname(filename || "");
-
-      if (extname !== ".md") throw new TRPCError({ message: "Invalid file extension", code: "INTERNAL_SERVER_ERROR" });
       if (!file || !filename) throw new TRPCError({ message: "No file", code: "INTERNAL_SERVER_ERROR" });
-      
-      const bucket = "blog";
-      const { error } = await supabase.storage.from(bucket).upload(filename, buffer, {
+
+      const extname = path.extname(filename || "");
+      if (extname !== ".md") throw new TRPCError({ message: "Invalid file extension", code: "INTERNAL_SERVER_ERROR" });
+
+      const buffer = Buffer.from(file, "base64");
+      const { error } = await supabase.storage.from("blog").upload(filename, buffer, {
         contentType: "text/markdown",
         upsert: true
       });
