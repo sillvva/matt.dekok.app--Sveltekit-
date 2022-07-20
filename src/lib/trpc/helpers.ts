@@ -1,6 +1,5 @@
-import type { Image } from "$lib/types";
 import { supabase } from "$lib/supabase/client";
-import prisma from '$lib/prisma';
+import prisma from "$lib/prisma";
 
 export const getResult = async (select: string | null, getImages?: boolean) => {
   if (!supabase) throw new Error("Supabase not initialized");
@@ -17,7 +16,19 @@ export const getResult = async (select: string | null, getImages?: boolean) => {
   const numprojects = await prisma.projects.count();
   const projects = select === "projects" ? await prisma.projects.findMany() : [];
 
-  let images: Image[] = [];
+  let images: {
+    id: string;
+    name: string;
+    created_at: string;
+    updated_at: string;
+    last_accessed_at: string;
+    copied?: boolean;
+    metadata: {
+      size?: number;
+      mimetype?: string;
+      cacheControl?: string;
+    };
+  }[] = [];
   if (select === "images" || getImages) {
     const { data: imageData } = await supabase.storage.from("images").list();
     images = (imageData || []).filter(
@@ -33,7 +44,7 @@ export const getResult = async (select: string | null, getImages?: boolean) => {
   return {
     success: true,
     numposts,
-    posts: posts.map(post => ({ ...post, tags: (post.tags as string[]) })),
+    posts: posts.map(post => ({ ...post, tags: post.tags as string[] })),
     numimages: images.length,
     images: select === "images" ? images : [],
     numexperience,
@@ -41,6 +52,6 @@ export const getResult = async (select: string | null, getImages?: boolean) => {
     numskills,
     skills,
     numprojects,
-    projects,
+    projects
   };
 };

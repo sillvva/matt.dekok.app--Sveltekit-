@@ -1,6 +1,6 @@
 import { writable } from "svelte/store";
 import type { InferQueryOutput } from "./trpc/client";
-import type { Toast, PageProps, ToastType } from "./types";
+import type { PageProps } from "./types";
 
 export const pageProps = writable<PageProps>({});
 
@@ -23,22 +23,32 @@ export const admin = writable<InferQueryOutput<"posts:get">>({
 export const pageStore = writable(1);
 export const queryStore = writable("");
 
+export type ToastType = "success" | "error" | "warning" | "info";
 export const toasts = (() => {
-  const { update, set, subscribe } = writable<Toast[]>([]);
+  const { update, set, subscribe } = writable<
+    {
+      id: number;
+      type: ToastType;
+      message: string;
+    }[]
+  >([]);
   const remove = (id: number) => update(t => t.filter(t => t.id !== id));
   const reset = () => set([]);
   const add = (type: ToastType, message: string, timer = 5000) =>
     update(t => {
-      const toast: Toast = {
-        id: Math.random(),
-        type,
-        message
-      };
+      const id = Math.random();
       if (timer)
         setTimeout(() => {
-          remove(toast.id || 0);
+          remove(id || 0);
         }, timer);
-      return [...t, toast];
+      return [
+        ...t,
+        {
+          id: Math.random(),
+          type,
+          message
+        }
+      ];
     });
 
   return {

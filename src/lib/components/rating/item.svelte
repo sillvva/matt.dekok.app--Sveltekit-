@@ -1,8 +1,10 @@
 <script lang="ts">
-import type { Rating } from "$lib/types";
 import Stars from "./stars.svelte";
 
-export let rating: Rating;
+export let rating: {
+  name: string;
+  rating: number;
+};
 </script>
 
 <div class="basis-full md:basis-6/12 xl:basis-4/12 p-3 grow-0">
