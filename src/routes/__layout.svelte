@@ -50,21 +50,21 @@ pageStore.subscribe(p => {
   if ($queryStore === "") search.delete("q");
   else search.set("q", $queryStore);
 
-  const q = search.toString();
-  history.pushState({}, "", `${$page.url.pathname}${q ? `?${q}` : ""}`);
+  const query = search.toString();
+  history.pushState({}, "", `${$page.url.pathname}${query ? `?${query}` : ""}`);
 });
 
-queryStore.subscribe(query => {
+queryStore.subscribe(q => {
   if (!browser) return;
   const search = new URLSearchParams($page.url.search);
 
   if ($pageStore <= 1) search.delete("page");
   else search.set("page", $pageStore.toString());
-  if (query === "") search.delete("q");
-  else search.set("q", query);
+  if (q === "") search.delete("q");
+  else search.set("q", q);
 
-  const q = search.toString();
-  history.pushState({}, "", `${$page.url.pathname}${q ? `?${q}` : ""}`);
+  const query = search.toString();
+  history.pushState({}, "", `${$page.url.pathname}${query ? `?${query}` : ""}`);
 });
 
 afterNavigate(({ from }) => {
