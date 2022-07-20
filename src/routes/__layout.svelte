@@ -13,7 +13,7 @@ export const load: Load = async ({ url }) => {
 import { onMount } from "svelte";
 import { fade } from "svelte/transition";
 import { QueryClient, QueryClientProvider } from "@sveltestack/svelte-query";
-import { afterNavigate } from "$app/navigation";
+import { afterNavigate, beforeNavigate } from "$app/navigation";
 import { page, session } from "$app/stores";
 import { browser } from "$app/env";
 import { pageProps, pageStore, queryStore } from "$lib/store";
@@ -41,31 +41,19 @@ onMount(async () => {
   }, transitionDuration / 2);
 });
 
-pageStore.subscribe(p => {
-  if (!browser) return;
-  const search = new URLSearchParams($page.url.search);
+$: {
+  if (browser) {
+      const search = new URLSearchParams($page.url.search);
 
-  if (p <= 1) search.delete("page");
-  else search.set("page", p.toString());
-  if ($queryStore === "") search.delete("q");
-  else search.set("q", $queryStore);
+      if ($pageStore <= 1) search.delete("page");
+      else search.set("page", $pageStore.toString());
+      if ($queryStore === "") search.delete("q");
+      else search.set("q", $queryStore);
 
-  const query = search.toString();
-  history.pushState({}, "", `${$page.url.pathname}${query ? `?${query}` : ""}`);
-});
-
-queryStore.subscribe(q => {
-  if (!browser) return;
-  const search = new URLSearchParams($page.url.search);
-
-  if ($pageStore <= 1) search.delete("page");
-  else search.set("page", $pageStore.toString());
-  if (q === "") search.delete("q");
-  else search.set("q", q);
-
-  const query = search.toString();
-  history.pushState({}, "", `${$page.url.pathname}${query ? `?${query}` : ""}`);
-});
+      const query = search.toString();
+      history.pushState({}, "", `${$page.url.pathname}${query ? `?${query}` : ""}`);
+  }
+}
 
 afterNavigate(({ from }) => {
   if (!from) return;
