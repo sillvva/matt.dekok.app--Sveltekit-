@@ -149,6 +149,10 @@
     }
   }
 
+  #app {
+    color-scheme: var(--scheme);
+  }
+
   h1,
   h2,
   h3,
@@ -163,6 +167,11 @@
 
   p {
     font-size: 0.95rem;
+  }
+
+  a:not([role="button"]) {
+    color: var(--color-text-link);
+    text-decoration: none;
   }
 }
 

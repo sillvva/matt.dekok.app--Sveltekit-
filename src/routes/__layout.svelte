@@ -67,7 +67,7 @@ queryStore.subscribe(query => {
   history.pushState({}, "", `${$page.url.pathname}${q ? `?${q}` : ""}`);
 });
 
-afterNavigate(({ from, to }) => {
+afterNavigate(({ from }) => {
   if (!from) return;
   setTimeout(() => {
     $pageStore = 1;
@@ -122,12 +122,3 @@ $: metaProps = metaTags($pageProps, $page.url.origin, $session.theme);
     <Toasts />
   </QueryClientProvider>
 </SupaAuthHelper>
-
-<style lang="scss">
-#app {
-  color-scheme: var(--scheme);
-  :global(a:not([role="button"])) {
-    @apply text-theme-link no-underline;
-  }
-}
-</style>

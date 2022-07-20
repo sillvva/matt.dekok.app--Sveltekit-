@@ -53,7 +53,7 @@ export const get: RequestHandler = async ({ params: { slug } }) => {
 
   if (write) {
     console.log("Revalidating...", slug);
-    const { publicURL: url } = await supabase.storage.from("blog").getPublicUrl(meta.name);
+    const { publicURL: url } = supabase.storage.from("blog").getPublicUrl(meta.name);
     if (!url) throw new Error(`Could not get public URL for ${meta.name}`);
     const response = await fetch(`${url}?t=${Date.now()}`);
     const content = await response.text();

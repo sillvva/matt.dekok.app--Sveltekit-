@@ -23,7 +23,7 @@ let active = false;
     ])}
     class:post-focused={active && !post.link}
     use:ripple
-    on:click={e => (active = true)}>
+    on:click={() => (active = true)}>
     <div
       class={conClasses([
         "relative bg-clip-content bg-cover bg-center bg-theme-hover bg-opacity-15",

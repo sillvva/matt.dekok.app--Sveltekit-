@@ -59,7 +59,7 @@ export async function fetchPosts(options: FetchOptions = {}) {
       changes++;
     } else continue;
 
-    const { publicURL: url } = await supabase.storage.from("blog").getPublicUrl(file.name);
+    const { publicURL: url } = supabase.storage.from("blog").getPublicUrl(file.name);
     if (!url) throw new Error(`Could not get public URL for ${file.name}`);
     const response = await fetch(`${url}?t=${Date.now()}`);
     const result = await response.text();

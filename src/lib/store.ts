@@ -8,10 +8,16 @@ export const drawer = writable(false);
 
 export const admin = writable<InferQueryOutput<"posts:get">>({
   success: false,
+  numposts: 0,
   posts: [],
+  numexperience: 0,
   experience: [],
+  numskills: 0,
   skills: [],
-  projects: []
+  numprojects: 0,
+  projects: [],
+  numimages: 0,
+  images: []
 });
 
 export const pageStore = writable(1);

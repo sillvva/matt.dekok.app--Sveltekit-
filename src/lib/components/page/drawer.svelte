@@ -16,7 +16,11 @@ $: menuItems = menuItems.map(item => {
 });
 </script>
 
-<div class="backdrop" in:fade={{ duration }} out:fade={{ duration }} on:click={() => ($drawer = false)}>
+<div
+  class="flex justify-center items-center fixed inset-0 z-10 bg-black/70"
+  in:fade={{ duration }}
+  out:fade={{ duration }}
+  on:click={() => ($drawer = false)}>
   <div in:scale={{ duration, start: 0.8 }} out:scale={{ duration, start: 0.5 }}>
     <HexMenu
       items={menuItems}
@@ -25,10 +29,3 @@ $: menuItems = menuItems.map(item => {
       rotated={true} />
   </div>
 </div>
-
-<style lang="scss">
-.backdrop {
-  @apply fixed inset-0 z-10 bg-black/70;
-  @apply flex justify-center items-center;
-}
-</style>

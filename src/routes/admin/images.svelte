@@ -276,7 +276,7 @@ $: paginatedImages = filteredImages.slice(($pageStore - 1) * itemsPerPage, $page
       {/each}
     {:else}
       {#each new Array(loaders).fill(1) as i}
-        <div class="flex flex-col bg-theme-article p-0 rounded-md shadow-md relative overflow-hidden">
+        <div class="flex flex-col bg-theme-article p-0 rounded-md shadow-md relative overflow-hidden" data-key="{i}">
           <div class="aspect-video animate-pulse bg-theme-hover bg-opacity-15" />
           <div class="flex-1 flex flex-col p-3">
             <div class="loading-line title max-w-xs">
