@@ -1,7 +1,6 @@
 <script lang="ts">
 import { page as p } from "$app/stores";
 import { browser } from "$app/env";
-import { itemsPerPage } from "$lib/constants";
 import { pageProps } from "$lib/store";
 import type { blog } from "@prisma/client";
 import Message from "$lib/components/page/message.svelte";
@@ -9,17 +8,9 @@ import Post from "$lib/components/blog/post.svelte";
 import Pagination from "$lib/components/common/pagination.svelte";
 import { metaTags } from "$lib/utils";
 
-const loaders: blog[] = Array(itemsPerPage).fill({
-  title: "",
-  date: "",
-  image: "",
-  slug: "",
-  tags: []
-});
-
 export let pages: number = 1;
 export let num: number = 0;
-export let posts: blog[] = loaders;
+export let posts: blog[];
 export let error: Error = { name: "", message: "" };
 
 if (num === 0) {
@@ -61,5 +52,5 @@ $: metaProps = metaTags($pageProps, $p.url.origin, $p.url.pathname);
 {/if}
 
 {#if pages > 1}
-  <Pagination {page} {pages} />
+  <Pagination {page} {pages} linked />
 {/if}

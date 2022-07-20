@@ -13,7 +13,7 @@ export const getPosts = async (options?: PostFetchOptions) => {
   const { page = 1, query = "", limit = itemsPerPage } = options || {};
 
   let { posts, num } = await fetchPosts({ getPosts: true, page, perpage: limit, query });
-
+  
   if (query) {
     posts = posts
       .map(post => {

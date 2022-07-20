@@ -5,6 +5,7 @@ import { conClasses } from "$lib/utils";
 
 export let page = 0;
 export let pages: number;
+export let linked: boolean = false;
 
 $: pgs = page || $pageStore || 1;
 $: {
@@ -13,7 +14,7 @@ $: {
 
 let pagination: (number | null)[] = [];
 $: {
-  pagination = pages > 1 ? [1, pages] : []
+  pagination = pages > 1 ? [1, pages] : [];
   if (pagination.length > 0) {
     const inMin = Math.max(2, pgs - 2);
     const inMax = Math.min(pages - 1, pgs + 2);
@@ -32,7 +33,7 @@ $: {
 }
 
 const pageHandler = (newPage: number) => {
-  const query = new URLSearchParams($p.url.search);
+  const query = new URLSearchParams();
   if (newPage === 1) query.delete("page");
   else query.set("page", newPage.toString());
   const q = query.toString();
@@ -53,16 +54,7 @@ const pageStoreHandler = (newPage: number) => {
         {p}
       </span>
     {:else if p}
-      {#if $pageStore}
-        <button
-          on:click={() => pageStoreHandler(p)}
-          class={conClasses([
-            "inline-flex w-8 h-8 justify-center items-center rounded-sm font-bold drop-shadow-sm bg-theme-article",
-            "hover:text-theme-button hover:bg-theme-link hover:drop-shadow-theme-text"
-          ])}>
-          {p}
-        </button>
-      {:else}
+      {#if linked}
         <a
           href={pageHandler(p)}
           class={conClasses([
@@ -71,6 +63,15 @@ const pageStoreHandler = (newPage: number) => {
           ])}>
           {p}
         </a>
+      {:else}
+        <button
+          on:click={() => pageStoreHandler(p)}
+          class={conClasses([
+            "inline-flex w-8 h-8 justify-center items-center rounded-sm font-bold drop-shadow-sm bg-theme-article",
+            "hover:text-theme-button hover:bg-theme-link hover:drop-shadow-theme-text"
+          ])}>
+          {p}
+        </button>
       {/if}
     {:else}
       <span class="inline-flex w-8 h-8 justify-center items-center"> | </span>

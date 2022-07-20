@@ -13,7 +13,7 @@ export const load: Load = async ({ url }) => {
 import { onMount } from "svelte";
 import { fade } from "svelte/transition";
 import { QueryClient, QueryClientProvider } from "@sveltestack/svelte-query";
-import { afterNavigate, beforeNavigate } from "$app/navigation";
+import { afterNavigate } from "$app/navigation";
 import { page, session } from "$app/stores";
 import { browser } from "$app/env";
 import { pageProps, pageStore, queryStore } from "$lib/store";
@@ -68,7 +68,7 @@ $: metaProps = metaTags($pageProps, $page.url.origin, $session.theme);
 
 <svelte:head>
   <link rel="icon" href="/favicon.png" />
-  <link rel="apple-touch-icon" href="{metaProps.origin}/apple-touch-icon.png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <link rel="manifest" href="/manifest.webmanifest" />
 
   <meta name="mobile-web-app-capable" content="yes" />

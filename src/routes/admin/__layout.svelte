@@ -1,14 +1,3 @@
-<script lang="ts" context="module">
-import type { Load } from "./__types/__layout";
-export const load: Load = async ({ url }) => {
-  return {
-    props: {
-      path: `${url.pathname}${url.search}`
-    }
-  };
-};
-</script>
-
 <script lang="ts">
 import { onMount } from "svelte";
 import { mdiOpenInNew } from "@mdi/js";

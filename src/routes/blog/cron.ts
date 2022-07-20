@@ -3,7 +3,7 @@ import type { RequestHandler } from "./__types/cron";
 import { fetchPosts } from "$lib/supabase/blog";
 import { itemsPerPage } from "$lib/constants";
 
-export const post: RequestHandler<any> = async ({ url }) => {
+export const POST: RequestHandler<any> = async ({ url }) => {
   try {
     const getPosts = !!url.searchParams.get("posts");
     const sPage = url.searchParams.get("page");

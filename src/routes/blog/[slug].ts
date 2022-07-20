@@ -8,7 +8,7 @@ import { env } from "$lib/constants";
 import prisma from "$lib/prisma";
 import type { blog } from "@prisma/client";
 
-export const get: RequestHandler = async ({ params: { slug } }) => {
+export const GET: RequestHandler = async ({ params: { slug } }) => {
   if (!supabase) throw new Error("Supabase not initialized");
   
   const dirPath = getContentDir();
@@ -37,7 +37,9 @@ export const get: RequestHandler = async ({ params: { slug } }) => {
     meta = await prisma.blog.findFirst({ where: { slug } });
   }
 
-  if (!meta) throw new Error("Slug not found");
+  if (!meta) return {
+    status: 404
+  };
 
   let write = false;
   if (existsSync(filePath)) {

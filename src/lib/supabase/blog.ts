@@ -43,7 +43,17 @@ export async function fetchPosts(options: FetchOptions = {}) {
     tags: (post.tags as string[]) || []
   }));
 
-  const num = posts.length;
+  const num = await prisma.blog.count({
+    where: query
+      ? {
+          OR: [
+            { title: { contains: query } },
+            { description: { contains: query } },
+            { tags: { array_contains: query } }
+          ]
+        }
+      : {}
+  });
 
   if (query || (page && perpage)) return { changes, upserted, removed, errors, posts, num };
 
