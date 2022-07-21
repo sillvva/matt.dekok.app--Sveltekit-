@@ -1,4 +1,6 @@
 import type { PageProps } from "./types";
+import { get } from "svelte/store";
+import { page } from "$app/stores";
 import { env } from "$lib/constants";
 
 export const themes = ["dark", "light", "blue"] as const;
@@ -51,8 +53,8 @@ export const checkOrigin = (origin: string) => {
     : origin;
 };
 
-export const metaTags = (pageProps: PageProps, origin: string, path: string, theme?: string) => {
-  const originCheck = checkOrigin(origin);
+export const metaTags = (pageProps: PageProps, theme?: string) => {
+  const originCheck = checkOrigin(get(page).url.origin);
   const themeColors: { [key: string]: string } = {
     dark: "#00aa99",
     blue: "#32b2e8",
@@ -69,7 +71,7 @@ export const metaTags = (pageProps: PageProps, origin: string, path: string, the
     image: pageProps.image?.startsWith("http")
       ? pageProps.image
       : `${originCheck}${pageProps.image || "/images/preview-me3.jpeg"}`,
-    url: originCheck + path
+    url: originCheck + get(page).url.pathname
   };
 
   return {

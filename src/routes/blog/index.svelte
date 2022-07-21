@@ -24,7 +24,7 @@ $pageProps = {
 };
 
 $: page = parseInt((browser && $p.url.searchParams.get("page")) || "1");
-$: metaProps = metaTags($pageProps, $p.url.origin, $p.url.pathname);
+$: metaProps = metaTags($pageProps);
 </script>
 
 <svelte:head>

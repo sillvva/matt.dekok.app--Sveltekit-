@@ -21,7 +21,7 @@ const cols = {
   xl: 4
 };
 
-$: metaProps = metaTags($pageProps, $page.url.origin, $page.url.pathname);
+$: metaProps = metaTags($pageProps);
 </script>
 
 <svelte:head>

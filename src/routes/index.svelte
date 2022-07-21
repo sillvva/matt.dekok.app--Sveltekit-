@@ -21,7 +21,7 @@ $pageProps = {
   bodyClass: "mt-20"
 };
 
-$: metaProps = metaTags($pageProps, $page.url.origin, $page.url.pathname);
+$: metaProps = metaTags($pageProps);
 </script>
 
 <svelte:head>

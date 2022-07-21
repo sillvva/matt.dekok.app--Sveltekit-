@@ -19,7 +19,7 @@ const age = (d: Date) => {
   return Math.abs(ageDate.getUTCFullYear() - 1970);
 };
 
-$: metaProps = metaTags($pageProps, $page.url.origin, $page.url.pathname);
+$: metaProps = metaTags($pageProps);
 </script>
 
 <svelte:head>

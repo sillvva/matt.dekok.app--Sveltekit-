@@ -64,7 +64,7 @@ afterNavigate(({ from }) => {
   }, transitionDuration / 2);
 });
 
-$: metaProps = metaTags($pageProps, $page.url.origin, $session.theme);
+$: metaProps = metaTags($pageProps, $session.theme);
 </script>
 
 <svelte:head>
