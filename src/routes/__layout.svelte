@@ -41,19 +41,20 @@ onMount(async () => {
   }, transitionDuration / 2);
 });
 
-$: {
-  if (browser) {
-      const search = new URLSearchParams($page.url.search);
+function storeNav(p: number, q: string) {
+  if (!browser) return;
+  const search = new URLSearchParams($page.url.search);
 
-      if ($pageStore <= 1) search.delete("page");
-      else search.set("page", $pageStore.toString());
-      if ($queryStore === "") search.delete("q");
-      else search.set("q", $queryStore);
+  if (p <= 1) search.delete("page");
+  else search.set("page", p.toString());
+  if (q === "") search.delete("q");
+  else search.set("q", q);
 
-      const query = search.toString();
-      history.pushState({}, "", `${$page.url.pathname}${query ? `?${query}` : ""}`);
-  }
+  const query = search.toString();
+  history.pushState({}, "", `${$page.url.pathname}${query ? `?${query}` : ""}`);
 }
+
+$: storeNav($pageStore, $queryStore);
 
 afterNavigate(({ from }) => {
   if (!from) return;
