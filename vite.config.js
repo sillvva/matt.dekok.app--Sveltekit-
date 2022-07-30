@@ -5,7 +5,7 @@ import { imagetools } from 'vite-imagetools';
 const config = {
 	plugins: [sveltekit(), imagetools()],
   define: {
-    'process.env': process.env
+    // 'process.env': process.env
   },
   optimizeDeps: {
     include: ['highlight.js', 'highlight.js/lib/core']
